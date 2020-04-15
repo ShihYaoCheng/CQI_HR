@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/task 
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<!-- ****排程 時間／參數設定**** -->
+	<!-- #JOB1 月結請假紀錄 BEGIN -->
+	<!-- JOB1 月結請假紀錄 工作內容 -->
+	<bean id="jobMonthlyLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyLeaveJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="userAskForLeaveService" value-ref="userAskForLeaveService"/>
+                <entry key="userLeaveService" value-ref="userLeaveService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB1 月結請假紀錄 排程設定 -->
+	<bean id="cronMonthlyLeaveBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobMonthlyLeaveBean"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 4 1 * ?</value>
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerMonthlyLeaveBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronMonthlyLeaveBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerMonthlyLeave</value>
+    	</property>
+    </bean>
+    <!-- #JOB1 月結請假紀錄 END -->
+
+	<!-- #JOB2 特休給假 BEGIN -->
+	<!-- JOB2 特休給假 工作內容 -->
+	<bean id="jobAnnualLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.AnnualLeaveJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="userLeaveService" value-ref="userLeaveService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB2 特休給假 排程設定 -->
+	<bean id="cronAnnualLeaveBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobAnnualLeaveBean"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 6 * * ?</value>
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerAnnualLeaveBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronAnnualLeaveBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerAnnualLeave</value>
+    	</property>
+    </bean>
+    <!-- #JOB2 特休給假 END -->
+    
+    <!-- #JOB3 自動請假 BEGIN -->
+	<!-- JOB3 自動請假 工作內容 -->
+	<bean id="jobAutoAskLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.AutoAskLeaveJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="applyForAutoAskLeaveService" value-ref="applyForAutoAskLeaveService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB1 特休給假 排程設定 -->
+	<bean id="cronAutoAskLeaveBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobAutoAskLeaveBean"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 50 8 * * ?</value>
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerAutoAskLeaveBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronAutoAskLeaveBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerAutoAskLeave</value>
+    	</property>
+    </bean>
+    <!-- #JOB1 特休給假 END -->
+</beans>

@@ -1,0 +1,30 @@
+.working-time {
+	width:7%;
+	color:#000000;
+	background-color:#22aa22!important;
+}
+.rest-time {
+	width:7%;
+	color:#888888;
+	background-color:#aaaaaa!important;
+}
+.ask-leave-time {
+	width:7%;
+	color:#ffffff;
+	background-color:#7FC9FF!important;
+}
+.no-overtime{
+	width:7%;
+	color:#888888;
+	background-color:#aaaaaa!important;
+}
+.has-overtime{
+	width:7%;
+	color:#ffffff;
+	background-color:#22aa22!important;
+}
+.elasticity-time{
+	width:7%;
+	color:#000000;
+	background-color:#007F46!important;
+}
