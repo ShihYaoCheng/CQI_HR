@@ -611,7 +611,6 @@ public final class DateUtils {
 		long days 	 = mss / (1000 * 60 * 60 * 24);
 		long hours 	 = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
 		long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
-		long seconds = (mss % (1000 * 60)) / 1000;
 		if(days >=1){
 			return Math.abs(days) + "天 ";
 		}else{
@@ -672,6 +671,17 @@ public final class DateUtils {
 		return cal.getTime();
 	}
 	
+	public static Date getFirstDateOfLastMonth(){
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+	
 	public static Date getLastDateOfThisMonth(){
 		Calendar cal = Calendar.getInstance();
 		int lastDate = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -708,6 +718,7 @@ public final class DateUtils {
 		return cal.getTime();
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public static String getChineseMonth(Date date){
 		Map<String, String> aMap = new HashMap<String, String>();
         aMap.put("01","一月");
@@ -781,7 +792,7 @@ public final class DateUtils {
 	
 	public static Date getTodayWithoutHourMinSec() {
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);

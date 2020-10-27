@@ -9,11 +9,11 @@
 
 <body role="document">
 	<%@include file="../include/menu.jsp"%>
-	<div class="container theme-showcase" role="main">
+	<div class="container theme-showcase page-width" role="main">
 		<div class="row row-offcanvas row-offcanvas-left">
 			
 			<!--/span-->
-			<div class="col-xs-12 col-md-9 single_table">
+			<div class="col-xs-12 col-md-12 single_table">
 				<form class="navbar-form">
 					<h3><b>自動請假設定管理</b></h3>
 					<br/>

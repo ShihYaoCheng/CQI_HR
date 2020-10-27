@@ -48,6 +48,8 @@ public class UserLeaveService extends AbstractService<UserLeave>{
 	@Resource GiveLeaveRecordDAO giveLeaveRecordDAO;
 	@Resource SysUserDAO sysUserDAO;
 	
+	@Resource UserAskForLeaveService userAskForLeaveService;
+	
 	@Override
 	protected AbstractDAO<UserLeave> getDAO() {
 		return userLeaveDAO;
@@ -215,9 +217,14 @@ public class UserLeaveService extends AbstractService<UserLeave>{
 		if(null==companyLeave){
 			return false;
 		}
+		String errorMsg = userAskForLeaveService.checkRule(userAskForLeave);
+		if(StringUtils.hasText(errorMsg)) {
+			return false;
+		}
 		userLeave.setCount(userLeave.getCount() - (companyLeave.getType() * userAskForLeave.getSpendTime()));
 		userLeaveDAO.update(userLeave);
 		userAskForLeave.setStatus(0);
+		userAskForLeave.setUpdateDate(new Date());
 		userAskForLeaveDAO.update(userAskForLeave);
 		return true;
 	}

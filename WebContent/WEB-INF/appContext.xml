@@ -22,8 +22,8 @@
 	<!-- Configures the @Controller programming model -->
 	<mvc:annotation-driven />
 
-	<!-- Forwards requests to the "/" resource to the "welcome" view -->
-	<mvc:view-controller path="/" view-name="login" />
+	<!-- Forwards requests to the "/" resource to the "welcome" view
+	<mvc:view-controller path="/" view-name="login" /> -->
 
 	<!-- Configures Handler Interceptors -->
 	<mvc:interceptors>
@@ -73,8 +73,11 @@
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost:3306/cqi_hr_manager" />
 		<property name="username" value="ProjectUser"/>
-		<property name="password" value="123$esZxcv"/>
-		<!-- <property name="password" value="1qaz2wsx"/> -->
+		<property name="password" value="1qaz2wsx"/>
+		<!-- <property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" />
+		<property name="url" value="jdbc:mysql://35.221.230.161:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
+		<property name="username" value="web"/>
+		<property name="password" value="drinkTEA4000"/> -->
 		<property name="testOnBorrow" value="true" />
 		<property name="validationQuery" value="SELECT 'Y'" />
 		<property name="initialSize" value="5" />

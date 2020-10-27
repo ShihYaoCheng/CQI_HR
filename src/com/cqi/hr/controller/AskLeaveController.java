@@ -67,13 +67,28 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			//使用者剩餘的假期
 			List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
 			model.addAttribute("userLeaveList", userLeaveList);
-			PagingList<UserAskForLeave> askLeaveList = userAskForLeaveService.getListByPage(page, operator.getSysUserId());
 			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+			PagingList<UserAskForLeave> askLeaveList = userAskForLeaveService.getListByPage(page, operator.getSysUserId());
 			createPagingInfo(model, askLeaveList);
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}
 		return "/askLeave/askLeave-list.table";
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="ajaxLeaveQuota")
+	public String ajaxLeaveQuota(HttpServletRequest req, ModelMap model) {
+		logger.info(FUNCTION_NAME + " ajaxLeaveQuota");
+		try {
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			//使用者剩餘的假期
+			List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
+			model.addAttribute("userLeaveList", userLeaveList);
+			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+		} catch (Exception e) {
+			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
+		}
+		return "/askLeave/askLeaveQuota-list.table";
 	}
 	
 	
@@ -87,24 +102,29 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			if(operator == null){
 				map = createResponseMsg(false, "", "請重新登入");
 			}else{
-				if(!DateUtils.isTheSameMonth(userAskForLeave.getStartTime(), userAskForLeave.getEndTime())) {
-					map = createResponseMsg(false, "", Constant.DIFFERENT_MONTH);
+				String errorMsg = userAskForLeaveService.checkRule(userAskForLeave);
+				if(StringUtils.hasText(errorMsg)) {
+					map = createResponseMsg(false, "", errorMsg);
 				}else {
-					userAskForLeave.setUpdateDate(new Date());
-					boolean isSuccess = userLeaveService.updateUserLeave(userAskForLeave, 2);
-					if(isSuccess){
-						String token = SessionUtils.getAsanaToken(req);
-						if(token != null && StringUtils.hasText(userAskForLeave.getAsanaTaskId())) {
-							boolean updateTaskSucceed = AsanaUtils.updateLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyLeaveMapping());
-							if(!updateTaskSucceed) {
-								userAskForLeave.setDescription("Asana更新Task失敗\n" + userAskForLeave.getDescription());
-								//將Asana狀況儲存
-								userAskForLeaveService.update(userAskForLeave);
+					if(!DateUtils.isTheSameMonth(userAskForLeave.getStartTime(), userAskForLeave.getEndTime())) {
+						map = createResponseMsg(false, "", Constant.DIFFERENT_MONTH);
+					}else {
+						userAskForLeave.setUpdateDate(new Date());
+						boolean isSuccess = userLeaveService.updateUserLeave(userAskForLeave, 2);
+						if(isSuccess){
+							String token = SessionUtils.getAsanaToken(req);
+							if(token != null && StringUtils.hasText(userAskForLeave.getAsanaTaskId())) {
+								boolean updateTaskSucceed = AsanaUtils.updateLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyLeaveMapping());
+								if(!updateTaskSucceed) {
+									userAskForLeave.setDescription("Asana更新Task失敗\n" + userAskForLeave.getDescription());
+									//將Asana狀況儲存
+									userAskForLeaveService.update(userAskForLeave);
+								}
 							}
+							map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
+						}else{
+							map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 						}
-						map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
-					}else{
-						map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 					}
 				}
 			}
@@ -126,12 +146,41 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			if(operator == null){
 				map = createResponseMsg(false, "", "請重新登入");
 			}else{
-				if(!DateUtils.isTheSameMonth(userAskForLeave.getStartTime(), userAskForLeave.getEndTime())) {
-					map = createResponseMsg(false, "", Constant.DIFFERENT_MONTH);
+				userAskForLeave.setSysUserId(operator.getSysUserId());
+				String errorMsg = userAskForLeaveService.checkRule(userAskForLeave);
+				if(StringUtils.hasText(errorMsg)) {
+					map = createResponseMsg(false, "", errorMsg);
 				}else {
-					if(userAskForLeave.getLeaveId()==CompanyLeave.SHIFT_MENSTRUATION_ID) {
-						SysUser dataUser = sysUserService.get(operator.getSysUserId());
-						if(dataUser.getGender()!=null && StringUtils.hasText(dataUser.getGender()) && dataUser.getGender().equals(Constant.GENDER_FEMALE)) {
+					if(!DateUtils.isTheSameMonth(userAskForLeave.getStartTime(), userAskForLeave.getEndTime())) {
+						map = createResponseMsg(false, "", Constant.DIFFERENT_MONTH);
+					}else {
+						if(userAskForLeave.getLeaveId()==CompanyLeave.SHIFT_MENSTRUATION_ID) {
+							SysUser dataUser = sysUserService.get(operator.getSysUserId());
+							if(dataUser.getGender()!=null && StringUtils.hasText(dataUser.getGender()) && dataUser.getGender().equals(Constant.GENDER_FEMALE)) {
+								userAskForLeave.setStatus(1);
+								Calendar calendar = Calendar.getInstance();
+								userAskForLeave.setCreateDate(calendar.getTime());
+								userAskForLeave.setUpdateDate(calendar.getTime());
+								boolean isSuccess = userLeaveService.updateUserLeave(userAskForLeave, 1);
+								if(isSuccess){
+									String token = SessionUtils.getAsanaToken(req);
+									if(token != null) {
+										boolean addTaskSucceed = AsanaUtils.addLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyLeaveMapping());
+										if(!addTaskSucceed) {
+											userAskForLeave.setDescription("Asana新增Task失敗\n" + userAskForLeave.getDescription());
+										}
+										logger.info("Asana Id ajaxAdd : " + userAskForLeave.getAsanaTaskId());
+										//將Asana狀況儲存，AsanaId和Description
+										userAskForLeaveService.update(userAskForLeave);
+									}
+									map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
+								}else{
+									map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
+								}
+							}else {
+								map = createResponseMsg(false, "", "無法新增，女性才可以請生理假。");
+							}
+						}else {
 							userAskForLeave.setSysUserId(operator.getSysUserId());
 							userAskForLeave.setStatus(1);
 							Calendar calendar = Calendar.getInstance();
@@ -153,30 +202,6 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 							}else{
 								map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 							}
-						}else {
-							map = createResponseMsg(false, "", "無法新增，女性才可以請生理假。");
-						}
-					}else {
-						userAskForLeave.setSysUserId(operator.getSysUserId());
-						userAskForLeave.setStatus(1);
-						Calendar calendar = Calendar.getInstance();
-						userAskForLeave.setCreateDate(calendar.getTime());
-						userAskForLeave.setUpdateDate(calendar.getTime());
-						boolean isSuccess = userLeaveService.updateUserLeave(userAskForLeave, 1);
-						if(isSuccess){
-							String token = SessionUtils.getAsanaToken(req);
-							if(token != null) {
-								boolean addTaskSucceed = AsanaUtils.addLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyLeaveMapping());
-								if(!addTaskSucceed) {
-									userAskForLeave.setDescription("Asana新增Task失敗\n" + userAskForLeave.getDescription());
-								}
-								logger.info("Asana Id ajaxAdd : " + userAskForLeave.getAsanaTaskId());
-								//將Asana狀況儲存，AsanaId和Description
-								userAskForLeaveService.update(userAskForLeave);
-							}
-							map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
-						}else{
-							map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 						}
 					}
 				}
@@ -248,8 +273,8 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 		return "/index/calendar";
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="calendar/ajaxDataLoading")
-	public void ajaxCalendarDataLoading(HttpServletRequest req, HttpServletResponse resp, String start, String end){
+	@RequestMapping(method=RequestMethod.POST, value="calendar/ajaxDataLoading")
+	public void ajaxCalendarDataLoading(HttpServletRequest req, HttpServletResponse resp, String start, String end, String userId){
 		logger.info(FUNCTION_NAME + " ajaxCalendarDataLoading, start : " + start + ", end : " + end);
 		JSONArray jsonArray = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -259,7 +284,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser databaseUser = sysUserService.get(operator.getSysUserId());
 			if(databaseUser!=null && StringUtils.hasText(databaseUser.getSysUserId())){
-				jsonArray = userAskForLeaveService.getCalendarData(startDate, endDate, null);
+				jsonArray = userAskForLeaveService.getCalendarData(startDate, endDate, userId);
 			}else{
 				jsonArray = new JSONArray();
 			}

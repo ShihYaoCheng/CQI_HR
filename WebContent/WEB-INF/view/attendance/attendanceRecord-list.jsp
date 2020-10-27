@@ -48,13 +48,13 @@
 
 <body role="document">
 	<%@include file="../include/menu.jsp"%>
-	<div class="container theme-showcase" role="main">
+	<div class="container theme-showcase page-width" role="main">
 		<div class="row row-offcanvas row-offcanvas-left">
 			
 			<!--/span-->
 			<div class="col-xs-12 col-md-12 single_table">
 				<form class="navbar-form">
-					<h3><b>調班資料管理</b></h3>
+					<h3><b>打卡資料管理</b></h3>
 					<br/>
 					<div class="form-group" style="display: inline;">
 						<div class="input-group">

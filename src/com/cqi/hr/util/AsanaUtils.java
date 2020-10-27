@@ -3,6 +3,8 @@ package com.cqi.hr.util;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -10,8 +12,11 @@ import org.apache.log4j.Logger;
 
 import com.asana.Client;
 import com.asana.OAuthApp;
+import com.asana.models.Project;
 import com.asana.models.Task;
+import com.asana.models.Team;
 import com.asana.models.User;
+import com.asana.models.Workspace;
 import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.SysUser;
@@ -19,11 +24,11 @@ import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserAskForOvertime;
 
 public class AsanaUtils {
-	private static Logger logger = Logger.getLogger("AsanaUtils");
+	private static Logger logger = Logger.getLogger(AsanaUtils.class);
+		
 	public static boolean addLeaveTask(String token, SysUser sysUser, UserAskForLeave leave, Map<Long, CompanyLeave> leaveMapping) {
 		try {
 			Client client = getAsanaOAuth(token);
-			client.headers.put("Asana-Enable", "string_ids");
 	        User me = client.users.me().execute();
 	        logger.info("me=" + me.name);
 	        Task demoTask = client.tasks.createInWorkspace(sysUser.getDefaultWorkspacesId())
@@ -46,7 +51,6 @@ public class AsanaUtils {
 	public static boolean updateLeaveTask(String token, SysUser sysUser, UserAskForLeave leave, Map<Long, CompanyLeave> leaveMapping) {
 		try {
 			Client client = getAsanaOAuth(token);
-			client.headers.put("Asana-Enable", "string_ids");
 	        User me = client.users.me().execute();
 	        logger.info("me=" + me.name);
 	        
@@ -67,12 +71,10 @@ public class AsanaUtils {
 	public static boolean deleteLeaveTask(String token, UserAskForLeave leave) {
 		try {
 			Client client = getAsanaOAuth(token);
-			client.headers.put("Asana-Enable", "string_ids");
 	        User me = client.users.me().execute();
 	        logger.info("me=" + me.name);
 	        
-	        Task demoTask = client.tasks.delete(leave.getAsanaTaskId())
-	                .execute();
+	        client.tasks.delete(leave.getAsanaTaskId()).execute();
 	        logger.info("Task " + leave.getAsanaTaskId() + " delete.");
 	        return true;
 		}catch (Exception e) {
@@ -84,7 +86,6 @@ public class AsanaUtils {
 	public static boolean addOvertimeTask(String token, SysUser sysUser, UserAskForOvertime overtime, Map<Long, CompanyLeave> leaveMapping) {
 		try {
 			Client client = getAsanaOAuth(token);
-			client.headers.put("Asana-Enable", "string_ids");
 	        User me = client.users.me().execute();
 	        logger.info("me=" + me.name);
 	        Task demoTask = client.tasks.createInWorkspace(sysUser.getDefaultWorkspacesId())
@@ -106,7 +107,6 @@ public class AsanaUtils {
 	public static boolean updateOvertimeTask(String token, SysUser sysUser, UserAskForOvertime overtime, Map<Long, CompanyLeave> leaveMapping) {
 		try {
 			Client client = getAsanaOAuth(token);
-			client.headers.put("Asana-Enable", "string_ids");
 	        User me = client.users.me().execute();
 	        logger.info("me=" + me.name);
 	        
@@ -127,12 +127,10 @@ public class AsanaUtils {
 	public static boolean deleteOvertimeTask(String token, UserAskForOvertime overtime) {
 		try {
 			Client client = getAsanaOAuth(token);
-			client.headers.put("Asana-Enable", "string_ids");
 	        User me = client.users.me().execute();
 	        logger.info("me=" + me.name);
 	        
-	        Task demoTask = client.tasks.delete(overtime.getAsanaTaskId())
-	                .execute();
+	        client.tasks.delete(overtime.getAsanaTaskId()).execute();
 	        logger.info("Task " + overtime.getAsanaTaskId() + " delete.");
 	        return true;
 		}catch (Exception e) {
@@ -222,5 +220,58 @@ public class AsanaUtils {
         }
         asanaName.append(" [CqiServ]");
         return asanaName.toString();
+	}
+	
+	public static Map<String, String> getTeamProject(String token) {
+		Map<String, String> projectMap = new HashMap<String, String>();
+		try {
+			Client client = getAsanaOAuth(token);
+	        
+	        Workspace workspace = client.workspaces.findById("102086551088779").execute();
+	        if(workspace!=null) {
+	        	List<Team> listTeam = client.teams.findByOrganization(workspace.gid).execute();
+	        	if(listTeam.size() > 0) {
+	        		for(Team team:listTeam) {
+	        			logger.info("Team name : " + team.name);
+	        			List<Project> listProject = client.projects.findByTeam(team.gid).execute();
+	        			for (Project project : listProject) {
+				        	logger.info("project.id : " + project.gid);
+				        	logger.info("project.name : " + project.name);
+				        	if (project.name.indexOf("通知")>=0 && project.name.indexOf("請假")>=0) {
+				        		projectMap.put(project.gid, team.name + ", " + project.name);
+				            }
+				        }
+	        		}
+	        		return projectMap;
+	        	}
+	        }
+		}catch (Exception e) {
+			logger.error("getTeamProject Exception : ", e);
+		}
+		return new HashMap<String, String>();
+	}
+	
+	public static boolean checkProjectPermission(String token, String sysUserId, String projectId) {
+		try {
+			Client client = getAsanaOAuth(token);
+			
+	        Project project = client.projects.findById(projectId).execute();
+	        for(User user :project.members) {
+	        	logger.info("project, Id : " + user.gid + ", name : " + user.name);
+	        	if(sysUserId.equals(user.gid)) {
+	        		return true;
+	        	}
+	        }
+	        List<Team> teamList = client.teams.getTeamsForUser(sysUserId, project.workspace.gid).execute();
+	        for(Team team :teamList) {
+	        	logger.info("team, Id : " + team.gid + ", name : " + team.name);
+	        	if(project.team.gid.equals(team.gid)) {
+	        		return true;
+	        	}
+	        }
+		}catch (Exception e) {
+			logger.error("checkProjectPermission Exception : ", e);
+		}
+		return false;
 	}
 }

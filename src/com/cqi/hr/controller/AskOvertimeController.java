@@ -75,20 +75,25 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 				map = createResponseMsg(false, "", "請重新登入");
 			}else{
 				userAskForOvertime.setUpdateDate(new Date());
-				boolean isSuccess = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 2);
-				if(isSuccess){
-					String token = SessionUtils.getAsanaToken(req);
-					if(token != null && StringUtils.hasText(userAskForOvertime.getAsanaTaskId())) {
-						boolean updateTaskSucceed = AsanaUtils.updateOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
-						if(!updateTaskSucceed) {
-							userAskForOvertime.setDescription("Asana更新Task失敗\n" + userAskForOvertime.getDescription());
-							//將Asana狀況儲存
-							userAskForOvertimeService.update(userAskForOvertime);
+				String errorMsg = userAskForOvertimeService.checkRule(userAskForOvertime);
+				if(StringUtils.hasText(errorMsg)) {
+					map = createResponseMsg(false, "", errorMsg);
+				}else {
+					boolean isSuccess = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 2);
+					if(isSuccess){
+						String token = SessionUtils.getAsanaToken(req);
+						if(token != null && StringUtils.hasText(userAskForOvertime.getAsanaTaskId())) {
+							boolean updateTaskSucceed = AsanaUtils.updateOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
+							if(!updateTaskSucceed) {
+								userAskForOvertime.setDescription("Asana更新Task失敗\n" + userAskForOvertime.getDescription());
+								//將Asana狀況儲存
+								userAskForOvertimeService.update(userAskForOvertime);
+							}
 						}
+						map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
+					}else{
+						map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 					}
-					map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
-				}else{
-					map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 				}
 			}
 		}catch(Exception e){
@@ -110,24 +115,34 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 				map = createResponseMsg(false, "", "請重新登入");
 			}else{
 				userAskForOvertime.setSysUserId(operator.getSysUserId());
-				userAskForOvertime.setStatus(1);
-				userAskForOvertime.setCreateDate(new Date());
-				userAskForOvertime.setUpdateDate(new Date());
-				boolean isSuccess = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 1);
-				if(isSuccess){
-					String token = SessionUtils.getAsanaToken(req);
-					if(token != null) {
-						boolean addTaskSucceed = AsanaUtils.addOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
-						if(!addTaskSucceed) {
-							userAskForOvertime.setDescription("Asana新增Task失敗\n" + userAskForOvertime.getDescription());
+				String errorMsg = userAskForOvertimeService.checkRule(userAskForOvertime);
+				if(StringUtils.hasText(errorMsg)) {
+					map = createResponseMsg(false, "", errorMsg);
+				}else {
+					Calendar calendar = Calendar.getInstance();
+					userAskForOvertime.setStatus(1);
+					userAskForOvertime.setCreateDate(calendar.getTime());
+					userAskForOvertime.setUpdateDate(calendar.getTime());
+					if(userAskForOvertimeService.checkEmergenceRule(userAskForOvertime)) {
+						boolean isSuccess = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 1);
+						if(isSuccess){
+							String token = SessionUtils.getAsanaToken(req);
+							if(token != null) {
+								boolean addTaskSucceed = AsanaUtils.addOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
+								if(!addTaskSucceed) {
+									userAskForOvertime.setDescription("Asana新增Task失敗\n" + userAskForOvertime.getDescription());
+								}
+								logger.info("Asana Id ajaxAdd : " + userAskForOvertime.getAsanaTaskId());
+								//將Asana狀況儲存，AsanaId和Description
+								userAskForOvertimeService.update(userAskForOvertime);
+							}
+							map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
+						}else{
+							map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 						}
-						logger.info("Asana Id ajaxAdd : " + userAskForOvertime.getAsanaTaskId());
-						//將Asana狀況儲存，AsanaId和Description
-						userAskForOvertimeService.update(userAskForOvertime);
+					}else {
+						map = createResponseMsg(false, "", Constant.EMERGENCE_ILLEGAL);
 					}
-					map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
-				}else{
-					map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 				}
 			}
 		}catch(Exception e){

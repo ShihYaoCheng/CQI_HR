@@ -60,6 +60,7 @@ public class SysUserService extends AbstractService<SysUser>{
 				databaseUser.setEmail(sysUser.getEmail());
 				databaseUser.setDepartment(sysUser.getDepartment());
 				databaseUser.setInaugurationDate(sysUser.getInaugurationDate());
+				databaseUser.setDefaultProjectId(sysUser.getDefaultProjectId());
 				databaseUser.setModifyDate(new Date());
 				databaseUser.setModifyId(su.getSysUserId());
 				update(databaseUser);
@@ -72,26 +73,23 @@ public class SysUserService extends AbstractService<SysUser>{
 	}
 	
 	@Transactional
-	public String saveOrUpdateAsanaUser(SysUser sysUser){
+	public SysUser saveOrUpdateAsanaUser(SysUser sysUser){
 		try{
 			SysUser databaseUser = sysUserDAO.get(sysUser.getSysUserId());
 			if(null==databaseUser) {
 				persist(sysUser);
+				return sysUser;
 			}else {
 				databaseUser.setModifyDate(new Date());
-				databaseUser.setDefaultWorkspacesId(sysUser.getDefaultWorkspacesId());
-				databaseUser.setDefaultWorkspacesName(sysUser.getDefaultWorkspacesName());
-				databaseUser.setDefaultProjectId(sysUser.getDefaultProjectId());
-				databaseUser.setDefaultProjectName(sysUser.getDefaultProjectName());
 				databaseUser.setEmail(sysUser.getEmail());
 				databaseUser.setUserName(sysUser.getUserName());
 				update(databaseUser);
+				return databaseUser;
 			}
 		}catch(Exception e){
 			logger.error("save error", e);
-			return Constant.NETWORK_BUSY;
 		}
-		return "";
+		return null;
 	}
 	
 	@Transactional
@@ -132,5 +130,10 @@ public class SysUserService extends AbstractService<SysUser>{
 	@Transactional
 	public List<SysUser> getEnableUserOderByList(String propertyName) throws Exception {
 		return sysUserDAO.getEnableUserOrderByDesc(propertyName);
+	}
+	
+	@Transactional
+	public SysUser getByLineId(String lineId) throws Exception{
+		return sysUserDAO.getByLineId(lineId);
 	}
 }

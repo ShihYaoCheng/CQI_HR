@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -356,18 +358,32 @@ public class AttendanceRecordService extends AbstractService<AttendanceRecord>{
 			//jsonObject.put("title", getLeaveCalendarTitleForTest(mappingUser.get(data.getSysUserId()), data, mappingLeave));
 			//Production
 			jsonObject.put("title", getAttendanceCalendarTitle(data));
-			jsonObject.put("start", datetimeFormat.format(data.getAttendanceDate()) + StringUtils.showText(data.getArriveTime()));
+			jsonObject.put("start", datetimeFormat.format(data.getAttendanceDate()) + (StringUtils.hasText(data.getArriveTime())?StringUtils.showText(data.getArriveTime()):StringUtils.showText(data.getLeaveTime())));
 			if(StringUtils.hasText(data.getLeaveTime()) && data.getLeaveTime().compareTo("07:00") < 0) {
 				Calendar nextDay = Calendar.getInstance();
 				nextDay.setTime(data.getAttendanceDate());
 				nextDay.add(Calendar.DAY_OF_MONTH, +1);
 				jsonObject.put("end", datetimeFormat.format(nextDay.getTime()) + StringUtils.showText(data.getLeaveTime()));
 			}else {
-				jsonObject.put("end", datetimeFormat.format(data.getAttendanceDate()) + StringUtils.showText(data.getLeaveTime()));
+				jsonObject.put("end", datetimeFormat.format(data.getAttendanceDate()) + (StringUtils.hasText(data.getLeaveTime())?StringUtils.showText(data.getLeaveTime()):StringUtils.showText(data.getArriveTime())));
 			}
 			dataArray.add(jsonObject);
 		}
 		return dataArray;
+	}
+	
+	@Transactional
+	public AttendanceRecord getUserToday(SysUser sysUser) throws Exception {
+		return attendanceRecordDAO.getOneByUserIdAndDate(sysUser.getSysUserId(), DateUtils.clearTime(new Date()));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public Map<String, AttendanceRecord> getMapToday() throws Exception{
+		Map<String, Object> criteria = new HashMap<String, Object>();
+		criteria.put("attendanceDate", DateUtils.getTodayWithoutHourMinSec());
+		logger.info("Tst : " + DateUtils.getTodayWithoutHourMinSec());
+		return (Map<String, AttendanceRecord>) getDAO().queryToMap("sysUserId", criteria);
 	}
 	
 	public static String getAttendanceCalendarTitle(AttendanceRecord attendanceRecord) {

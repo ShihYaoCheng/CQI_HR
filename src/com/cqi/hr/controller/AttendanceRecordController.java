@@ -37,13 +37,18 @@ public class AttendanceRecordController extends AbstractController<AttendanceRec
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public String index(HttpServletRequest req, ModelMap model) {
-		logger.info(FUNCTION_NAME + " list");
-		try {
-			model.addAttribute("userList", sysUserService.getUserList());
-		} catch (Exception e) {
-			logger.error(FUNCTION_NAME + "index error:", e);
+		logger.info(FUNCTION_NAME + " index");
+		SysUser operator = SessionUtils.getLoginInfo(req);
+		if(operator.getRoleId().equals("1")) {
+			try {
+				model.addAttribute("userList", sysUserService.getUserList());
+			} catch (Exception e) {
+				logger.error(FUNCTION_NAME + "index error:", e);
+			}
+			return "/attendance/attendanceRecord-list";
+		}else {
+			return "/attendance/attendanceSingle-list";
 		}
-		return "/attendance/attendanceRecord-list";
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="ajaxDataLoading")
@@ -56,7 +61,10 @@ public class AttendanceRecordController extends AbstractController<AttendanceRec
 			Date endDate = sdf.parse(end);
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser databaseUser = sysUserService.get(operator.getSysUserId());
-			if(databaseUser!=null && StringUtils.hasText(sysUserId) && StringUtils.hasText(databaseUser.getSysUserId())){
+			if(databaseUser!=null && StringUtils.hasText(databaseUser.getSysUserId())){
+				if(!StringUtils.hasText(sysUserId)) {
+					sysUserId = operator.getSysUserId();
+				}
 				jsonArray = userAskForLeaveService.getCalendarSimpleData(startDate, endDate, sysUserId);
 				jsonArray.addAll(attendanceRecordService.getMonthlyData(startDate, endDate, sysUserId));
 			}else{

@@ -1,8 +1,8 @@
 package com.cqi.hr.service;
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,22 +12,37 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cqi.hr.constant.Constant;
 import com.cqi.hr.dao.AbstractDAO;
 import com.cqi.hr.dao.CompanyLeaveDAO;
+import com.cqi.hr.dao.EmergenceOvertimeSignDAO;
+import com.cqi.hr.dao.LineImageUrlDAO;
+import com.cqi.hr.dao.SpecialDateAboutWorkDAO;
+import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
 import com.cqi.hr.dao.UserLeaveDAO;
 import com.cqi.hr.entity.CompanyLeave;
+import com.cqi.hr.entity.EmergenceOvertimeSign;
 import com.cqi.hr.entity.PagingList;
+import com.cqi.hr.entity.SpecialDateAboutWork;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.entity.UserLeave;
+import com.cqi.hr.util.DateUtils;
+import com.cqi.hr.util.MD5Utils;
+import com.cqi.hr.util.StringUtils;
 
 @Service
 public class UserAskForOvertimeService extends AbstractService<UserAskForOvertime>{
+	@Resource LineBotService lineBotService;
 	@Resource UserAskForOvertimeDAO userAskForOvertimeDAO;
 	@Resource CompanyLeaveDAO companyLeaveDAO;
 	@Resource UserLeaveService userLeaveService;
 	@Resource UserLeaveDAO userLeaveDAO;
+	@Resource SysUserDAO sysUserDAO;
+	@Resource EmergenceOvertimeSignDAO emergenceOvertimeSignDAO;
+	@Resource LineImageUrlDAO lineImageUrlDAO;
+	@Resource SpecialDateAboutWorkDAO specialDateAboutWorkDAO;
 	
 	@Override
 	protected AbstractDAO<UserAskForOvertime> getDAO() {
@@ -52,6 +67,33 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 			mapping.put(leave.getLeaveId(), leave);
 		}
 		return mapping;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public boolean checkEmergenceRule(UserAskForOvertime data) throws Exception {
+		Map<Long, CompanyLeave> map = (Map<Long, CompanyLeave>) companyLeaveDAO.queryToMap("leaveId"); 
+		if(map.get(data.getOvertimeId()).getLeaveName().equals("災害處理")) {
+			SpecialDateAboutWork specialDateAboutWork = specialDateAboutWorkDAO.getOneByDate(DateUtils.clearTime(data.getStartTime()));
+			Calendar askDay = Calendar.getInstance();
+			askDay.setTime(DateUtils.clearTime(data.getStartTime()));
+			if((askDay.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY && askDay.get(Calendar.DAY_OF_WEEK)!=Calendar.SATURDAY && null==specialDateAboutWork) 
+					|| (null!=specialDateAboutWork && specialDateAboutWork.getIsWorkDay()==1)) {
+				//工作日
+				if(data.getSpendTime()>9) {
+					return false;
+				}
+			}else {
+				//休假日
+				if(data.getSpendTime()<9) {
+					return false;
+				}
+			}
+			if(!StringUtils.hasText(data.getDescription())) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/*
@@ -87,6 +129,36 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 					userLeave.setUpdateDate(calendar.getTime());
 				}
 				userLeaveDAO.saveOrUpdate(userLeave);
+			}else if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("災害處理")) {
+				// 1. 產生災害處理單的對應認證碼
+				EmergenceOvertimeSign sign = new EmergenceOvertimeSign();
+				sign.setToken(MD5Utils.md5Hex(String.valueOf(new Date().getTime())));
+				sign.setAskForOvertimeId(userAskForOvertime.getAskForOvertimeId());
+				// 2. 尋找開發組主管
+				SysUser user = sysUserDAO.get(userAskForOvertime.getSysUserId());
+				SysUser manager = sysUserDAO.getProjectManager(user.getGroupName());
+				sign.setProjectSignerId(manager.getSysUserId());
+				sign.setDepartmentSignerId(sysUserDAO.getDepartmentMaster().getSysUserId());
+				sign.setFinanceSignerId(sysUserDAO.getFinanceMaster().getSysUserId());
+				sign.setAdministrationSignerId(sysUserDAO.getAdministrationManager().getSysUserId());
+				sign.setCompanySignerId(sysUserDAO.getCompanyGold().getSysUserId());
+				sign.setStatus(Constant.STATUS_ENABLE);
+				sign.setCreateTime(userAskForOvertime.getStartTime());
+				sign.setUpdateTime(calendar.getTime());
+				emergenceOvertimeSignDAO.persist(sign);
+				// 3. 向LINE發送簽核網址
+				lineBotService.buildConfirmVo(sign, Constant.LINE_IMAGE_TYPE_PROJECT);
+//				FlexMessageVo flexMessageVo = new FlexMessageVo();
+//				flexMessageVo.setAltText(Constant.LINE_FLEX_MESSAGE_ALT_TEXT_EMERGENCE_REQUEST);
+//				List<LineImageUrl> imageUrlList = lineImageUrlDAO.getTypeList(Constant.LINE_IMAGE_TYPE_PROJECT);
+//				int random = (int) (Math.random()*imageUrlList.size());
+//				flexMessageVo.setImageUrl(imageUrlList.get(random).getImageUrl());
+//				flexMessageVo.setTargetUser(manager);
+//				flexMessageVo.setSysUser(user);
+//				flexMessageVo.setUserAskForOvertime(userAskForOvertime);
+//				flexMessageVo.setConfirmParam(LineBotService.getEmergenceConfirmParameter(sign.getToken(), Constant.LINE_EMERGENCE_LEVEL_PROJECT));
+//				flexMessageVo.setRejectParam(LineBotService.getEmergenceRejectParameter(sign.getToken(), Constant.LINE_EMERGENCE_LEVEL_PROJECT));
+//				lineBotService.sendEmergenceSign(flexMessageVo);
 			}
 			break;
 		case 2:
@@ -110,6 +182,8 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 						userLeave.setUpdateDate(calendar.getTime());
 					}
 					userLeaveDAO.saveOrUpdate(userLeave);
+				}else if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("災害處理")) {
+					return false;
 				}
 				userAskForOvertimeOri.setOvertimeId(userAskForOvertime.getOvertimeId());
 				userAskForOvertimeOri.setSpendTime(userAskForOvertime.getSpendTime());
@@ -135,6 +209,10 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 			return false;
 		}
 		if(!userAskForOvertime.getSysUserId().equals(operator.getSysUserId())){
+			return false;
+		}
+		String errorMsg = checkRule(userAskForOvertime);
+		if(StringUtils.hasText(errorMsg)) {
 			return false;
 		}
 		Calendar calendar = Calendar.getInstance();
@@ -177,5 +255,39 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 			}
 		}
 		return dataMap;
+	}
+	
+	@Transactional
+	public Map<Long, UserAskForOvertime> findByCreateTime(Date startTime, Date endTime) throws Exception {
+		Map<Long, UserAskForOvertime> map = new HashMap<>();
+		CompanyLeave companyLeave = companyLeaveDAO.getOvertimeByName("災害處理");
+		List<UserAskForOvertime> list = userAskForOvertimeDAO.findByIdAndCreateTime(startTime, endTime, companyLeave.getLeaveId());
+		for(UserAskForOvertime data:list) {
+			map.put(data.getAskForOvertimeId(), data);
+		}
+		return map;
+	}
+	
+	@Transactional
+	public String checkRule(UserAskForOvertime data) {
+		//確認是否為上個月以前不可請的時間
+		Calendar today = Calendar.getInstance();
+		Calendar dataStartTime = Calendar.getInstance();
+		dataStartTime.setTime(data.getStartTime());
+		if(today.get(Calendar.MONTH)>dataStartTime.get(Calendar.MONTH)) {
+			if(today.get(Calendar.DAY_OF_MONTH)>=4) {
+				return Constant.LAST_MONTH_CLOSE;
+			}
+		}
+		//確認時間有無重疊
+		List<UserAskForOvertime> dataList = userAskForOvertimeDAO.checkTimeOverCross(data);
+		if(dataList.size()>0) {
+			for(UserAskForOvertime askOvertime: dataList) {
+				if(!askOvertime.getAskForOvertimeId().equals(data.getAskForOvertimeId())) {
+					return Constant.OVER_CROSS;
+				}
+			}
+		}
+		return "";
 	}
 }

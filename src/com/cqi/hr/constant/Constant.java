@@ -58,11 +58,17 @@ public class Constant {
 	public final static int    PAGE_SIZE 					= 10;
 	public final static String SUCCESS = "成功";//
 	public final static String NETWORK_BUSY = "系統或網路繁忙，請稍候在試。";//network.busy
+	public final static String DATA_DUPLICATED = "資料重複，請重新確認";
 	public final static String NAME_DUPLICATED = "名稱重複";
 	public final static String RECORD_NOT_EXIST = "紀錄不存在";
+	public final static String EMERGENCE_ILLEGAL = "災害處理單規則不符，請參考說明。";
 	
 	//方便統計所以跨月分開請
-	public final static String DIFFERENT_MONTH = "為了方便系統統計，如有跨月，請分開請";//network.busy
+	public final static String DIFFERENT_MONTH = "為了方便系統統計，如有跨月，請分開請";
+	
+	public final static String OVER_CROSS = "日期橫跨過其他資料，請重新確認。";
+	
+	public final static String LAST_MONTH_CLOSE = "上個月以前的出勤資料已結算，無法更動。";
 	
 	public final static String SYSUSER_ENABLE = "y";
 	public final static String SYSUSER_DISABLE = "n";
@@ -103,7 +109,7 @@ public class Constant {
 	 */
 //	public final static String ASANA_CLIENT_ID = "904212848320509";
 //	public final static String ASANA_CLIENT_SECRET = "22b136c8e709c7cdf50a3c0e1ac1dd98";
-//	public final static String ASANA_REDIRECT_URL = "https://36.230.171.36/CQIHRManage/asanaCallback";
+//	public final static String ASANA_REDIRECT_URL = "https://9e7e75089ee2.ngrok.io/CQIHRManage/asanaCallback";
 	
 	/**
 	 * Production
@@ -117,12 +123,46 @@ public class Constant {
 	 */
 	public final static String CQI_GAMES_ASANA_TOKEN = "0/aa0cd0284bc273402c12b6cc9ad7700c";
 	
-	public final static Map<Integer, String> getCategoryMap(){
-		Map<Integer, String> categoryMap = new HashMap<Integer, String>();
-		categoryMap.put(CATEGORY_ROLE, "角色");
-		categoryMap.put(CATEGORY_BACKGROUND, "背景");
-		categoryMap.put(CATEGORY_DIALOG, "對話框");
-		return categoryMap;
+	/**
+	 * Line Bot Token Developer
+	 */
+//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "9V5eAPc0qXfScAdQC/70oo2clrUDAzAoqLKFJ9kFDyHr+tb2NujETiBI1z6vhepwpT12b4+z4M4zl5edGSca8FUNjbq3JTHDXJJRzpyGl9L0lie+4EbKergpqZWl/MbLnLA86SvSXGQfbF7j+oeiGwdB04t89/1O/w1cDnyilFU=";
+//	public final static String LINE_CHANNEL_SECRET = "51a1e1e55402541156b93fc75ebb7388";
+	/**
+	 * Line Bot Token Production
+	 */
+	public final static String LINE_CHANNEL_ACCESS_TOKEN = "oDxg3KbBiGQuQ73ByGn7GTrFrMdPs4/9VdupRuFqTGz00enU4pF2cG/rtbW14jGq3qRw2gM3QrbXUYRINenhfncllPRPqr3NtRZ2pcvRyyD0X85hzmEhGLyOuAZCADJ+4tZGcaiZB0xjjXXixUudVwdB04t89/1O/w1cDnyilFU=";
+	public final static String LINE_CHANNEL_SECRET = "c5e4e6cb1e9bd54b92f2b7bfb21f800a";
+	
+	public final static String LINE_FLEX_MESSAGE_ALT_TEXT_EMERGENCE_REQUEST = "災害處理單申請";
+	
+	public final static String LINE_IMAGE_TYPE_PROJECT = "Project";
+	public final static String LINE_IMAGE_TYPE_DEPARTMENT = "Department";
+	public final static String LINE_IMAGE_TYPE_COMPANY = "Company";
+	
+	public final static String LINE_EMERGENCE_CONFIRM = "confirm";
+	public final static String LINE_EMERGENCE_REJECT = "reject";
+	
+	public final static Integer LINE_EMERGENCE_REJECT_BY_PROJECT = -1;
+	public final static Integer LINE_EMERGENCE_REJECT_BY_DEPARTMENT = -2;
+	public final static Integer LINE_EMERGENCE_REJECT_BY_FINANCE = -3;
+	public final static Integer LINE_EMERGENCE_REJECT_BY_ADMINISTRATION = -4;
+	public final static Integer LINE_EMERGENCE_REJECT_BY_COMPANY = -5;
+	
+	public final static String LINE_EMERGENCE_LEVEL_PROJECT = "Project";
+	public final static String LINE_EMERGENCE_LEVEL_DEPARTMENT = "Department";
+	public final static String LINE_EMERGENCE_LEVEL_FINANCE = "Finance";
+	public final static String LINE_EMERGENCE_LEVEL_ADMINISTRATION = "Administration";
+	public final static String LINE_EMERGENCE_LEVEL_COMPANY = "Company";
+	
+	public final static Map<Integer, String> getEmergenceLevel(){
+		Map<Integer, String> levelMap = new HashMap<Integer, String>();
+		levelMap.put(3, "C1狼級");
+		levelMap.put(6, "C2虎級");
+		levelMap.put(9, "C3鬼級");
+		levelMap.put(12, "C4龍級");
+		levelMap.put(15, "C5神級");
+		return levelMap;
 	}
 
 	public final static Map<String, String> getGenderMap(){
@@ -132,43 +172,4 @@ public class Constant {
 		return genderMap;
 	}
 	
-	public final static Map<String, String> getMarriageMap(){
-		Map<String, String> marriageMap = new HashMap<String, String>();
-		marriageMap.put(MARRIAGE_MARRIED, "已婚");
-		marriageMap.put(MARRIAGE_NON_MARRIED, "未婚");
-		return marriageMap;
-	}
-	
-	public final static Map<String, String> getServiceMap(){
-		Map<String, String> map = new HashMap<String, String>();
-		map.put(HAS_SERVICE_BOOK, "購買書籍");
-		map.put(HAS_SERVICE_COURSE, "接受服務");
-		return map;
-	}
-	
-	public final static Map<String, String> getTransactionMap(){
-		Map<String, String> map = new HashMap<String, String>();
-		map.put(TRANSACTION_TYPE_SAVE, "存入");
-		map.put(TRANSACTION_TYPE_TRANS, "轉讓");
-		map.put(TRANSACTION_TYPE_USE, "使用");
-		return map;
-	}
-
-	public static Map<String, String> getItemStatus(){
-		Map<String, String> itemStatusMap = new HashMap<String, String>();
-		itemStatusMap.put(ITEM_STATUS_OPEN, "已開課");
-		itemStatusMap.put(ITEM_STATUS_UPOPEN, "未開課");
-		itemStatusMap.put(ITEM_STATUS_TRANSFER, "已轉讓");
-		itemStatusMap.put(ITEM_STATUS_TAKEN, "已領取");
-		itemStatusMap.put(ITEM_STATUS_NOPAY, "未付款");
-		return itemStatusMap;
-	}
-
-	public static Map<String, String> getCourseStatus(){
-		Map<String, String> itemStatusMap = new HashMap<String, String>();
-		itemStatusMap.put(ITEM_STATUS_OPEN, "開課");
-		itemStatusMap.put(ITEM_STATUS_TRANSFER, "轉讓");
-		itemStatusMap.put(ITEM_STATUS_TAKEN, "結業");
-		return itemStatusMap;
-	}
 }

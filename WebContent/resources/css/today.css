@@ -28,3 +28,13 @@
 	color:#000000;
 	background-color:#007F46!important;
 }
+.absence-time{
+	width:7%;
+	color:#000000;
+	background-color:#FF0000!important;
+}
+.no-attendance-time{
+	width:7%;
+	color:#000000;
+	background-color:#FFFFFF!important;
+}

@@ -65,7 +65,7 @@
 					            </div>
 							</div>
 							<div class="form-group">
-					            <label for="email" class="control-label col-sm-12">暱稱:</label>
+					            <label for="email" class="control-label col-sm-12">Email:</label>
 					            <div class="col-sm-12">
 						            <input type="text" class="form-control" id="email" name="email" onfocus="resetInput('email')"/>
 						            <span id="email-error" class="error_text"></span>
@@ -103,6 +103,18 @@
 					                    </span>
 					                </div>
 						            <span id="inaugurationDate-error" class="error_text"></span>
+					            </div>
+							</div>
+							<div class="form-group">
+					            <label for="defaultProjectId" class="control-label col-sm-12">Asana Project:</label>
+					            <div class="col-sm-12">
+					            	<select class="form-control" id="defaultProjectId" name="defaultProjectId" onchange="checkProjectPermission()">
+					            		<option value="">請選擇</option>
+						            	<c:forEach var="map" items="${projectMap}" varStatus="vs">
+											<option value="${map.key}">${map.value}</option>
+										</c:forEach>
+					            	</select>
+						            <span id="defaultProjectId-error" class="error_text"></span>
 					            </div>
 							</div>
 						</div>
@@ -154,7 +166,6 @@
 		}
 		
 		function submit(){
-			alert(1)
 			var errorCode = {};
 			errorCode["1"] = "Can not be empty";
 			errorCode["2"] = "Id duplicate";
@@ -254,6 +265,7 @@
 							$('#email').val(data.sysUser.email);
 							$('#gender').val(data.sysUser.gender);
 							$('#department').val(data.sysUser.department);
+							$('#defaultProjectId').val(data.sysUser.defaultProjectId);
 							$('#inaugurationDate').val(formatJsonDate(data.sysUser.inaugurationDate, "y/M/d"));
 							$('#basicModal').find('.modal-title').text(text+"開發者");
 							$('#basicModal').modal('toggle');
@@ -270,7 +282,31 @@
 		
 		function resetInput(id){
 			$("#"+id+"-error").text('');
-			$("#"+id+"-error").hide();		
+			$("#"+id+"-error").hide();
+		}
+		
+		function checkProjectPermission(){
+			resetInput("defaultProjectId");
+			var targetURL= "<c:url value='/security/sysUser/checkProjectPermission'/>";
+			$.ajax({
+				type : "POST",
+				url : targetURL,
+				data : {
+					sysUserId: $('#sysUserId').val(),
+					projectId: $('#defaultProjectId').val()
+				},
+				dataType: "json",
+				success : function(data) {
+					console.log("Response : " +data);
+					if (data.success) {
+						$("#defaultProjectId-error").text('使用者有權限');
+						$("#defaultProjectId-error").hide();
+					}else{
+						$("#defaultProjectId-error").text('使用者無權限');
+						$("#defaultProjectId-error").show();
+					}
+				}
+			});
 		}
 	</script>
 </body>

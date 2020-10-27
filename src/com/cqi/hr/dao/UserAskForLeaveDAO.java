@@ -176,5 +176,15 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 		criteria.add(Restrictions.or(rest1, rest2));
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserAskForLeave> checkTimeOverCross(UserAskForLeave data){
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		criteria.add(Restrictions.gt("endTime", data.getStartTime()));
+		criteria.add(Restrictions.lt("startTime", data.getEndTime()));
+		criteria.add(Restrictions.eq("sysUserId", data.getSysUserId()));
+		return criteria.list();
+	}
 }
 

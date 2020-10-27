@@ -87,6 +87,15 @@ public class UserAskForOvertimeDAO extends AbstractDAO<UserAskForOvertime> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<UserAskForOvertime> findByIdAndCreateTime(Date start, Date end, Long overtimeId) throws Exception{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.between("createDate", start, end));
+		criteria.add(Restrictions.eq("overtimeId", overtimeId));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<Object[]> getMonthlyRowdata(Integer year, Integer month, String userId, Long leaveId) throws Exception{
 		Date startDayOfMonth = DateUtils.getFirstDateOfMonth(year, month);
 		Date endDayTimeOfMonth = DateUtils.getLastDateTimeOfMonth(year, month);
@@ -146,6 +155,16 @@ public class UserAskForOvertimeDAO extends AbstractDAO<UserAskForOvertime> {
 		Criterion rest2 = Restrictions.or(Restrictions.between("startTime", DateUtils.clearTime(today.getTime()), DateUtils.clearTime(tommorrow.getTime())), 
 				Restrictions.between("endTime", DateUtils.clearTime(today.getTime()), DateUtils.clearTime(tommorrow.getTime())));
 		criteria.add(Restrictions.or(rest1, rest2));
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserAskForOvertime> checkTimeOverCross(UserAskForOvertime data){
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		criteria.add(Restrictions.ge("endTime", data.getStartTime()));
+		criteria.add(Restrictions.le("startTime", data.getEndTime()));
+		criteria.add(Restrictions.eq("sysUserId", data.getSysUserId()));
 		return criteria.list();
 	}
 }

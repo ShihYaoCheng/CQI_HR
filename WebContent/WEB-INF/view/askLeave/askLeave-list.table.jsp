@@ -3,36 +3,6 @@
 <%@include file="/WEB-INF/view/include/view-lib.jsp"%>
 
 <div class="table-responsive">
-<br/>
-	<div id="userLeaveDataText"><h4><b>*特休功能上線試算，有問題請回報。目前特休以小時計算。一天工時8小時。<br/><br/><br/>請假剩餘額度</b></h4></div>
-	<table class="table table-striped" id="userLeaveDataArea">
-		<thead>
-			<tr>
-				<td>假別</td>
-				<td>剩餘額度</td>
-			</tr>
-		</thead>
-		<tbody>
-			<c:if test="${userLeaveList == null || userLeaveList.size()<1}">
-				<tr class="bg">
-					<td colspan="5" align="center">沒有資料</td>
-				</tr>
-			</c:if>
-			<c:forEach var="userLeave" items="${userLeaveList}" varStatus="vs">
-				<tr >
-					<td>
-						${mappingLeave.get(userLeave.leaveId).leaveName}
-					</td>
-					<td>
-						${userLeave.count.intValue()}
-						<c:if test="${mappingLeave.get(userLeave.leaveId).unitType == 1}">天</c:if>
-						<c:if test="${mappingLeave.get(userLeave.leaveId).unitType == 2}">小時</c:if>
-					</td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
-	<br/>
 	<div><h4><b>請假紀錄</b></h4></div>
 	<table class="table table-striped">
 		<thead>
@@ -75,12 +45,18 @@
 						</div>
 					</td>
 					<td>
-						<a href="#" class="btn btn-default function_icon" onclick="active('${item.askForLeaveId}')" title="修改"> 
-							<i class="glyphicon glyphicon-pencil"></i>
-						</a>
-						<a href="#" class="btn btn-default function_icon" onclick="deleteData('${item.askForLeaveId}')" title="刪除"> 
-							<i class="glyphicon glyphicon-remove"></i>
-						</a>
+						<c:set var="today" value="<%=new Date()%>"/>
+						<fmt:formatDate var="day" value="${today}" pattern="dd" />
+						<fmt:formatDate var="month" value="${today}" pattern="MM" />
+						<fmt:formatDate var="dataMonth" value="${item.startTime}" pattern="MM" />
+						<c:if test="${dataMonth >= month || (day<4 && (dataMonth + 1) == month )}">
+							<a href="#" class="btn btn-default function_icon" onclick="active('${item.askForLeaveId}')" title="修改"> 
+								<i class="glyphicon glyphicon-pencil"></i>
+							</a>
+							<a href="#" class="btn btn-default function_icon" onclick="deleteData('${item.askForLeaveId}')" title="刪除"> 
+								<i class="glyphicon glyphicon-remove"></i>
+							</a>
+						</c:if>
 					</td>
 				</tr>
 			</c:forEach>

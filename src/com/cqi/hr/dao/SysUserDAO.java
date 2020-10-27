@@ -128,5 +128,73 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public SysUser getProjectManager(String groupName) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("groupName", groupName));
+		criteria.add(Restrictions.eq("projectManager", Constant.STATUS_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+		
+	@SuppressWarnings("unchecked")
+	public SysUser getDepartmentMaster() throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("departmentMaster", Constant.STATUS_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public SysUser getFinanceMaster() throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("financeMaster", Constant.STATUS_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public SysUser getAdministrationManager() throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("administrationManager", Constant.STATUS_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public SysUser getCompanyGold() throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("companyGod", Constant.STATUS_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public SysUser getByLineId(String lineId) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("lineId", lineId));
+		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
 }
 

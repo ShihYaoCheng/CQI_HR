@@ -9,11 +9,11 @@
 
 <body role="document">
 	<%@include file="../include/menu.jsp"%>
-	<div class="container theme-showcase" role="main">
+	<div class="container theme-showcase page-width" role="main">
 		<div class="row row-offcanvas row-offcanvas-left">
 			
 			<!--/span-->
-			<div class="col-xs-12 col-md-9 single_table">
+			<div class="col-xs-12 col-md-12 single_table">
 				<form class="navbar-form">
 					<h3><b>請假資料管理</b></h3>
 					<br/>
@@ -28,7 +28,9 @@
 						</div>
 
 					</div>
-					<%@include file="../include/progressing.jsp"%>					
+					<%@include file="../include/progressing.jsp"%>
+					<div id="leaveQuatoContent">
+					</div>
 					<div id="dataContent">
 					</div>
 				</form>
@@ -90,6 +92,10 @@
 										<option value="10">10</option>
 										<option value="11">11</option>
 										<option value="12">12</option>
+										<option value="13">13</option>
+										<option value="14">14</option>
+										<option value="15">15</option>
+										<option value="16">16</option>
 									</select>
 						            <span id="spendTime-error" class="error_text"></span>
 					            </div>
@@ -144,12 +150,18 @@
 		var progressing = 0;
 		jQuery().ready(function (){
 			queryData(1);
+			var today = new Date();
+			var pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
+			if(today.getDate()<4){
+				pickerStartDate = getFormattedDate(getLastMonth(), 'y/M/d H:m');
+			}
 			$('#datetimepickerStart').datetimepicker({
 				format :'yyyy/mm/dd hh:ii',
 				autoclose: true,
 				minuteStep:30,
 		        focusOnShow: false,
-		        allowInputToggle: true
+		        allowInputToggle: true,
+		        startDate: pickerStartDate
 			});
 			$('#datetimepickerEnd').datetimepicker({
 				format :'yyyy/mm/dd hh:ii',
@@ -158,6 +170,7 @@
 				focusOnShow: false,
 		        allowInputToggle: true
 			});
+			$('#datetimepickerEnd').datetimepicker("setStartDate", pickerStartDate);
 			$("#datetimepickerStart").on("changeDate", function (e) {
 	            $('#datetimepickerEnd').datetimepicker("setStartDate", e.date);
 	            if($('#spendTime').val()!=''){
@@ -196,8 +209,18 @@
 				return;
 			}
 			$("body").css("cursor", "progress");
+			$('#leaveQuatoContent').hide();
 			$('#dataContent').hide();
 			$("#progressing").show();
+			$.ajax({
+				type : "POST",
+				url : "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
+				data : {},
+				success : function(data) {
+					$('#leaveQuatoContent').html(data);
+					$('#leaveQuatoContent').show();
+				}
+			});
 			$.ajax({
 				type : "POST",
 				url : "<c:url value='/security/askLeave/ajaxDataLoading'/>",
@@ -218,6 +241,7 @@
 			errorCode["1"] = "請選擇假別";
 			errorCode["2"] = "請選擇天數/時數";
 			errorCode["3"] = "請輸入時間";
+			errorCode["4"] = "時間似乎怪怪的，請確認";
 			var errors = {};
 			
 			if($('#leaveId :selected').val() == ''){
@@ -354,22 +378,16 @@
 							$('#description').val(data.userAskForLeave.description);
 							$('#asanaTaskId').val(data.userAskForLeave.asanaTaskId);
 							$('#status').val(data.userAskForLeave.status);
+							selectedLeaveId($('#leaveId option:selected').html());
 							$('#basicModal').find('.modal-title').text(text + "請假紀錄");
 							$('#basicModal').modal('toggle');
 							progressing = 0;
 						}else{
 							alert(data.message);
 						}
-						
 					}
 				});				
 			}	
-			
-		}
-		
-		function resetInput(id){
-			$("#"+id+"-error").text('');
-			$("#"+id+"-error").hide();		
 		}
 	</script>
 </body>

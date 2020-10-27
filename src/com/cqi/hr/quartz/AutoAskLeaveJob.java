@@ -8,8 +8,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.cqi.hr.service.ApplyForAutoAskLeaveService;
-import com.cqi.hr.service.UserAskForLeaveService;
-import com.cqi.hr.service.UserLeaveService;
 import com.cqi.hr.util.DateUtils;
 
 

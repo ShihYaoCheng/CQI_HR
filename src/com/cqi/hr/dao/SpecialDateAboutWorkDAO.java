@@ -36,6 +36,15 @@ public class SpecialDateAboutWorkDAO extends AbstractDAO<SpecialDateAboutWork> {
 		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SpecialDateAboutWork> getVacationBetweenDate(Date startDate, Date endDate) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.between("theDay", startDate, endDate));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		criteria.add(Restrictions.eq("isWorkDay", Constant.STATUS_DISABLE));
+		return criteria.list();
+	}
 
 	public PagingList<SpecialDateAboutWork> getListByPage(Integer page) throws Exception {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());

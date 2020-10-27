@@ -17,8 +17,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cqi.hr.constant.Constant;
 import com.cqi.hr.dao.AbstractDAO;
 import com.cqi.hr.dao.CompanyLeaveDAO;
+import com.cqi.hr.dao.SpecialDateAboutWorkDAO;
 import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.UserAskForLeaveDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
@@ -26,6 +28,7 @@ import com.cqi.hr.dao.UserLeaveDAO;
 import com.cqi.hr.dao.UserLeaveHistoryDAO;
 import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.PagingList;
+import com.cqi.hr.entity.SpecialDateAboutWork;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserAskForOvertime;
@@ -43,6 +46,7 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 	@Resource UserAskForOvertimeDAO userAskForOvertimeDAO;
 	@Resource SysUserDAO sysUserDAO;
 	@Resource UserLeaveHistoryDAO userLeaveHistoryDAO;
+	@Resource SpecialDateAboutWorkDAO specialDateAboutWorkDAO;
 	
 	@Override
 	protected AbstractDAO<UserAskForLeave> getDAO() {
@@ -90,6 +94,15 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 			jsonObject.put("title", getOvertimeCalendarTitle(mappingUser.get(data.getSysUserId()), data, mappingLeave, false));
 			jsonObject.put("start", datetimeFormat.format(data.getStartTime()));
 			jsonObject.put("end", datetimeFormat.format(data.getEndTime()));
+			dataArray.add(jsonObject);
+		}
+		List<SpecialDateAboutWork> specialDateList = specialDateAboutWorkDAO.getVacationBetweenDate(start, end);
+		SimpleDateFormat allDayFormat = new SimpleDateFormat("yyyy-MM-dd");
+		for(SpecialDateAboutWork data:specialDateList) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("rendering", "background");
+			jsonObject.put("start", allDayFormat.format(data.getTheDay()));
+			jsonObject.put("end", allDayFormat.format(data.getTheDay()));
 			dataArray.add(jsonObject);
 		}
 		return dataArray;
@@ -302,5 +315,50 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
         	asanaName.append(" " + dayMonthFormat.format(overtime.getStartTime()) + " " + hourFormat.format(overtime.getStartTime()) + " ~ " + dayMonthFormat.format(overtime.getEndTime()) + " " + hourFormat.format(overtime.getEndTime()) );
         }
         return asanaName.toString();
+	}
+	
+	@Transactional
+	public Map<String, List<UserAskForLeave>> getRestTodayLeave() throws Exception{
+		Map<String, SysUser> mappingUser = new HashMap<>();
+		List<SysUser> listUser = sysUserDAO.get();
+		for(SysUser user : listUser){
+			mappingUser.put(user.getSysUserId(), user);
+		}
+		Map<String, List<UserAskForLeave>> dataMap = new HashMap<>();
+		List<UserAskForLeave> todayLeave = userAskForLeaveDAO.getTodayLeave();
+		logger.debug("Test : " + todayLeave.size());
+		for(UserAskForLeave userAskForLeave:todayLeave) {
+			if(null == dataMap.get(mappingUser.get(userAskForLeave.getSysUserId()).getUserName())) {
+				List<UserAskForLeave> userLeave = new ArrayList<UserAskForLeave>();
+				userLeave.add(userAskForLeave);
+				dataMap.put(mappingUser.get(userAskForLeave.getSysUserId()).getUserName(), userLeave);
+			}else {
+				dataMap.get(mappingUser.get(userAskForLeave.getSysUserId()).getUserName()).add(userAskForLeave);
+			}
+		}
+		return dataMap;
+	}
+	
+	@Transactional
+	public String checkRule(UserAskForLeave data) {
+		//確認是否為上個月以前不可請的時間
+		Calendar today = Calendar.getInstance();
+		Calendar dataStartTime = Calendar.getInstance();
+		dataStartTime.setTime(data.getStartTime());
+		if(today.get(Calendar.MONTH)>dataStartTime.get(Calendar.MONTH)) {
+			if(today.get(Calendar.DAY_OF_MONTH)>=4) {
+				return Constant.LAST_MONTH_CLOSE;
+			}
+		}
+		//確認時間有無重疊
+		List<UserAskForLeave> dataList = userAskForLeaveDAO.checkTimeOverCross(data);
+		if(dataList.size()>0) {
+			for(UserAskForLeave askLeave: dataList) {
+				if(!askLeave.getAskForLeaveId().equals(data.getAskForLeaveId())) {
+					return Constant.OVER_CROSS;
+				}
+			}
+		}
+		return "";
 	}
 }

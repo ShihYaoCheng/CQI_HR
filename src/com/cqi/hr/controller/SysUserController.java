@@ -18,6 +18,7 @@ import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.service.SysUserService;
+import com.cqi.hr.util.AsanaUtils;
 import com.cqi.hr.util.SessionUtils;
 import com.cqi.hr.util.StringUtils;
 
@@ -33,6 +34,7 @@ public class SysUserController extends AbstractController<SysUser> {
 		logger.info(FUNCTION_NAME + " list");
 		try {
 			model.addAttribute("sysRoleList", sysUserService.getSysRoleList());
+			model.addAttribute("projectMap", AsanaUtils.getTeamProject(Constant.CQI_GAMES_ASANA_TOKEN));
 		} catch (Exception e) {
 			logger.error(FUNCTION_NAME + "index error:", e);
 		}
@@ -166,6 +168,26 @@ public class SysUserController extends AbstractController<SysUser> {
 				session.setAttribute("userName", userName);
 			}
 			map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
+		}catch(Exception e){
+			logger.error(FUNCTION_NAME + "ajaxUpdate error: ", e);
+			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
+		}
+		returnJsonMap(req, resp, map);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="checkProjectPermission")
+	public void ajaxCheckProjectPermission(HttpServletRequest req, HttpServletResponse resp, String sysUserId, String projectId){
+		logger.info(FUNCTION_NAME + " ajaxUpdateUserSelfInfo");
+		Map<Object, Object> map = null;
+		try{
+			String result = "";
+			//SysUser operator = SessionUtils.getLoginInfo(req);
+			if(StringUtils.hasText(sysUserId) && StringUtils.hasText(projectId)) {
+				boolean hasPermission = AsanaUtils.checkProjectPermission(Constant.CQI_GAMES_ASANA_TOKEN, sysUserId, projectId);
+				map = createResponseMsg(hasPermission, Constant.SUCCESS, result);
+			}else {
+				map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
+			}
 		}catch(Exception e){
 			logger.error(FUNCTION_NAME + "ajaxUpdate error: ", e);
 			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);

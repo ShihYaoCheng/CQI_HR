@@ -9,7 +9,7 @@
 
 <body role="document">
 	<%@include file="../include/menu.jsp"%>
-	<div class="container theme-showcase" role="main">
+	<div class="container theme-showcase page-width" role="main">
 		<div class="row row-offcanvas row-offcanvas-left">
 			
 			<!--/span-->

@@ -42,10 +42,9 @@
 							<c:if test="${sessionScope.__session_info.logInInfo.roleId == 1}">
 								<button type="button" class="btn btn-primary btn-lg " id="gotoMonthlySummary" data-loading-text="前往出勤月總計中" onclick="goToMonthlySummary()">前往出勤月總計</button>
 								<button type="button" class="btn btn-primary btn-lg " id="gotoMonthlyQuota" data-loading-text="前往月結剩餘額度中" onclick="goToMonthlyQuota()">前往月結剩餘額度</button>
-								<button type="button" class="btn btn-primary btn-lg " id="gotoCheckIn" data-loading-text="前往打卡紀錄" onclick="goToCheckIn()">前往打卡紀錄</button>
 							</c:if>
+							<button type="button" class="btn btn-primary btn-lg " id="gotoCheckIn" data-loading-text="前往打卡紀錄" onclick="goToCheckIn()">前往打卡紀錄</button>
 						</div>
-		
 					</div>
 					<iframe style="margin-top:20px;" width="100%" height="800px" src="<c:url value='/security/askLeave/calendar'/>">
 					</iframe>

@@ -59,6 +59,27 @@ public class SysUser implements java.io.Serializable {
 	@Column(name = "default_project_name", length = 50)
 	private String defaultProjectName;
 	
+	@Column(name = "group_name", length = 50)
+	private String groupName;
+	
+	@Column(name = "line_id", length = 50)
+	private String lineId;
+	
+	@Column(name = "project_manager", length = 3)
+	private Integer projectManager;
+	
+	@Column(name = "department_master", length = 3)
+	private Integer departmentMaster;
+
+	@Column(name = "finance_master", length = 3)
+	private Integer financeMaster;
+	
+	@Column(name = "administration_manager", length = 3)
+	private Integer administrationManager;
+	
+	@Column(name = "company_god", length = 3)
+	private Integer companyGod;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "inauguration_date", length = 19)
 	private Date inaugurationDate;
@@ -215,6 +236,70 @@ public class SysUser implements java.io.Serializable {
 
 	public void setDefaultProjectName(String defaultProjectName) {
 		this.defaultProjectName = defaultProjectName;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getLineId() {
+		return lineId;
+	}
+
+	public void setLineId(String lineId) {
+		this.lineId = lineId;
+	}
+
+	public Integer getProjectManager() {
+		return projectManager;
+	}
+
+	public void setProjectManager(Integer projectManager) {
+		this.projectManager = projectManager;
+	}
+
+	public Integer getDepartmentMaster() {
+		return departmentMaster;
+	}
+
+	public void setDepartmentMaster(Integer departmentMaster) {
+		this.departmentMaster = departmentMaster;
+	}
+
+	public Integer getFinanceMaster() {
+		return financeMaster;
+	}
+
+	public void setFinanceMaster(Integer financeMaster) {
+		this.financeMaster = financeMaster;
+	}
+
+	public Integer getAdministrationManager() {
+		return administrationManager;
+	}
+
+	public void setAdministrationManager(Integer administrationManager) {
+		this.administrationManager = administrationManager;
+	}
+
+	public Integer getCompanyGod() {
+		return companyGod;
+	}
+
+	public void setCompanyGod(Integer companyGod) {
+		this.companyGod = companyGod;
+	}
+
+	public Date getGraduationDate() {
+		return graduationDate;
+	}
+
+	public void setGraduationDate(Date graduationDate) {
+		this.graduationDate = graduationDate;
 	}
 
 	public Date getInaugurationDate() {

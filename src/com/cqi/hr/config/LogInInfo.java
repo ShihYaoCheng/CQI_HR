@@ -1,7 +1,6 @@
 package com.cqi.hr.config;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class LogInInfo implements Serializable {
 	private static final long serialVersionUID = -4746874909179676773L;

@@ -35,7 +35,7 @@
             <ref bean="jobMonthlyLeaveBean"/>
         </property>
         <property name="cronExpression">
-            <value>0 0 4 1 * ?</value>
+            <value>0 10 0 4 * ?</value>
         </property>
         <!-- 
 			    秒（0-59）
@@ -117,7 +117,7 @@
             </map>
         </property>   
     </bean>
-    <!-- JOB1 特休給假 排程設定 -->
+    <!-- JOB3 自動請假 排程設定 -->
 	<bean id="cronAutoAskLeaveBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <ref bean="jobAutoAskLeaveBean"/>
@@ -146,5 +146,94 @@
         	<value>schedulerAutoAskLeave</value>
     	</property>
     </bean>
-    <!-- #JOB1 特休給假 END -->
+    <!-- #JOB3 自動請假 END -->
+    
+    <!-- #JOB4 自動推送LineBot審核 BEGIN -->
+	<!-- JOB4 自動推送LineBot審核 工作內容 -->
+	<bean id="jobMonthlyLinePushBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyLinePushJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="lineBotService" value-ref="lineBotService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB4 自動推送LineBot審核 排程設定 -->
+	<bean id="cronMonthlyLinePushBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobMonthlyLinePushBean"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 40 1 25 * ?</value>
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerMonthlyLinePushBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronMonthlyLinePushBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerMonthlyLinePush</value>
+    	</property>
+    </bean>
+    <!-- #JOB4 自動推送LineBot審核 END -->
+    
+    <!-- #JOB5 月初班別自動生成 BEGIN -->
+	<!-- JOB5 月初班別自動生成 工作內容 -->
+	<bean id="jobMonthlyShiftBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyShiftJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="sysUserShiftService" value-ref="sysUserShiftService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB5 月初班別自動生成 排程設定 -->
+	<bean id="cronMonthlyShiftBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobMonthlyShiftBean"/>
+        </property>
+        <property name="cronExpression">
+            <!-- <value>0 30 0 1 * ?</value> -->
+            <value>0 30 0 1 * ?</value>
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerMonthlyShiftBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronMonthlyShiftBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerMonthlyShift</value>
+    	</property>
+    </bean>
+    <!-- #JOB5 月初班別自動生成 END -->
 </beans>

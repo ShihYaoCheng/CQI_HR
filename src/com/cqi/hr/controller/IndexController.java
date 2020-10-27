@@ -1,6 +1,9 @@
 package com.cqi.hr.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -14,10 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asana.Client;
 import com.asana.OAuthApp;
@@ -29,15 +37,23 @@ import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.SysFunction;
 import com.cqi.hr.entity.SysRole;
 import com.cqi.hr.entity.SysUser;
+import com.cqi.hr.service.AttendanceRecordService;
 import com.cqi.hr.service.CreateInfo;
 import com.cqi.hr.service.SpecialDateAboutWorkService;
 import com.cqi.hr.service.SysFunctionService;
 import com.cqi.hr.service.SysPrivilegeService;
 import com.cqi.hr.service.SysUserService;
+import com.cqi.hr.service.SysUserShiftService;
 import com.cqi.hr.service.UserAskForLeaveService;
 import com.cqi.hr.service.UserAskForOvertimeService;
 import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.SessionUtils;
+import com.cqi.hr.vo.WeatherLocation;
+import com.cqi.hr.vo.WeatherTime;
+import com.cqi.hr.vo.WeatherType;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 
 @Controller
@@ -48,6 +64,8 @@ public class IndexController extends AbstractController<CreateInfo> {
 	@Resource UserAskForLeaveService userAskForLeaveService;
 	@Resource UserAskForOvertimeService userAskForOvertimeService;
 	@Resource SpecialDateAboutWorkService specialDateAboutWorkService;
+	@Resource AttendanceRecordService attendanceRecordService;
+	@Resource SysUserShiftService sysUserShiftService;
 	
 	@RequestMapping(value = "/robots.txt")
 	public void robots(HttpServletRequest request, HttpServletResponse response) {
@@ -58,10 +76,32 @@ public class IndexController extends AbstractController<CreateInfo> {
 	    }
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/")
+	public String welcome(HttpServletRequest req) {
+		logger.info("welcome");
+		try {
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			if(operator!=null) {
+				SysUser checkUser = sysUserService.get(operator.getSysUserId());
+				if(checkUser!=null) {
+					return "redirect:/security/index";
+				}
+			}
+		} catch (Exception e) {
+			logger.error("welcome error : ", e);
+		}
+		return "/login";
+	}
+	
 	@RequestMapping(method=RequestMethod.GET, value="/security/index")
 	public String index(HttpServletRequest req, Integer page, ModelMap model) {
 		logger.info("/index");
-		
+		SysUser operator = SessionUtils.getLoginInfo(req);
+		try {
+			model.addAttribute("attendanceToday", attendanceRecordService.getUserToday(operator));
+		} catch (Exception e) {
+			logger.error("getUserToday AttendanceRecord Error : ", e);
+		}
 		return "/index/main-form";
 	}
 	
@@ -199,10 +239,10 @@ public class IndexController extends AbstractController<CreateInfo> {
 					Constant.ASANA_REDIRECT_URL
 				);
 			Client client = Client.oauth(app);
-			client.headers.put("Asana-Enable", "string_ids");
 			if (!req.getParameter("state").isEmpty()) {
 				String token = app.fetchToken(req.getParameter("code"));
-				logger.info("token : " + token);
+				String refreshToken = app.credential.getRefreshToken();
+				logger.info("token : " + token + ", refreshToken : " + refreshToken);
 				app = new OAuthApp(Constant.ASANA_CLIENT_ID,
 						Constant.ASANA_CLIENT_SECRET,
 						Constant.ASANA_REDIRECT_URL,
@@ -211,16 +251,16 @@ public class IndexController extends AbstractController<CreateInfo> {
 				client = Client.oauth(app);
 				client.headers.put("Asana-Enable", "string_ids");
 
-		        System.out.println("isAuthorized=" + app.isAuthorized());
+		        //System.out.println("isAuthorized=" + app.isAuthorized());
 		        User me = client.users.me().execute();
-		        System.out.println("me=" + me.name);
+		        logger.info("me=" + me.name);
 		        
 		        // find your "Personal Projects" project
 		        Workspace personalWorkspace = null;
 		        for (Workspace workspace : client.workspaces.findAll()) {
-		        	logger.info("workspace : " + workspace);
-		        	logger.info("workspace.id : " + workspace.gid);
-		        	logger.info("workspace.name : " + workspace.name);
+//		        	logger.info("workspace : " + workspace);
+//		        	logger.info("workspace.id : " + workspace.gid);
+//		        	logger.info("workspace.name : " + workspace.name);
 		            if (workspace.name.equals("formoga.com")) {
 		            	personalWorkspace = workspace;
 		                break;
@@ -231,10 +271,10 @@ public class IndexController extends AbstractController<CreateInfo> {
 		        	// find Team
 			        Team defaultTeam = null;
 			        List<Team> teams = client.teams.findByOrganization(personalWorkspace.gid).execute();
-			        logger.info("teams : " + teams.size());
+//			        logger.info("teams : " + teams.size());
 			        for(Team team:teams) {
-			        	logger.info("team.id : " + team.gid);
-			        	logger.info("team.name : " + team.name);
+//			        	logger.info("team.id : " + team.gid);
+//			        	logger.info("team.name : " + team.name);
 			        	if(me.name.indexOf("Wendell Chuang")>=0) {
 			        		if (team.name.equals("CQI Services")) {
 			        			defaultTeam = team;
@@ -251,18 +291,13 @@ public class IndexController extends AbstractController<CreateInfo> {
 			        }
 			        Project demoProject = null;
 			        for (Project project : projects) {
-			        	logger.info("project.id : " + project.gid);
-			        	logger.info("project.name : " + project.name);
+//			        	logger.info("project.id : " + project.gid);
+//			        	logger.info("project.name : " + project.name);
 			        	if (project.name.indexOf("通知(請假)")>=0) {
 			                demoProject = project;
 			                break;
 			            }
 			        }
-//			        Task demoTask = client.tasks.createInWorkspace(personalProjects.id)
-//			                .data("name", "demo task created at " + new Date())
-//			                .data("projects", Arrays.asList(demoProject.id))
-//			                .execute();
-//			        System.out.println("Task " + demoTask.id + " created.");
 			        SysUser sysUser = new SysUser();
 			        sysUser.setSysUserId(me.gid);
 			        sysUser.setUserName(me.name);
@@ -278,15 +313,18 @@ public class IndexController extends AbstractController<CreateInfo> {
 			        sysUser.setCreateDate(calendar.getTime());
 			        sysUser.setModifyDate(calendar.getTime());
 			        sysUser.setStatus(Constant.SYSUSER_ENABLE);
-			        sysUserService.saveOrUpdateAsanaUser(sysUser);
-			        
-			        SessionUtils.setLoginInfo(req, sysUser);
-			        SessionUtils.setAsanaToken(req, token);
+			        SysUser loginedUser = sysUserService.saveOrUpdateAsanaUser(sysUser);
+			        if(null == loginedUser) {
+			        	logger.error("saveOrUpdateAsanaUser error");
+			        	return "redirect:/";
+			        }
+			        SessionUtils.setLoginInfo(req, loginedUser);
+			        SessionUtils.setAsanaToken(req, token, refreshToken, req.getParameter("code"));
 					
 					//setup menu
 				
 					Map<String, Map<String, List<SysFunction>>>  menu = new HashMap<String, Map<String, List<SysFunction>>>();
-					SysRole sr =  sysFunctionService.getUserMenu(sysUser.getRoleId());
+					SysRole sr =  sysFunctionService.getUserMenu(loginedUser.getRoleId());
 					if(null!=sr){
 						List<SysFunction> allFuntionList = sysFunctionService.getList();
 						Map<String, Integer> privilegeMap = new HashMap<String,Integer>();
@@ -324,7 +362,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 						HttpSession session = req.getSession();
 						session.setAttribute(Constant.ROLE_PRIVILEGE, privilegeMap);
 						session.setAttribute("userMenu", menu);
-						session.setAttribute("userName", sysUser.getUserName());
+						session.setAttribute("userName", loginedUser.getUserName());
 						return "redirect:/security/index";
 					}else{
 						return "redirect:/";
@@ -378,10 +416,110 @@ public class IndexController extends AbstractController<CreateInfo> {
 				model.put("userList", sysUserService.getEnableUserOderByList("department"));
 				model.put("todayLeave", userAskForLeaveService.getTodayLeave());
 				model.put("todayOvertime", userAskForOvertimeService.getTodayOvertime());
+				model.put("shift", sysUserShiftService.getMapThisMonth());
+				model.put("attendance", attendanceRecordService.getMapToday());
 			}
 		}catch (Exception e) {
 			logger.error("today Exception: ", e);
 		}
 		return "/today";
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="/weather")
+	public String weather(HttpServletRequest req, ModelMap model) {
+		logger.info("weather");
+		try {
+			HttpClient client = new DefaultHttpClient();  
+	        HttpGet getMethod = new HttpGet("http://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-005?Authorization=CWB-F2972DE2-EB6B-44DE-94D9-17522E4455F4&format=JSON&sort=time");
+	        
+	        HttpResponse response = client.execute(getMethod);
+	        // Get the response  
+	        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+	        StringBuilder responseString = new StringBuilder();
+	        String line = "";
+	        while ((line = rd.readLine()) != null) {  
+	        	responseString.append(line);  
+	        }
+	        logger.debug("data : " + responseString.toString());
+	        JSONObject jsonObject = JSONObject.fromObject(responseString.toString());
+	        if(jsonObject.optBoolean("success")) {
+	        	JSONObject jsonRecords = jsonObject.optJSONObject("records");
+	        	JSONArray jsonArrayLocations = jsonRecords.optJSONArray("locations");
+	        	if(jsonArrayLocations.size()==1) {
+	        		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        		JSONObject jsonCity = jsonArrayLocations.optJSONObject(0);
+		        	JSONArray jsonArrayLocation = jsonCity.optJSONArray("location");
+		        	Map<String, WeatherLocation> locationMap = new HashMap<>();
+		        	for(int i=0;i<jsonArrayLocation.size();i++) {
+		        		JSONObject jsonLocation = jsonArrayLocation.optJSONObject(i);
+		        		if(jsonLocation.optString("locationName").equals("桃園區")) {
+		        			WeatherLocation weatherLocation = new WeatherLocation();
+			        		List<WeatherType> weatherTypeList = new ArrayList<>();
+			        		weatherLocation.setLocationName(jsonLocation.optString("locationName"));
+			        		for(int j=0;j<jsonLocation.optJSONArray("weatherElement").size();j++) {
+			        			logger.debug("type size : " + jsonLocation.optJSONArray("weatherElement").size());
+			        			JSONObject jsonWeatherType = jsonLocation.optJSONArray("weatherElement").optJSONObject(j);
+			        			if(jsonWeatherType.optString("description").equals("天氣現象")) {
+				        			WeatherType weatherType = new WeatherType();
+				        			List<WeatherTime> weatherTimeList = new ArrayList<>();
+				        			weatherType.setWeatherType(jsonWeatherType.optString("description"));
+				        			for(int k=0;k<jsonWeatherType.optJSONArray("time").size();k++) {
+				        				logger.debug(jsonWeatherType.optString("description") + " time size : " + jsonWeatherType.optJSONArray("time").size());
+				        				JSONObject jsonTime = jsonWeatherType.optJSONArray("time").optJSONObject(k);
+				        				WeatherTime weatherTime = new WeatherTime();
+				        				if(!jsonTime.optString("startTime").isEmpty()) {
+					        				weatherTime.setStartTime(sdf.parse(jsonTime.optString("startTime")));
+					        				weatherTime.setEndTime(sdf.parse(jsonTime.optString("endTime")));
+				        				}
+				        				if(jsonTime.optJSONArray("elementValue").size()>0) {
+				        					weatherTime.setElementValue(jsonTime.optJSONArray("elementValue").optJSONObject(0).optString("value"));
+				        					weatherTimeList.add(weatherTime);
+				        					logger.debug("儲存=====================");
+				        				}
+				        			}
+				        			weatherType.setWeatherTimeList(weatherTimeList);
+				        			weatherTypeList.add(weatherType);
+			        			}
+			        		}
+			        		weatherLocation.setWeatherTypeList(weatherTypeList);
+			        		locationMap.put(jsonLocation.optString("locationName"), weatherLocation);
+		        		}
+		        	}
+		        	model.put("locationMap", locationMap);
+	        	}
+	        }
+//			boolean isWorkDay = specialDateAboutWorkService.isWorkDay();
+//			model.put("isWorkDay", isWorkDay);
+//			if(isWorkDay) {
+//				model.put("userList", sysUserService.getEnableUserOderByList("department"));
+//				model.put("todayLeave", userAskForLeaveService.getTodayLeave());
+//				model.put("todayOvertime", userAskForOvertimeService.getTodayOvertime());
+//			}
+		}catch (Exception e) {
+			logger.error("weather Exception: ", e);
+		}
+		return "/weather.table";
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="/loginLine")
+	public String loginLine(HttpServletRequest req, HttpServletResponse resp, @RequestParam String lineId) {
+		logger.info("login line");
+		try{
+			SysUser su = sysUserService.getByLineId(lineId);
+			logger.info(BeanUtils.describe(su));
+			if(su == null){
+				return "/404";
+			}else{
+				SessionUtils.setLoginInfo(req, su);
+				Map<String, Integer> privilegeMap = new HashMap<String,Integer>();
+				privilegeMap.put("/security/emergence", 1);
+				HttpSession session = req.getSession();
+				session.setAttribute(Constant.ROLE_PRIVILEGE, privilegeMap);
+				return "redirect:/security/emergence";
+			}
+		}catch(Exception e){
+			logger.error("error:", e);
+			return "/404";
+		}
 	}
 }

@@ -90,3 +90,26 @@ function getFormattedDate(d, fmt) {
 	return s;
 	
 }
+
+function getLastMonth(){
+	var now = new Date();
+	var lastMonth = new Date();
+	if (now.getMonth() == 0) {
+	    lastMonth = new Date(now.getFullYear() - 1, 11, 1);
+	} else {
+	    lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+	}
+	return lastMonth;
+}
+
+function getCurrentFirstDay(){
+	var now = new Date();
+	var current = new Date(now.getFullYear(), now.getMonth(), 1);
+	return current;
+}
+
+function getNextFirstDay(){
+	var now = new Date();
+	var nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+	return nextMonth;
+}

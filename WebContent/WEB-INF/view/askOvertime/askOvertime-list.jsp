@@ -9,7 +9,7 @@
 
 <body role="document">
 	<%@include file="../include/menu.jsp"%>
-	<div class="container theme-showcase" role="main">
+	<div class="container theme-showcase page-width" role="main">
 		<div class="row row-offcanvas row-offcanvas-left">
 			
 			<!--/span-->
@@ -28,7 +28,9 @@
 						</div>
 
 					</div>
-					<%@include file="../include/progressing.jsp"%>					
+					<%@include file="../include/progressing.jsp"%>
+					<div id="leaveQuatoContent">
+					</div>
 					<div id="dataContent">
 					</div>
 				</form>
@@ -87,6 +89,10 @@
 										<option value="10">10</option>
 										<option value="11">11</option>
 										<option value="12">12</option>
+										<option value="13">13</option>
+										<option value="14">14</option>
+										<option value="15">15</option>
+										<option value="16">16</option>
 									</select>
 						            <span id="spendTime-error" class="error_text"></span>
 					            </div>
@@ -143,12 +149,18 @@
 		var progressing = 0;
 		jQuery().ready(function (){
 			queryData(1);
+			var today = new Date();
+			var pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
+			if(today.getDate()<4){
+				pickerStartDate = getFormattedDate(getLastMonth(), 'y/M/d H:m');
+			}
 			$('#datetimepickerStart').datetimepicker({
 				format :'yyyy/mm/dd hh:ii',
 				autoclose: true,
 				minuteStep:30,
 		        focusOnShow: false,
-		        allowInputToggle: true
+		        allowInputToggle: true,
+		        startDate: pickerStartDate
 			});
 			$('#datetimepickerEnd').datetimepicker({
 				format :'yyyy/mm/dd hh:ii',
@@ -183,11 +195,25 @@
 		});
 		
 		function selectedLeaveId(data){
+			console.log("data : " + data);
 			$('#spendTimeStr').html(data.split("，")[1]);
 			if(data.indexOf('天')>=0){
 				$('#unitType').val('天');
 			}else{
 				$('#unitType').val('小時');
+			}
+			
+			$("#spendTime option").remove();
+			if(data.indexOf('災害處理')>=0){
+				$("#spendTime").append($("<option></option>").attr("value", "3").text("C1狼級，3小時"));
+				$("#spendTime").append($("<option></option>").attr("value", "6").text("C2虎級，6小時"));
+				$("#spendTime").append($("<option></option>").attr("value", "9").text("C3鬼級，9小時"));
+				$("#spendTime").append($("<option></option>").attr("value", "12").text("C4龍級，12小時"));
+				$("#spendTime").append($("<option></option>").attr("value", "15").text("C5神級，15小時"));
+			}else{
+				for(var i=1;i<17;i++){
+					$("#spendTime").append($("<option></option>").attr("value", i).text(i));
+				}
 			}
 		}
 		
@@ -196,8 +222,18 @@
 				return;
 			}
 			$("body").css("cursor", "progress");
+			$('#leaveQuatoContent').hide();
 			$('#dataContent').hide();
 			$("#progressing").show();
+			$.ajax({
+				type : "POST",
+				url : "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
+				data : {},
+				success : function(data) {
+					$('#leaveQuatoContent').html(data);
+					$('#leaveQuatoContent').show();
+				}
+			});
 			$.ajax({
 				type : "POST",
 				url : "<c:url value='/security/askOvertime/ajaxDataLoading'/>",
@@ -356,6 +392,7 @@
 							$('#description').val(data.userAskForOvertime.description);
 							$('#asanaTaskId').val(data.userAskForOvertime.asanaTaskId);
 							$('#status').val(data.userAskForOvertime.status);
+							selectedLeaveId($('#overtimeId option:selected').html());
 							$('#basicModal').find('.modal-title').text(text + "調班紀錄");
 							$('#basicModal').modal('toggle');
 							progressing = 0;

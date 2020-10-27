@@ -26,6 +26,7 @@
       eventLimit: true, // allow "more" link when too many events
       events: {
         url: "<c:url value='/security/askLeave/calendar/ajaxDataLoading'/>",
+        method: 'POST',
         error: function() {
           $('#script-warning').show();
         }
