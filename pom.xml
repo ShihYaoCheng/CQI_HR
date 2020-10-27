@@ -47,7 +47,7 @@
 	<dependency>
 		<groupId>com.asana</groupId>
 		<artifactId>asana</artifactId>
-		<version>0.9.0</version>
+		<version>0.10.1</version>
 	</dependency>
 	<dependency>
 		<groupId>junit</groupId>
@@ -213,11 +213,6 @@
 	    <version>1.9.13</version>
 	</dependency>
 	<dependency>
-	    <groupId>org.codehaus.jackson</groupId>
-	    <artifactId>jackson-mapper-asl</artifactId>
-	    <version>1.9.13</version>
-	</dependency>
-	<dependency>
 	    <groupId>org.javassist</groupId>
 	    <artifactId>javassist</artifactId>
 	    <version>3.18.1-GA</version>
@@ -327,7 +322,23 @@
 	    <groupId>org.apache.commons</groupId>
 	    <artifactId>commons-math3</artifactId>
 	    <version>3.6.1</version>
-	</dependency>		
+	</dependency>
+	<dependency>
+		<groupId>com.linecorp.bot</groupId>
+		<artifactId>line-bot-api-client</artifactId>
+		<version>4.1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>com.linecorp.bot</groupId>
+		<artifactId>line-bot-model</artifactId>
+		<version>4.1.0</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+	<dependency>
+	    <groupId>com.squareup.okhttp3</groupId>
+	    <artifactId>okhttp</artifactId>
+	    <version>3.14.8</version>
+	</dependency>
   </dependencies>
   
 </project>
