@@ -60,6 +60,7 @@ public class SysUserService extends AbstractService<SysUser>{
 				databaseUser.setEmail(sysUser.getEmail());
 				databaseUser.setDepartment(sysUser.getDepartment());
 				databaseUser.setInaugurationDate(sysUser.getInaugurationDate());
+				databaseUser.setGraduationDate(sysUser.getGraduationDate());
 				databaseUser.setDefaultProjectId(sysUser.getDefaultProjectId());
 				databaseUser.setModifyDate(new Date());
 				databaseUser.setModifyId(su.getSysUserId());
@@ -123,6 +124,18 @@ public class SysUserService extends AbstractService<SysUser>{
 	}
 	
 	@Transactional
+	public Map<String, SysUser> getUserCardMapping() throws Exception {
+		Map<String, SysUser> mapping = new HashMap<>();
+		List<SysUser> list = sysUserDAO.get();
+		for(SysUser user : list){
+			if(StringUtils.hasText(user.getCardId()) && !user.getCardId().equals("NULL")) {
+				mapping.put(user.getCardId(), user);
+			}
+		}
+		return mapping;
+	}
+	
+	@Transactional
 	public List<SysUser> getUserList() throws Exception {
 		return sysUserDAO.getEnableUser();
 	}
@@ -136,4 +149,5 @@ public class SysUserService extends AbstractService<SysUser>{
 	public SysUser getByLineId(String lineId) throws Exception{
 		return sysUserDAO.getByLineId(lineId);
 	}
+	
 }
