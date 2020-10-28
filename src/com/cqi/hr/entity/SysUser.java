@@ -102,6 +102,9 @@ public class SysUser implements java.io.Serializable {
 	@Column(name = "MODIFY_USER", length = 50)
 	private String modifyId;
 	
+	@Column(name = "cardid", length = 50)
+	private String cardId;
+	
 	@Column(name = "STATUS", length = 3)
 	private String status;
 
@@ -348,6 +351,14 @@ public class SysUser implements java.io.Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getCardId() {
+		return cardId;
+	}
+
+	public void setCardId(String cardId) {
+		this.cardId = cardId;
 	}
 
 	public String getExtension() {
