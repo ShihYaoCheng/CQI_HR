@@ -111,10 +111,15 @@ public class SpecialDateAboutWorkController extends AbstractController<SpecialDa
 			if(operator == null){
 				map = createResponseMsg(false, "", "請重新登入");
 			}else{
-				specialDateAboutWork.setStatus(Constant.STATUS_ENABLE);
-				specialDateAboutWork.setCreateDate(new Date());
-				specialDateAboutWorkService.persist(specialDateAboutWork);
-				map = createResponseMsg(true, "", "");
+				SpecialDateAboutWork dbData = specialDateAboutWorkService.getOneByDate(specialDateAboutWork.getTheDay());
+				if(null == dbData) {
+					specialDateAboutWork.setStatus(Constant.STATUS_ENABLE);
+					specialDateAboutWork.setCreateDate(new Date());
+					specialDateAboutWorkService.persist(specialDateAboutWork);
+					map = createResponseMsg(true, "", "");
+				}else {
+					map = createResponseMsg(false, "", Constant.DATA_DUPLICATED);
+				}
 			}
 		}catch(Exception e){
 			logger.error(FUNCTION_NAME + " ajaxAdd error: ", e);

@@ -61,6 +61,11 @@
 							<button type="button" id="uploadExcelFile" class="btn btn-primary" data-loading-text="檔案上傳中" onclick="ajaxUploadFile()"> 
 								<i class="glyphicon glyphicon-upload"></i>上傳
 							</button>
+							<br/>
+							請選擇上述網址中，要匯入的年度資料，進入該年度畫面後，下方選擇JSON下載。
+							<br/>
+							*****僅支援.JSON檔名匯入*****
+							因公家機關無51勞動節放假，請管理者自行新增
 						</div>
 
 					</div>
@@ -68,6 +73,12 @@
 					<div id='loading'>loading...</div>
 
 					<div id='calendar'></div>
+					</div>
+					
+					<div class="btn-group">
+						<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"> 
+							<i class="glyphicon glyphicon-plus"></i>
+						</a>
 					</div>
 					
 					<div id="dataContent">
