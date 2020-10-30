@@ -35,6 +35,7 @@ public class CompanyLeave implements Serializable {
 	public static final Long ANNUAL_LEAVE_ID = 4L;
 	//病假
 	public static final String SICK_LEAVE = "病假";
+	public static final Long SICK_LEAVE_ID = 5L;
 	/**
 	 * 
 	 */
