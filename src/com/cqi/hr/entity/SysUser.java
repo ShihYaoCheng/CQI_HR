@@ -81,11 +81,11 @@ public class SysUser implements java.io.Serializable {
 	private Integer companyGod;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "inauguration_date", length = 19)
+	@Column(name = "inauguration_date", length = 19, nullable = true)
 	private Date inaugurationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "graduation_date", length = 19)
+	@Column(name = "graduation_date", length = 19, nullable = true)
 	private Date graduationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)

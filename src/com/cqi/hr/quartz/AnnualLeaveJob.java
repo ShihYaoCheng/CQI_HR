@@ -34,7 +34,7 @@ public class AnnualLeaveJob extends BasicJob {
 				//事假給予
 				userLeaveService.sickLeaveGive();
 				//病假給予
-//				userLeaveService.occupiedLeaveGive();
+				userLeaveService.occupiedLeaveGive();
 				//新增女性的生理假資料
 				userLeaveService.menstruationLeaveGive();
 				//job done, unlock

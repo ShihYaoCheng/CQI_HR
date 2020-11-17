@@ -15,6 +15,12 @@
 		http://www.springframework.org/schema/task 
 		http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean class="com.cqi.hr.controller.DateBindingInitializer" />
+		</property>
+	</bean>
 	<!-- Scans the classpath of this application for @Components to deploy as 
 		beans -->
 	<context:component-scan base-package="com.cqi.hr" />
@@ -22,8 +28,8 @@
 	<!-- Configures the @Controller programming model -->
 	<mvc:annotation-driven />
 
-	<!-- Forwards requests to the "/" resource to the "welcome" view -->
-	<mvc:view-controller path="/" view-name="index" />
+	<!-- Forwards requests to the "/" resource to the "welcome" view
+	<mvc:view-controller path="/" view-name="login" /> -->
 
 	<!-- Configures Handler Interceptors -->
 	<mvc:interceptors>
@@ -36,6 +42,7 @@
 		up static resources in the ${webappRoot}/resources/ directory -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	<mvc:resources mapping="/upload/**" location="/upload/" />
+	<mvc:resources mapping="/.well-known/**" location="/.well-known/" />
 
 	<!-- Saves a locale change using a cookie -->
 	<bean id="localeResolver"
@@ -70,14 +77,20 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/cqi_hr_manager" />
+		<!-- <property name="url" value="jdbc:mysql://localhost:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
 		<property name="username" value="ProjectUser"/>
-		<property name="password" value="1qaz2wsx"/>
+		<property name="password" value="1qaz2wsx"/> -->
+		<property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" />
+		<!-- <property name="url" value="jdbc:mysql://35.221.230.161:3306/cqi_hr_manager?serverTimezone=GMT%2B8" /> -->
+		<property name="username" value="web"/>
+		<property name="password" value="drinkTEA4000"/>
 		<property name="testOnBorrow" value="true" />
 		<property name="validationQuery" value="SELECT 'Y'" />
-		<property name="initialSize" value="10" />
-		<property name="removeAbandonedTimeout" value="10" />
+		<property name="initialSize" value="5" />
+		<property name="removeAbandonedTimeout" value="5" />
 		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="5" />
+		<property name="minEvictableIdleTimeMillis" value="10000" />
 	</bean>
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -103,22 +116,22 @@
 	<bean
 		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 	<bean id="mailConfig" class="com.cqi.hr.config.MailConfig">
-		<property name="uploadFileRootFolder" value="/Notofication/download" />
-		<property name="downloadFileRootPath" value="/Notofication/download" />
+		<property name="uploadFileRootFolder" value="/download" />
+		<property name="downloadFileRootPath" value="/download" />
 		<!-- mail config -->
 		
 		<property name="mailServer" value="smtp.gmail.com" />
 		<property name="mailServerPort" value="587" />
 		<property name="mailTransportProtocol" value="smtp" />
-		<property name="mailFrom" value="zerofinal2002@gmail.com" />
+		<property name="mailFrom" value="aa@gmail.com" />
 		<property name="defaultSubject" value="HR Manage" />
 		<!-- link address -->
 	</bean>
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />  
 		<property name="port" value="587" />
-        <property name="username" value="zerofinal2002@gmail.com" /> 
-        <property name="password" value="asdfghjklz" />
+        <property name="username" value="aa@gmail.com" /> 
+        <property name="password" value="qqq" />  <!-- -->
         <property name="javaMailProperties">  
             <props>  
 				<prop key="mail.smtp.starttls.enable">true</prop>
@@ -130,7 +143,13 @@
     
     <bean id="webConfigBean" class="com.cqi.hr.config.WebConfigBean">
 		<property name="exportCsvCharset" value="UTF-8" />
-		<property name="logoPath" value="/resources/protal/images/member_login_03.jpg" />
+		<property name="logoPath" value="/resources/img/index_03.png" />
 		<property name="loginLogoPath" value="/resources/img/index_03.png" />
+		<property name="uploadPath" value="/cqi" />
+		<property name="picPath" value="/image" />
+		<property name="execute" value="false" />
 	</bean>
+	
+    <import resource="/quartz.xml"/>
+	
 </beans>

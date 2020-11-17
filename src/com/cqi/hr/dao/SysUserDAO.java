@@ -108,7 +108,9 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 	public PagingList<SysUser> getListByPage(Integer page, String searchUserName) throws Exception {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		if(StringUtils.hasText(searchUserName)){
-			criteria.add(Restrictions.like("userName", "%"+searchUserName+"%"));
+			Criterion rest1 = Restrictions.and(Restrictions.like("userName", "%"+searchUserName+"%"));
+			Criterion rest2 = Restrictions.and(Restrictions.like("originalName", "%"+searchUserName+"%"));
+			criteria.add(Restrictions.or(rest1, rest2));
 		}
 		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"userName desc", "status desc"}));
 	}

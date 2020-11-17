@@ -61,6 +61,10 @@ public class SysUserService extends AbstractService<SysUser>{
 				databaseUser.setDepartment(sysUser.getDepartment());
 				databaseUser.setInaugurationDate(sysUser.getInaugurationDate());
 				databaseUser.setGraduationDate(sysUser.getGraduationDate());
+				if(!StringUtils.hasText(sysUser.getCardId())) {
+					sysUser.setCardId("NULL");
+				}
+				databaseUser.setCardId(sysUser.getCardId());
 				databaseUser.setDefaultProjectId(sysUser.getDefaultProjectId());
 				databaseUser.setModifyDate(new Date());
 				databaseUser.setModifyId(su.getSysUserId());

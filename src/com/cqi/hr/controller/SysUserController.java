@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,8 +56,9 @@ public class SysUserController extends AbstractController<SysUser> {
 	
 	
 	@RequestMapping(method=RequestMethod.POST, value="/{sysUserId}")
-	public void ajaxUpdate(HttpServletRequest req, HttpServletResponse resp, @Valid SysUser sysUser){
+	public void ajaxUpdate(HttpServletRequest req, HttpServletResponse resp, @Valid SysUser sysUser, BindingResult bindingResult){
 		logger.info(FUNCTION_NAME + " ajaxUpdate: " + sysUser.getSysUserId());
+		logger.info("Test : " + bindingResult.getErrorCount());
 		Map<Object, Object> map = null;
 		try{
 			String result = "";
@@ -193,5 +195,19 @@ public class SysUserController extends AbstractController<SysUser> {
 			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
 		}
 		returnJsonMap(req, resp, map);
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="u")
+	public String self(HttpServletRequest req, ModelMap model) {
+		logger.info(FUNCTION_NAME + " list");
+		try {
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			SysUser dbUser = sysUserService.get(operator.getSysUserId());
+			model.addAttribute("sysUser", dbUser);
+			model.addAttribute("projectMap", AsanaUtils.getTeamProject(Constant.CQI_GAMES_ASANA_TOKEN));
+		} catch (Exception e) {
+			logger.error(FUNCTION_NAME + "index error:", e);
+		}
+		return "/sysUser/sysUser";
 	}
 }

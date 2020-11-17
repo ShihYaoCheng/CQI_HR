@@ -83,6 +83,13 @@
 					            </div>
 							</div>
 							<div class="form-group">
+					            <label for="cardId" class="control-label col-sm-12">卡號:</label>
+					            <div class="col-sm-12">
+					            	<input type="text" class="form-control" id="cardId" name="cardId" />
+					            </div>
+					            <span>請前往卡號原始資料查詢無對應的卡號，離職人員請將卡號清除避免卡號重複</span>
+							</div>
+							<div class="form-group">
 					            <label for="department" class="control-label col-sm-12">樓層:</label>
 					            <div class="col-sm-12">
 					            	<select class="form-control" id="department" name="department">
@@ -103,6 +110,18 @@
 					                    </span>
 					                </div>
 						            <span id="inaugurationDate-error" class="error_text"></span>
+					            </div>
+							</div>
+							<div class="form-group">
+					            <label for="graduationDate" class="control-label col-sm-12">離職日期:</label>
+					            <div class="col-sm-12">
+					            	<div class='input-group date' id='datepickerGraduationDate'>
+					                    <input type="text" class="form-control" id="graduationDate" name="graduationDate" size="10" type="text" value=""/>
+					                    <span class="input-group-addon">
+					                        <span class="glyphicon glyphicon-calendar"></span>
+					                    </span>
+					                </div>
+						            <span id="graduationDate-error" class="error_text"></span>
 					            </div>
 							</div>
 							<div class="form-group">
@@ -139,6 +158,10 @@
 				autoclose: true, minView: 2
 			});
 			
+			$('#datepickerGraduationDate').datetimepicker({
+				format :'yyyy/mm/dd',
+				autoclose: true, minView: 2
+			});
 			queryData(1);
 		});
 		
@@ -153,8 +176,7 @@
 				type : "POST",
 				url : "<c:url value='/security/sysUser/ajaxDataLoading'/>",
 				data : {
-					page:page,
-					searchUserName:$('#searchUserName').val()
+					page:page
 				},
 				success : function(data) {
 					$("body").css("cursor", "auto");
@@ -265,8 +287,10 @@
 							$('#email').val(data.sysUser.email);
 							$('#gender').val(data.sysUser.gender);
 							$('#department').val(data.sysUser.department);
+							$('#cardId').val(data.sysUser.cardId);
 							$('#defaultProjectId').val(data.sysUser.defaultProjectId);
 							$('#inaugurationDate').val(formatJsonDate(data.sysUser.inaugurationDate, "y/M/d"));
+							$('#graduationDate').val(formatJsonDate(data.sysUser.graduationDate, "y/M/d"));
 							$('#basicModal').find('.modal-title').text(text+"開發者");
 							$('#basicModal').modal('toggle');
 							progressing = 0;
