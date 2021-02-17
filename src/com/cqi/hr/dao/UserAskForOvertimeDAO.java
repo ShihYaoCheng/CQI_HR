@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.cqi.hr.constant.Constant;
+import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.util.DateUtils;
@@ -97,8 +98,8 @@ public class UserAskForOvertimeDAO extends AbstractDAO<UserAskForOvertime> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getMonthlyRowdata(Integer year, Integer month, String userId, Long leaveId) throws Exception{
-		Date startDayOfMonth = DateUtils.getFirstDateOfMonth(year, month);
-		Date endDayTimeOfMonth = DateUtils.getLastDateTimeOfMonth(year, month);
+		Date startDayOfMonth = DateUtils.getFirstDateByYearAndMonth(year, month);
+		Date endDayTimeOfMonth = DateUtils.getLastDateByYearAndMonth(year, month);
 
 		logger.info("startDayOfMonth : " + startDayOfMonth);
 		logger.info("endDayTimeOfMonth : " + endDayTimeOfMonth);
@@ -121,6 +122,34 @@ public class UserAskForOvertimeDAO extends AbstractDAO<UserAskForOvertime> {
 		criteria.setProjection(projList);
 		return criteria.list();
 	}
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getLastMonthlyRowdata(Integer year, Integer month, String userId, Long leaveId) throws Exception{
+		Date startDayOfMonth = DateUtils.getFirstDateByYearAndMonth(year, month-1);
+		Date endDayTimeOfMonth = DateUtils.getLastDateByYearAndMonth(year, month-1);
+
+		logger.info("startDayOfMonth : " + startDayOfMonth);
+		logger.info("endDayTimeOfMonth : " + endDayTimeOfMonth);
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		if(StringUtils.hasText(userId)){
+			criteria.add(Restrictions.eq("sysUserId", userId));
+		}
+		//criteria.add(Restrictions.eq("leaveId", leaveId));
+		criteria.add(Restrictions.between("startTime", startDayOfMonth, endDayTimeOfMonth));
+		criteria.add(Restrictions.between("endTime", startDayOfMonth, endDayTimeOfMonth));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		
+		ProjectionList projList = Projections.projectionList();
+		projList.add(Projections.sum("spendTime"));
+		projList.add(Projections.groupProperty("sysUserId"));
+		projList.add(Projections.groupProperty("overtimeId"));
+
+		//add other fields you need in the projection list
+		criteria.setProjection(projList);
+		return criteria.list();
+	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	public Double getAfterDataByMonth(String userId, Long overtimeId) throws Exception{
@@ -166,6 +195,30 @@ public class UserAskForOvertimeDAO extends AbstractDAO<UserAskForOvertime> {
 		criteria.add(Restrictions.le("startTime", data.getEndTime()));
 		criteria.add(Restrictions.eq("sysUserId", data.getSysUserId()));
 		return criteria.list();
+	}
+
+	//add by sam 20201223
+	@SuppressWarnings("unchecked")
+	public UserAskForOvertime getOneByUserIdAndDate(String sysUserId, Date date) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		criteria.add(Restrictions.eq("sysUserId", sysUserId));
+		
+		Calendar thisDate = Calendar.getInstance();
+		Calendar nextDate = Calendar.getInstance();
+		thisDate.setTime(date);
+		nextDate.setTime(DateUtils.nextDate(date));
+		Criterion rest1 = Restrictions.and(Restrictions.le("startTime", DateUtils.clearTime(thisDate.getTime())), 
+				Restrictions.ge("endTime", DateUtils.clearTime(nextDate.getTime())));
+		Criterion rest2 = Restrictions.or(Restrictions.between("startTime", DateUtils.clearTime(thisDate.getTime()), DateUtils.clearTime(nextDate.getTime())), 
+				Restrictions.between("endTime", DateUtils.clearTime(thisDate.getTime()), DateUtils.clearTime(nextDate.getTime())));
+		criteria.add(Restrictions.or(rest1, rest2));
+		
+		List<UserAskForOvertime> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
 	}
 }
 

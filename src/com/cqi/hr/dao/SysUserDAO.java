@@ -40,6 +40,15 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		return criteria.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<SysUser> getEnableRole2User()throws Exception{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		criteria.add(Restrictions.eq("roleId", "2"));
+		return criteria.list();
+	}
+	
+	
 	/**
 	 * 取得在職員工或是這個月離職的員工，主要用於統計出勤的UserList用
 	 * @return
@@ -52,12 +61,35 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		Criterion rest1 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
 		Calendar calendarMonth = Calendar.getInstance();
 		calendarMonth.setTime(theMonth);
-		Date startDate = DateUtils.getFirstDateOfMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
-		Date endDate = DateUtils.getLastDateTimeOfMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
+		Date startDate = DateUtils.getFirstDateByYearAndMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
+		Date endDate = DateUtils.getLastDateByYearAndMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
 		logger.info("startDate : " + startDate);
 		logger.info("endDate : " + endDate);
 		Criterion rest2 = Restrictions.and(Restrictions.between("graduationDate", startDate, endDate));
 		criteria.add(Restrictions.or(rest1, rest2));
+		return criteria.list();
+	}
+	
+	
+	/**
+	 * 取得在職一般員工或是這個月離職的員工，主要用於統計出勤的UserList用
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public List<SysUser> getEnableRole2UserOrGraduationInMonth(Date theMonth) throws Exception{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		Criterion rest1 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		
+		Calendar calendarMonth = Calendar.getInstance();
+		calendarMonth.setTime(theMonth);
+		Date startDate = DateUtils.getFirstDateByYearAndMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
+		Date endDate = DateUtils.getLastDateByYearAndMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
+		logger.info("startDate : " + startDate);
+		logger.info("endDate : " + endDate);
+		Criterion rest2 = Restrictions.and(Restrictions.between("graduationDate", startDate, endDate));
+		criteria.add(Restrictions.or(rest1, rest2));
+		criteria.add(Restrictions.eq("roleId", "2"));
 		return criteria.list();
 	}
 	
@@ -68,8 +100,8 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		Criterion rest1 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
 		Calendar calendarMonth = Calendar.getInstance();
 		calendarMonth.setTime(theMonth);
-		Date startDate = DateUtils.getFirstDateOfMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
-		Date endDate = DateUtils.getLastDateTimeOfMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
+		Date startDate = DateUtils.getFirstDateByYearAndMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
+		Date endDate = DateUtils.getLastDateByYearAndMonth(calendarMonth.get(Calendar.YEAR), calendarMonth.get(Calendar.MONTH));
 		logger.info("startDate : " + startDate);
 		logger.info("endDate : " + endDate);
 		Criterion rest2 = Restrictions.and(Restrictions.between("graduationDate", startDate, endDate));
@@ -192,6 +224,29 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		criteria.add(Restrictions.eq("lineId", lineId));
 		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	//20210111 sam for punchRecord mapping
+	@SuppressWarnings("unchecked")
+	public SysUser getOneByCardId(String cardId) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("cardId", cardId));
+		List<SysUser> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public SysUser getOneBySysUserId(String sysUserId) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", sysUserId));
 		List<SysUser> list = criteria.list();
 		if(list.size()==1) {
 			return list.get(0);

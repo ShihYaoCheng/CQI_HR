@@ -146,4 +146,6 @@ public class UserAskForOvertime implements Serializable {
 		this.updateDate = updateDate;
 	}
 
+	
+
 }

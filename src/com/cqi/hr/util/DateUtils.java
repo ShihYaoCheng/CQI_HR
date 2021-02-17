@@ -693,10 +693,10 @@ public final class DateUtils {
 		return cal.getTime();
 	}
 	
-	public static Date getFirstDateOfMonth(int year, int month){
+	public static Date getFirstDateByYearAndMonth(int year, int month){
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR,	year);
-		cal.set(Calendar.MONTH,	month);
+		cal.set(Calendar.MONTH,	month); 
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -705,12 +705,11 @@ public final class DateUtils {
 		return cal.getTime();
 	}
 	
-	public static Date getLastDateTimeOfMonth(int year, int month){
+	public static Date getLastDateByYearAndMonth(int year, int month){
 		Calendar cal = Calendar.getInstance();
-		int lastDate = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 		cal.set(Calendar.YEAR,	year);
-		cal.set(Calendar.MONTH,	month);
-		cal.set(Calendar.DAY_OF_MONTH, lastDate);
+		cal.set(Calendar.MONTH,	month+1);
+		cal.set(Calendar.DAY_OF_MONTH, 0); //下個月的第0天 = 上個月最後一天
 		cal.set(Calendar.HOUR_OF_DAY, 23);
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 59);
@@ -805,5 +804,17 @@ public final class DateUtils {
 		Calendar calendarEnd = Calendar.getInstance();
 		calendarEnd.setTime(endDate);
 		return (calendarStart.get(Calendar.YEAR) == calendarEnd.get(Calendar.YEAR) && calendarStart.get(Calendar.MONTH) == calendarEnd.get(Calendar.MONTH));
+	}
+	
+	//20201229 sam
+	public static boolean isSameDay(Date startTime, Date endTime) {
+		Calendar cal = initCalWith(startTime),cal2 = initCalWith(endTime);
+		clearTime(cal);
+		clearTime(cal2);
+		if (cal.equals(cal2)) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }

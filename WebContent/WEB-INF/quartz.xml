@@ -35,6 +35,7 @@
             <ref bean="jobMonthlyLeaveBean"/>
         </property>
         <property name="cronExpression">
+            <!--<value>10 * * * * ?</value>  -->
             <value>0 10 0 4 * ?</value>
         </property>
         <!-- 
@@ -79,7 +80,8 @@
             <ref bean="jobAnnualLeaveBean"/>
         </property>
         <property name="cronExpression">
-            <value>0 0 6 * * ?</value>
+        	<!-- <value>10 * * * * ?</value>-->
+            <value>0 0 6 * * ?</value> 
         </property>
         <!-- 
 			    秒（0-59）
@@ -211,7 +213,7 @@
             <ref bean="jobMonthlyShiftBean"/>
         </property>
         <property name="cronExpression">
-            <!-- <value>0 30 0 1 * ?</value> -->
+            <!-- <value>10 * * * * ?</value> -->
             <value>0 30 0 1 * ?</value>
         </property>
         <!-- 
@@ -236,4 +238,94 @@
     	</property>
     </bean>
     <!-- #JOB5 月初班別自動生成 END -->
+    
+    <!-- #JOB6 日結出勤紀錄 BEGIN -->
+	<!-- JOB6 日結出勤紀錄 工作內容 -->
+	<bean id="jobDailyAttendanceRecordBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.DailyAttendanceRecordJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="dailyAttendanceRecordService" value-ref="dailyAttendanceRecordService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB6 日結出勤紀錄 排程設定 -->
+	<bean id="cronDailyAttendanceRecordBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobDailyAttendanceRecordBean"/>
+        </property>
+        <property name="cronExpression">
+            <!-- <value>10 * * * * ?</value>  -->
+     		<value>0 0 1 * * ?</value>
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerDailyAttendanceRecordBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronDailyAttendanceRecordBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerDailyAttendanceRecord</value>
+    	</property>
+    </bean>
+    <!-- #JOB6 日結出勤紀錄 END -->
+    
+    <!-- #JOB7 月結報表 BEGIN -->
+	<!-- JOB7 月結報表 工作內容 -->
+	<bean id="jobMonthlyReportBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyReportJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="monthlyReportService" value-ref="monthlyReportService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB7 月結報表 排程設定 -->
+	<bean id="cronMonthlyReportBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobMonthlyReportBean"/>
+        </property>
+        <property name="cronExpression">
+            <!--<value>10 * * * * ?</value> -->
+             <value>0 0 2 4 * ?</value> 
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerMonthlyReportBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronMonthlyReportBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerMonthlyReport</value>
+    	</property>
+    </bean>
+    <!-- #JOB7 月結報表 END -->
 </beans>

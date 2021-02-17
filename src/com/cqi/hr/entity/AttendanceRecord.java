@@ -3,6 +3,7 @@ package com.cqi.hr.entity;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -130,5 +131,24 @@ public class AttendanceRecord implements Serializable {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
+	
+	public double getAttendHours() {
+		if(arriveTime == null || leaveTime == null || arriveTime.isEmpty() || leaveTime.isEmpty()) {
+			return 0.0;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		double hours = 0.0;
+		try {
+			Date dateArriveTime = sdf.parse(arriveTime);
+			Date dateLeaveTime = sdf.parse(leaveTime);
+			hours = (dateLeaveTime.getTime() -dateArriveTime.getTime())/(1000*60*60);
+			
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		return hours;
+		
+	}
+	
 
 }

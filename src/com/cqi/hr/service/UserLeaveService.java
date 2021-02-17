@@ -3,6 +3,7 @@ package com.cqi.hr.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cqi.hr.constant.Constant;
 import com.cqi.hr.dao.AbstractDAO;
 import com.cqi.hr.dao.CompanyLeaveDAO;
+import com.cqi.hr.dao.DailyAttendanceRecordDAO;
 import com.cqi.hr.dao.GiveLeaveRecordDAO;
 import com.cqi.hr.dao.GiveLeaveRuleDAO;
 import com.cqi.hr.dao.SysUserDAO;
@@ -26,6 +28,7 @@ import com.cqi.hr.dao.UserLeaveDAO;
 import com.cqi.hr.dao.UserLeaveHistoryDAO;
 import com.cqi.hr.dao.UserLeaveQuotaMonthlyDAO;
 import com.cqi.hr.entity.CompanyLeave;
+import com.cqi.hr.entity.DailyAttendanceRecord;
 import com.cqi.hr.entity.GiveLeaveRecord;
 import com.cqi.hr.entity.GiveLeaveRule;
 import com.cqi.hr.entity.PagingList;
@@ -58,9 +61,11 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 	GiveLeaveRecordDAO giveLeaveRecordDAO;
 	@Resource
 	SysUserDAO sysUserDAO;
+	@Resource DailyAttendanceRecordDAO dailyAttendanceRecordDAO;
 
 	@Resource
 	UserAskForLeaveService userAskForLeaveService;
+	@Resource DailyAttendanceRecordService dailyAttendanceRecordService;
 
 	@Override
 	protected AbstractDAO<UserLeave> getDAO() {
@@ -212,6 +217,15 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 				userAskForLeaveDAO.merge(userAskForLeave);
 			}
 		}
+		
+		//update dailyAttendanceRecord
+		Date date = DateUtils.clearTime(userAskForLeave.getStartTime());
+		SysUser operator = sysUserDAO.getOneBySysUserId(userAskForLeave.getSysUserId());
+		DailyAttendanceRecord oldDailyAttendanceRecord = dailyAttendanceRecordDAO.getOneByUserIdAndDate(operator.getSysUserId(), date);
+		if(oldDailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.delete(oldDailyAttendanceRecord);}
+		DailyAttendanceRecord dailyAttendanceRecord = dailyAttendanceRecordService.calculateAttendanceRecord (date ,operator);
+		if(dailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.saveOrUpdate(dailyAttendanceRecord);}
+		
 		return true;
 	}
 
@@ -244,6 +258,14 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		userAskForLeave.setStatus(0);
 		userAskForLeave.setUpdateDate(new Date());
 		userAskForLeaveDAO.update(userAskForLeave);
+		
+		//update dailyAttendanceRecord
+		Date date = DateUtils.clearTime(userAskForLeave.getStartTime());
+		DailyAttendanceRecord oldDailyAttendanceRecord = dailyAttendanceRecordDAO.getOneByUserIdAndDate(operator.getSysUserId(), date);
+		if(oldDailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.delete(oldDailyAttendanceRecord);}
+		DailyAttendanceRecord dailyAttendanceRecord = dailyAttendanceRecordService.calculateAttendanceRecord (date ,operator);
+		if(dailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.saveOrUpdate(dailyAttendanceRecord);}
+		
 		return true;
 	}
 
@@ -272,7 +294,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		Map<Long, CompanyLeave> mapLeaveType = (Map<Long, CompanyLeave>) companyLeaveDAO.queryToMap("leaveId");
 		for (UserLeave userLeave : userLeaveList) {
 			// 特休額度刷新，判斷到職日
-			if (userMapping.get(userLeave.getSysUserId()) != null) {
+			if (userMapping.get(userLeave.getSysUserId()) != null && userMapping.get(userLeave.getSysUserId()).getRoleId().equals("2")  ) {
 				switch (mapLeaveType.get(userLeave.getLeaveId()).getLeaveName()) {
 				case CompanyLeave.OCCUPIED_LEAVE:
 					// 事假，搜尋下個月是否有事假與調班紀錄，有的話加減回來判斷是否負值，負值當月會扣薪，下個月初始化為零。
@@ -280,14 +302,14 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 							userLeave.getLeaveId());
 					Double afterAskForOvertimeData = userAskForOvertimeDAO.getAfterDataByMonth(userLeave.getSysUserId(),
 							CompanyLeave.SHIFT_OVERTIME_ID);
-					Double monthSummary = userLeave.getCount() + afterAskForLeaveData - afterAskForOvertimeData;
-					if (monthSummary < 0) {
+					Double monthSummaryOccupied = userLeave.getCount() + afterAskForLeaveData - afterAskForOvertimeData;
+					if (monthSummaryOccupied < 0) {
 						userLeave.setCount(afterAskForOvertimeData - afterAskForLeaveData);
 						userLeaveDAO.update(userLeave);
 					}
-					// 記載在月結剩餘額度上，目前僅特休與事假有額度
+					// 記載在月結剩餘額度上
 					UserLeaveQuotaMonthly userLeaveQuotaMonthlyOccupied = new UserLeaveQuotaMonthly();
-					userLeaveQuotaMonthlyOccupied.setMonthlySummaryQuota(monthSummary);
+					userLeaveQuotaMonthlyOccupied.setMonthlySummaryQuota(monthSummaryOccupied);
 					userLeaveQuotaMonthlyOccupied.setDateOfYear(calendar.get(Calendar.YEAR));
 					userLeaveQuotaMonthlyOccupied.setDateOfMonth(calendar.get(Calendar.MONTH) + 1); // 人看得懂的月份
 					userLeaveQuotaMonthlyOccupied.setLeaveId(userLeave.getLeaveId());
@@ -301,8 +323,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 					if (null == oldOccupiedDataCheck) {
 						userLeaveQuotaMonthlyDAO.persist(userLeaveQuotaMonthlyOccupied);
 					} else {
-						oldOccupiedDataCheck
-								.setMonthlySummaryQuota(userLeaveQuotaMonthlyOccupied.getMonthlySummaryQuota());
+						oldOccupiedDataCheck.setMonthlySummaryQuota(userLeaveQuotaMonthlyOccupied.getMonthlySummaryQuota());
 						oldOccupiedDataCheck.setUpdateDate(new Date());
 						userLeaveQuotaMonthlyDAO.update(oldOccupiedDataCheck);
 					}
@@ -334,7 +355,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 					Double afterAskForLeaveAnnualData = userAskForLeaveDAO.getAfterDataByMonth(userLeave.getSysUserId(),
 							userLeave.getLeaveId());
 					Double monthSummaryAnnual = userLeave.getCount() + afterAskForLeaveAnnualData;
-					// 記載在月結剩餘額度上，目前僅特休與事假有額度
+					// 記載在月結剩餘額度上
 					UserLeaveQuotaMonthly userLeaveQuotaMonthlyAnnual = new UserLeaveQuotaMonthly();
 					userLeaveQuotaMonthlyAnnual.setMonthlySummaryQuota(monthSummaryAnnual);
 					userLeaveQuotaMonthlyAnnual.setDateOfYear(calendar.get(Calendar.YEAR));
@@ -355,11 +376,31 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 					}
 					break;
 				case CompanyLeave.SICK_LEAVE:
-					// 病假下個月初始化為零。取出新月份的請假設定
+					// 病假
 					Double afterAskForLeaveSickData = userAskForLeaveDAO.getAfterDataByMonth(userLeave.getSysUserId(),
 							userLeave.getLeaveId());
-					userLeave.setCount(-1 * afterAskForLeaveSickData);
-					userLeaveDAO.update(userLeave);
+					Double monthSummarySick = userLeave.getCount() + afterAskForLeaveSickData ;
+					
+					UserLeaveQuotaMonthly userLeaveQuotaMonthlySick = new UserLeaveQuotaMonthly();
+					userLeaveQuotaMonthlySick.setMonthlySummaryQuota(monthSummarySick);
+					userLeaveQuotaMonthlySick.setDateOfYear(calendar.get(Calendar.YEAR));
+					userLeaveQuotaMonthlySick.setDateOfMonth(calendar.get(Calendar.MONTH) + 1); // 人看得懂的月份
+					userLeaveQuotaMonthlySick.setLeaveId(userLeave.getLeaveId());
+					userLeaveQuotaMonthlySick.setSysUserId(userLeave.getSysUserId());
+					userLeaveQuotaMonthlySick.setStatus(Constant.STATUS_ENABLE);
+					userLeaveQuotaMonthlySick.setCreateDate(new Date());
+					UserLeaveQuotaMonthly oldSickDataCheck = userLeaveQuotaMonthlyDAO.getOneByYearAndMonth(
+							userLeaveQuotaMonthlySick.getDateOfYear(),
+							userLeaveQuotaMonthlySick.getDateOfMonth(), userLeave.getLeaveId(),
+							userLeaveQuotaMonthlySick.getSysUserId());
+					if (null == oldSickDataCheck) {
+						userLeaveQuotaMonthlyDAO.persist(userLeaveQuotaMonthlySick);
+					} else {
+						oldSickDataCheck.setMonthlySummaryQuota(userLeaveQuotaMonthlySick.getMonthlySummaryQuota());
+						oldSickDataCheck.setUpdateDate(new Date());
+						userLeaveQuotaMonthlyDAO.update(oldSickDataCheck);
+					}
+					
 					break;
 				default:
 					// 預設為，每月月初將請假時數歸零
@@ -479,19 +520,23 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.OCCUPIED_LEAVE_ID );
 		logger.info("●●●give occupied Leave List : " + giveLeaveRuleList.size());
 		LocalDate localDate = LocalDate.now();
-		List<SysUser> users = sysUserDAO.getEnableUser();
+		List<SysUser> users = new ArrayList<SysUser>();
+		users = sysUserDAO.getEnableRole2User();
+		//for test
+		// users.add(sysUserDAO.get("1198842813042872"));
+		
 		for (SysUser user : users) {
 			// 先撈出是否給過記錄
 			GiveLeaveRecord giveLeaveRecord = giveLeaveRecordDAO.getWithUserAndRule(user.getSysUserId(),giveLeaveRuleList.get(0).getRuleId(), CompanyLeave.OCCUPIED_LEAVE_ID);
 			if (null == giveLeaveRecord) {
 				// 無記錄則給該員事假額度並記錄
-				saveAndGiveSickLeave(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
-				saveSickLeaveRecord(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
+				saveAndGiveUserLeaveQuota(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
+				saveGiveLeaveRecord(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
 			} else {
 				// 有記錄則判斷是否跨年, 跨年則給該員事假額度並記錄
-				if (giveLeaveRecord.getCreateDate().toInstant().atZone(ZoneId.systemDefault()).getYear() < localDate.getYear()) {
-					saveAndGiveSickLeave(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
-					saveSickLeaveRecord(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
+				if (giveLeaveRecord.getUpdateDate().toInstant().atZone(ZoneId.systemDefault()).getYear() < localDate.getYear()) {
+					saveAndGiveUserLeaveQuota(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
+					saveGiveLeaveRecord(giveLeaveRuleList, user,CompanyLeave.OCCUPIED_LEAVE_ID);
 				}
 			}
 		}
@@ -503,26 +548,30 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.SICK_LEAVE_ID);
 		logger.info("●●●give sick Leave List : " + giveLeaveRuleList.size());
 		LocalDate localDate = LocalDate.now();
-		List<SysUser> users = sysUserDAO.getEnableUser();
+		List<SysUser> users = new ArrayList<SysUser>();
+		users = sysUserDAO.getEnableRole2User();
+		//for test
+		//users.add(sysUserDAO.get("1198842813042872"));
+		
 		for (SysUser user : users) {
 			// 先撈出是否給過記錄
 			GiveLeaveRecord giveLeaveRecord = giveLeaveRecordDAO.getWithUserAndRule(user.getSysUserId(),giveLeaveRuleList.get(0).getRuleId(), CompanyLeave.SICK_LEAVE_ID);
 			if (null == giveLeaveRecord) {
 				// 無記錄則給該員病假額度並記錄
-				saveAndGiveSickLeave(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
-				saveSickLeaveRecord(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
+				saveAndGiveUserLeaveQuota(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
+				saveGiveLeaveRecord(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
 			} else {
 				// 有記錄則判斷是否跨年, 跨年則給該員病假額度並記錄
-				if (giveLeaveRecord.getCreateDate().toInstant().atZone(ZoneId.systemDefault()).getYear() < localDate.getYear()) {
-					saveAndGiveSickLeave(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
-					saveSickLeaveRecord(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
+				if (giveLeaveRecord.getUpdateDate().toInstant().atZone(ZoneId.systemDefault()).getYear() < localDate.getYear()) {
+					saveAndGiveUserLeaveQuota(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
+					saveGiveLeaveRecord(giveLeaveRuleList, user,CompanyLeave.SICK_LEAVE_ID);
 				}
 			}
 		}
 	}
 	
 	@Transactional
-	private void saveAndGiveSickLeave(List<GiveLeaveRule> giveLeaveRuleList, SysUser user,long leaveId) throws Exception {
+	private void saveAndGiveUserLeaveQuota(List<GiveLeaveRule> giveLeaveRuleList, SysUser user,long leaveId) throws Exception {
 		UserLeave userLeave = userLeaveDAO.getOneBy2Id(user.getSysUserId(), leaveId);
 		if (userLeave==null) {
 			userLeave = new UserLeave();
@@ -559,17 +608,26 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 	}
 	
 	@Transactional
-	private void saveSickLeaveRecord(List<GiveLeaveRule> giveLeaveRuleList, SysUser user ,long leaveId) throws Exception {
-		GiveLeaveRecord giveLeaveRecord;
-		giveLeaveRecord = new GiveLeaveRecord();
-		giveLeaveRecord.setSysUserId(user.getSysUserId());
-		giveLeaveRecord.setRuleId(giveLeaveRuleList.get(0).getRuleId());
-		giveLeaveRecord.setLeaveId(giveLeaveRuleList.get(0).getLeaveId());
-		giveLeaveRecord.setQuota(giveLeaveRuleList.get(0).getQuota());
-		giveLeaveRecord.setDescription("在UserLeave上的休假數以小時計算。");
-		giveLeaveRecord.setStatus(Constant.STATUS_ENABLE);
-		giveLeaveRecord.setCreateDate(new Date());
-		giveLeaveRecordDAO.persist(giveLeaveRecord);
-		logRecordByLeaveId(user, leaveId);
+	private void saveGiveLeaveRecord(List<GiveLeaveRule> giveLeaveRuleList, SysUser user ,long leaveId) throws Exception {
+		
+		GiveLeaveRecord giveLeaveRecord = giveLeaveRecordDAO.getWithUserAndRule(user.getSysUserId(),giveLeaveRuleList.get(0).getRuleId(), leaveId);
+		if(giveLeaveRecord == null){
+			giveLeaveRecord.setSysUserId(user.getSysUserId());
+			giveLeaveRecord.setRuleId(giveLeaveRuleList.get(0).getRuleId());
+			giveLeaveRecord.setLeaveId(giveLeaveRuleList.get(0).getLeaveId());
+			giveLeaveRecord.setQuota(giveLeaveRuleList.get(0).getQuota());
+			giveLeaveRecord.setDescription("在UserLeave上的休假數以小時計算。");
+			giveLeaveRecord.setStatus(Constant.STATUS_ENABLE);
+			giveLeaveRecord.setCreateDate(new Date());
+			giveLeaveRecord.setUpdateDate(new Date());
+			giveLeaveRecordDAO.persist(giveLeaveRecord);
+			logRecordByLeaveId(user, leaveId);
+		}else {
+			giveLeaveRecord.setQuota(giveLeaveRuleList.get(0).getQuota());
+			giveLeaveRecord.setUpdateDate(new Date());
+			giveLeaveRecordDAO.update(giveLeaveRecord);
+			logByLeaveId(user, leaveId);
+		}
+		
 	}
 }

@@ -1,9 +1,12 @@
 package com.cqi.hr.entity;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -19,6 +22,7 @@ public class PunchRecords implements java.io.Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id", unique = true, nullable = false)
 	private String id;
 	
@@ -42,6 +46,16 @@ public class PunchRecords implements java.io.Serializable{
 	
 	@Column(name = "status", length = 1)
 	private String status;
+
+	public PunchRecords(String cardID, Date time,Date createDate, Date modifyDate, String status) {
+		this.cardId = cardID;
+		this.time = time;
+		this.createDate = createDate;
+		this.modifyDate = modifyDate;
+		this.status = status;
+	}
+
+	
 
 	public String getId() {
 		return id;

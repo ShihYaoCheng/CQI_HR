@@ -37,10 +37,10 @@
 						<div class="btn-group">
 							<c:if test="${sessionScope.__session_info.logInInfo.roleId == 2}">
 								<button type="button" class="btn btn-primary btn-lg " id="gotoLeave" data-loading-text="前往請假資料中" onclick="goToLeave()">前往請假資料</button>
-								<button type="button" class="btn btn-primary btn-lg " id="gotoOvertime" data-loading-text="前往調班資料中" onclick="goToOvertime()">前往調班資料</button>
 							</c:if>
 							<c:if test="${sessionScope.__session_info.logInInfo.roleId == 1}">
-								<button type="button" class="btn btn-primary btn-lg " id="gotoMonthlySummary" data-loading-text="前往出勤月總計中" onclick="goToMonthlySummary()">前往出勤月總計</button>
+								<button type="button" class="btn btn-primary btn-lg " id="gotoDailyAttendanceRecords" data-loading-text="前往日結紀錄" onclick="goToDailyAttendanceRecords()">前往日結出勤紀錄</button>
+								<button type="button" class="btn btn-primary btn-lg " id="gotoMonthlyReport" data-loading-text="前往出勤月結表" onclick="goToMonthlyReport()">前往出勤月結表</button>
 								<button type="button" class="btn btn-primary btn-lg " id="gotoMonthlyQuota" data-loading-text="前往月結剩餘額度中" onclick="goToMonthlyQuota()">前往月結剩餘額度</button>
 							</c:if>
 							<button type="button" class="btn btn-primary btn-lg " id="gotoCheckIn" data-loading-text="前往打卡紀錄" onclick="goToCheckIn()">前往打卡紀錄</button>
@@ -67,7 +67,14 @@
 			$('#gotoOvertime').button('loading');
 			location.href="<c:url value='/security/askOvertime'/>";
 		}
-		
+		function goToDailyAttendanceRecords(){
+			$('#gotoDailyAttendanceRecords').button('loading');
+			location.href="<c:url value='/security/DailyAttendanceRecords/manager'/>";
+		}
+		function goToMonthlyReport(){
+			$('#gotoMonthlyReport').button('loading');
+			location.href="<c:url value='/security/MonthlyReport/manager'/>";
+		}
 		function goToMonthlySummary(){
 			$('#gotoMonthlySummary').button('loading');
 			location.href="<c:url value='/security/userLeaveHistory/manager'/>";

@@ -34,6 +34,7 @@ import com.asana.models.Team;
 import com.asana.models.User;
 import com.asana.models.Workspace;
 import com.cqi.hr.constant.Constant;
+import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.SysFunction;
 import com.cqi.hr.entity.SysRole;
 import com.cqi.hr.entity.SysUser;
@@ -417,6 +418,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 				model.put("todayLeave", userAskForLeaveService.getTodayLeave());
 				model.put("todayOvertime", userAskForOvertimeService.getTodayOvertime());
 				model.put("shift", sysUserShiftService.getMapThisMonth());
+				Map<String, AttendanceRecord>  a = attendanceRecordService.getMapToday();
 				model.put("attendance", attendanceRecordService.getMapToday());
 			}
 		}catch (Exception e) {

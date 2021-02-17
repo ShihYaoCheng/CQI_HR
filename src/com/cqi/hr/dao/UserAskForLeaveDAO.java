@@ -99,8 +99,8 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getMonthlyRowdata(Integer year, Integer month, String userId, Long leaveId) throws Exception{
-		Date startDayOfMonth = DateUtils.getFirstDateOfMonth(year, month);
-		Date endDayTimeOfMonth = DateUtils.getLastDateTimeOfMonth(year, month);
+		Date startDayOfMonth = DateUtils.getFirstDateByYearAndMonth(year, month);
+		Date endDayTimeOfMonth = DateUtils.getLastDateByYearAndMonth(year, month);
 
 		logger.info("startDayOfMonth : " + startDayOfMonth);
 		logger.info("endDayTimeOfMonth : " + endDayTimeOfMonth);
@@ -185,6 +185,31 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 		criteria.add(Restrictions.lt("startTime", data.getEndTime()));
 		criteria.add(Restrictions.eq("sysUserId", data.getSysUserId()));
 		return criteria.list();
+	}
+	
+	//20201223 add by sam
+	@SuppressWarnings("unchecked")
+	public UserAskForLeave getOneByUserIdAndDate (String userId, Date leaveDate) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", userId));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		
+		Calendar thisDate = Calendar.getInstance();
+		Calendar nextDate = Calendar.getInstance();
+		thisDate.setTime(leaveDate);
+		nextDate.setTime(DateUtils.nextDate(leaveDate));
+		Criterion rest1 = Restrictions.and(Restrictions.le("startTime", DateUtils.clearTime(thisDate.getTime())), 
+				Restrictions.ge("endTime", DateUtils.clearTime(nextDate.getTime())));
+		Criterion rest2 = Restrictions.or(Restrictions.between("startTime", DateUtils.clearTime(thisDate.getTime()), DateUtils.clearTime(nextDate.getTime())), 
+				Restrictions.between("endTime", DateUtils.clearTime(thisDate.getTime()), DateUtils.clearTime(nextDate.getTime())));
+		criteria.add(Restrictions.or(rest1, rest2));
+		
+		List<UserAskForLeave> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
+		
 	}
 }
 

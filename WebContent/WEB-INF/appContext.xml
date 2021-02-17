@@ -71,13 +71,26 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-		<!-- <property name="url" value="jdbc:mysql://localhost:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
-		<property name="username" value="ProjectUser"/>
-		<property name="password" value="1qaz2wsx"/> -->
-		<!-- <property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" /> -->
-		<property name="url" value="jdbc:mysql://35.221.230.161:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
-		<property name="username" value="web"/>
-		<property name="password" value="drinkTEA4000"/>
+		
+		<!-- Develop -->
+		<!-- -->
+			<property name="url" value="jdbc:mysql://127.0.0.1:3307/beta_hr?serverTimezone=GMT%2B8" /> 
+		
+		<!-- 
+			<property name="url" value="jdbc:mysql://localhost:3306/beta_hr?serverTimezone=GMT%2B8" /> 
+			<property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" /> 
+			<property name="username" value="web"/> 
+			<property name="password" value="drinkTEA4000"/> 
+		-->
+		
+		<!-- Product -->
+		<!--
+			<property name="url" value="jdbc:mysql://127.0.0.1:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
+		   -->
+			<property name="username" value="root"/> 
+			<property name="password" value="cqig7777"/>
+		 
+		
 		<property name="testOnBorrow" value="true" />
 		<property name="validationQuery" value="SELECT 'Y'" />
 		<property name="initialSize" value="5" />
@@ -95,6 +108,7 @@
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="current_session_context_class">thread</prop>
+				<prop key="hibernate.autoReconnect">true</prop>
 			</props>
 		</property>
 	</bean>

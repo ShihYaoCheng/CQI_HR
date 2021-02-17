@@ -80,8 +80,8 @@
 		<!-- <property name="url" value="jdbc:mysql://localhost:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
 		<property name="username" value="ProjectUser"/>
 		<property name="password" value="1qaz2wsx"/> -->
-		<property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" />
-		<!-- <property name="url" value="jdbc:mysql://35.221.230.161:3306/cqi_hr_manager?serverTimezone=GMT%2B8" /> -->
+		<!-- <property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" /> -->
+		<property name="url" value="jdbc:mysql://35.221.230.161:3306/cqi_hr_manager?serverTimezone=GMT%2B8" /> 
 		<property name="username" value="web"/>
 		<property name="password" value="drinkTEA4000"/>
 		<property name="testOnBorrow" value="true" />

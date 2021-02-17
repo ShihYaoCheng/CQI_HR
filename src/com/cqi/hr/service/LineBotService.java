@@ -240,7 +240,7 @@ public class LineBotService extends AbstractService<LineUser>{
 		Calendar calendar = Calendar.getInstance();
 		//calendar.add(Calendar.MONTH, -1);
 		List<EmergenceOvertimeSign> dataList = emergenceOvertimeSignDAO.findByDate(
-				DateUtils.getFirstDateOfMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)), DateUtils.getFirstDateOfMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1));
+				DateUtils.getFirstDateByYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)), DateUtils.getFirstDateByYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1));
 		if(dataList.size()>0) {
 			//buildListVo(Constant.LINE_EMERGENCE_LEVEL_DEPARTMENT);
 			buildListVo(Constant.LINE_EMERGENCE_LEVEL_FINANCE, null);

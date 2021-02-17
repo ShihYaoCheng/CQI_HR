@@ -36,7 +36,7 @@ public class MonthlyLeaveJob extends BasicJob {
 			if(!webConfigBean.getExecute()){
 				//lock this thread
 				webConfigBean.setExecute(true);
-				userAskForLeaveService.getMonthlySummary();
+				userAskForLeaveService.getLastMonthlySummary();
 				userLeaveService.monthlyLeaveDataUpdate();
 				//job done, unlock
 				webConfigBean.setExecute(false);

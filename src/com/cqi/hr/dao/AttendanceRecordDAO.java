@@ -24,7 +24,7 @@ public class AttendanceRecordDAO extends AbstractDAO<AttendanceRecord> {
 		criteria.add(Restrictions.eq("sysUserId", userId));
 		criteria.add(Restrictions.eq("attendanceDate", attendanceDate));
 		List<AttendanceRecord> list = criteria.list();
-		if(list.size()==1) {
+		if(list.size()>=1) {
 			return list.get(0);
 		}
 		return null;

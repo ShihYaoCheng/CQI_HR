@@ -96,6 +96,8 @@ public class SysUserShiftService extends AbstractService<SysUserShift>{
 		return (Map<String, SysUserShift>) getDAO().queryToMap("sysUserId", criteria);
 	}
 	
+	
+	
 	public void checkThisMonthShift() throws Exception {
 		SysUser criteria = new SysUser();
 		criteria.setRoleId("2");
@@ -151,5 +153,35 @@ public class SysUserShiftService extends AbstractService<SysUserShift>{
 				logger.info("這個月有資料");
 			}
 		}
+	}
+	
+	//add by sam 20201222
+	@SuppressWarnings("unchecked")
+	public Map<String, SysUserShift> getMapLastMonth() throws Exception{
+		Map<String, Object> criteria = new HashMap<String, Object>();
+		criteria.put("enableMonth", DateUtils.getFirstDateOfLastMonth());
+		return (Map<String, SysUserShift>) getDAO().queryToMap("sysUserId", criteria);
+	}
+	
+	//add by sam 20210201
+	@SuppressWarnings({ "unchecked", "deprecation" })
+	public Map<String, SysUserShift> getMapByDate(Date date) throws Exception{
+		Map<String, Object> criteria = new HashMap<String, Object>();
+		Date enableDate = DateUtils.clearTime(date);
+		enableDate.setDate(1);
+		criteria.put("enableMonth", enableDate);
+		return (Map<String, SysUserShift>) getDAO().queryToMap("sysUserId", criteria);
+		
+	}
+	
+	
+
+	//add by sam 20201225
+	@SuppressWarnings("unchecked")
+	public Map<String, SysUserShift> getMapByYearAndMonth(Integer year, Integer month) throws Exception{
+		Map<String, Object> criteria = new HashMap<String, Object>();
+		Date enableDate = DateUtils.getFirstDateByYearAndMonth(year, month-1);
+		criteria.put("enableMonth", enableDate);
+		return (Map<String, SysUserShift>) getDAO().queryToMap("sysUserId", criteria);
 	}
 }

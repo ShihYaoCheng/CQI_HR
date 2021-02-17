@@ -7,19 +7,24 @@ import javax.annotation.Resource;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.cqi.hr.service.DailyAttendanceRecordService;
+import com.cqi.hr.service.MonthlyReportService;
+import com.cqi.hr.service.UserAskForLeaveService;
 import com.cqi.hr.service.UserLeaveService;
 import com.cqi.hr.util.DateUtils;
 
 
-/** 特休新增 **/
-public class AnnualLeaveJob extends BasicJob {
+/** 月結報表 每月4號用每日出勤紀錄計算前個月報表**/
+public class MonthlyReportJob extends BasicJob {
 	@Resource
-	private UserLeaveService userLeaveService;
-
-	public void setUserLeaveService(UserLeaveService userLeaveService) {
-		this.userLeaveService = userLeaveService;
+	private MonthlyReportService monthlyReportService;
+	
+	
+	public void setMonthlyReportService(MonthlyReportService monthlyReportService) {
+		this.monthlyReportService = monthlyReportService;
 	}
 
+	
 	@Override
 	protected void executeInternal(JobExecutionContext arg0)throws JobExecutionException {
 		logger.info(JOB_NAME + " start.");
@@ -29,14 +34,7 @@ public class AnnualLeaveJob extends BasicJob {
 			if(!webConfigBean.getExecute()){
 				//lock this thread
 				webConfigBean.setExecute(true);
-				//特休假給予
-				userLeaveService.annualLeaveGive();
-				//病假給予
-				userLeaveService.sickLeaveGive();
-				//事假給予
-				userLeaveService.occupiedLeaveGive();
-				//新增女性的生理假資料
-				userLeaveService.menstruationLeaveGive();
+				monthlyReportService.calculateLastMonthReport();
 				//job done, unlock
 				webConfigBean.setExecute(false);
 			}

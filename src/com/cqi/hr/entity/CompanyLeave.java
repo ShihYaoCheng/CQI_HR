@@ -44,6 +44,7 @@ public class CompanyLeave implements Serializable {
 	private String leaveName;
 	private Integer type;
 	private Integer unitType;
+	private double calculateBase;
 	private Integer status;
 	private String description;
 	private Date createDate;
@@ -114,6 +115,15 @@ public class CompanyLeave implements Serializable {
 		this.unitType = unitType;
 	}
 
+	@Column(name = "calculate_base")
+	public Double getCalculateBase() {
+		return calculateBase;
+	}
+
+	public void setCalculateBase(Double calculateBase) {
+		this.calculateBase = calculateBase;
+	}
+	
 	@Column(name = "status")
 	public Integer getStatus() {
 		return status;

@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +33,7 @@ import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.entity.UserLeaveHistory;
 import com.cqi.hr.util.StringUtils;
+import com.cqi.hr.util.DateUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -154,11 +154,15 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 	 * @throws Exception
 	 */
 	@Transactional
-	public void getMonthlySummary() throws Exception {
+	public void getLastMonthlySummary() throws Exception {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -1);
-		List<SysUser> userList = sysUserDAO.getEnableUserOrGraduationInMonth(calendar.getTime());
-		//List<CompanyLeave> leaveList = companyLeaveDAO.getListByType(CompanyLeave.TYPE_LEAVE);
+		List<SysUser> userList = new ArrayList<SysUser>();
+		userList = sysUserDAO.getEnableUserOrGraduationInMonth(calendar.getTime());
+		
+		//for test 
+		//userList.add(sysUserDAO.get("1198842813042872"));
+		
 		for(SysUser sysUser:userList) {
 			List<Object[]> userAskForLeaveList = userAskForLeaveDAO.getMonthlyRowdata(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), sysUser.getSysUserId(), null);
 			logger.info("sysUser : " + sysUser.getUserName() + ", size : " + userAskForLeaveList.size());
@@ -341,7 +345,8 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 	
 	@Transactional
 	public String checkRule(UserAskForLeave data) {
-		//確認是否為上個月以前不可請的時間
+		//確認是否為上個月以前不可請的時間  
+		/*
 		Calendar today = Calendar.getInstance();
 		Calendar dataStartTime = Calendar.getInstance();
 		dataStartTime.setTime(data.getStartTime());
@@ -350,6 +355,21 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 				return Constant.LAST_MONTH_CLOSE;
 			}
 		}
+		*/ //modify by sam 20201229 ask for leave next year
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 3);
+		
+		Date todayDate = new Date(),leaveDate = data.getStartTime() ;
+		Date thirdDateOfThisMonth = cal.getTime();
+		if(leaveDate.before(DateUtils.getFirstDateOfLastMonth())) {
+			return Constant.LAST_MONTH_CLOSE;
+		}else if (leaveDate.before(DateUtils.getFirstDateOfThisMonth())) {
+			if(todayDate.after(thirdDateOfThisMonth)) {
+				return Constant.LAST_MONTH_CLOSE;
+			}
+		}
+		
+		
 		//確認時間有無重疊
 		List<UserAskForLeave> dataList = userAskForLeaveDAO.checkTimeOverCross(data);
 		if(dataList.size()>0) {

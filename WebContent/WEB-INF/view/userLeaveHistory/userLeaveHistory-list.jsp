@@ -15,9 +15,9 @@
 			<!--/span-->
 			<div class="col-xs-12 col-md-9 single_table">
 				<form class="navbar-form">
-					<h3><b>出勤月總計</b></h3>
+					<h3><b>月結請假紀錄</b></h3>
 					<br/>
-					<div><h4>*每個月一號會結算前一個月的請假時數總和，將其記錄下來</h4></div>
+					<div><h4>*每個月四號會結算前一個月的請假時數總和，將其記錄下來</h4></div>
 					<br/>
 					<div class="form-group" style="display: inline;">
 						<div class="input-group">

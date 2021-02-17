@@ -1,5 +1,6 @@
 package com.cqi.hr.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.cqi.hr.constant.Constant;
+import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.UserOvertime;
 
@@ -36,6 +38,7 @@ public class UserOvertimeDAO extends AbstractDAO<UserOvertime> {
 		}
 		return null;
 	}
+	
 	
 }
 
