@@ -15,10 +15,12 @@
 			<!--/span-->
 			<div class="col-xs-12 col-md-9 single_table">
 				<form class="navbar-form">
-					<h3><b>月結剩餘額度</b></h3>
+					<h3><b>月結請假剩餘額度</b></h3>
 					<br/>
+					<div><h4>一年有14天*8小時的事假額度，一年有30天*8小時的病假額度</h4></div>
 					<div><h4>*每個月四號會結算前一個月的剩餘額度，將其記錄下來</h4></div>
 					<br/>
+					
 					<div class="form-group" style="display: inline;">
 						<div class="input-group">
 							<select id="historyYear" name="historyYear">

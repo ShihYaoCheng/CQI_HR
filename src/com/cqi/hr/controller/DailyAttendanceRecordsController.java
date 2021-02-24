@@ -1,5 +1,6 @@
 package com.cqi.hr.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class DailyAttendanceRecordsController extends AbstractController<Monthly
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
-			if(checkUser!=null && checkUser.getRoleId().equals("1")) {
+			if(checkUser!=null ) {
 				return "/DailyAttendanceRecords/dailyAttendanceRecords";
 			}
 		} catch (Exception e) {
@@ -56,9 +57,15 @@ public class DailyAttendanceRecordsController extends AbstractController<Monthly
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
-			if(checkUser!=null && checkUser.getRoleId().equals("1")) {
+			if(checkUser!=null ) {
 				Map<String, SysUserShift> shiftMap = sysUserShiftService.getMapByYearAndMonth(year, month);
-				List<DailyAttendanceRecord> dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month, null);
+				List<DailyAttendanceRecord> dailyAttendanceRecordList = new ArrayList<DailyAttendanceRecord>();
+				if(checkUser.getRoleId().equals("1")) {
+					dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month, null);
+				}else {
+					dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month,checkUser );
+				}
+				
 				
 				model.addAttribute("userMap", sysUserService.getUserMapping());
 				model.addAttribute("shiftMap", shiftMap );

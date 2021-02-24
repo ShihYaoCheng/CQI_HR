@@ -8,8 +8,8 @@
 			<tr>
 				<th style="width:3%">年</th>
 				<th style="width:2%">月</th>
-				<th style="width:5%">樓層</th>
-				<th style="width:6%">成員</th>
+				<th style="width:4%">樓層</th>
+				<th style="width:7%">成員</th>
 				<th style="width:5%">班別</th>
 				<th style="width:4%">缺班計算基數</th>
 				<th style="width:4%">加班計算基數</th>
@@ -18,15 +18,15 @@
 				<th style="width:4%">排班</th>
 				<th style="width:4%">作業時數</th>
 				<th style="width:4%">缺席(曠職)</th>
-				<th style="width:4%">特休</th>
-				<th style="width:4%">事假</th>
-				<th style="width:4%">病假</th>
+				<th style="width:4%">特休/額度</th>
+				<th style="width:4%">事假/額度</th>
+				<th style="width:4%">病假/額度</th>
 				<th style="width:4%">生理假</th>
-				<th style="width:4%">婚假</th>
 				<th style="width:4%">公假</th>
 				<th style="width:4%">產假</th>
 				<th style="width:4%">陪產假</th>
 				<th style="width:4%">喪假</th>
+				<th style="width:4%">婚假</th>
 				<th style="width:4%">無薪假</th>
 				<th style="width:4%">防疫假</th>
 			</tr>
@@ -64,7 +64,8 @@
 									<td> <span style="color:red">${item.schedulingHours.intValue() }/40時 </span></td>
 								</c:when>
 								<c:otherwise>
-									<td>${item.schedulingHours.intValue()}/40時</td>
+									<!-- <td>${item.schedulingHours.intValue()}/40時</td> -->
+									<td>排/40時</td>
 								</c:otherwise>
 							</c:choose>
 							<!-- 作業時數 -->
@@ -121,11 +122,11 @@
 									<td>${item.l3.intValue() }天</td>
 								</c:otherwise>
 							</c:choose>
-							<td>婚假</td>
 							<td>${item.l6.intValue() }時</td>
 							<td>${item.l8.intValue() }天</td>
 							<td>${item.l9.intValue() }天</td>
 							<td>${item.l7.intValue() }天</td>
+							<td>婚假</td>
 							<td>無薪</td>
 							<td>防疫</td>
 						</tr>

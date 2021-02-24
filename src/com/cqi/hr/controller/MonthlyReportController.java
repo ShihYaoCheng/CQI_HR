@@ -1,5 +1,6 @@
 package com.cqi.hr.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class MonthlyReportController extends AbstractController<MonthlyReport> {
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
-			if(checkUser!=null && checkUser.getRoleId().equals("1")) {
+			if(checkUser!=null ) {
 				return "/MonthlyReport/monthlyReport";
 			}
 		} catch (Exception e) {
@@ -49,8 +50,14 @@ public class MonthlyReportController extends AbstractController<MonthlyReport> {
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
-			if(checkUser!=null && checkUser.getRoleId().equals("1")) {
-				List<MonthlyReport> monthlyReportList = monthlyReportService.getMonthlyReportByYearAndMonth(year, month, null);
+			if(checkUser!=null ) {
+				List<MonthlyReport> monthlyReportList = new ArrayList<MonthlyReport>();
+				if(checkUser.getRoleId().equals("1")) {
+					monthlyReportList = monthlyReportService.getMonthlyReportByYearAndMonth(year, month, null);
+				}else {
+					monthlyReportList = monthlyReportService.getMonthlyReportByYearAndMonth(year, month, checkUser);
+				}
+				
 				Map<Long, CompanyLeave> mapLeave= userLeaveService.getCompanyLeaveAllMapping();
 				model.addAttribute("userMap", sysUserService.getUserMapping());
 				model.addAttribute("mappingLeave", mapLeave);
