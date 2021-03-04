@@ -64,11 +64,14 @@ public class PunchRecordsService extends AbstractService<PunchRecords>{
 			
 		}else {
 			Date arriveTimeDate = sdfTime.parse(attendanceRecord.getArriveTime());
-			arriveTimeDate.setDate(PunchTime.getDate());
 			arriveTimeDate.setYear(PunchTime.getYear());
+			arriveTimeDate.setMonth(PunchTime.getMonth());
+			arriveTimeDate.setDate(PunchTime.getDate());
 			Date leaveTimeDate = (attendanceRecord.getLeaveTime() == null || attendanceRecord.getLeaveTime().isEmpty() ) ? arriveTimeDate : sdfTime.parse(attendanceRecord.getLeaveTime());
-			leaveTimeDate.setDate(PunchTime.getDate());
 			leaveTimeDate.setYear(PunchTime.getYear());
+			leaveTimeDate.setMonth(PunchTime.getMonth());
+			leaveTimeDate.setDate(PunchTime.getDate());
+			
 			if(PunchTime.before(arriveTimeDate)) {
 				attendanceRecord.setLeaveTime(attendanceRecord.getArriveTime());
 				attendanceRecord.setArriveTime(sdfTime.format(PunchTime));

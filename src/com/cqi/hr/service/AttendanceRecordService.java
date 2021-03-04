@@ -395,4 +395,6 @@ public class AttendanceRecordService extends AbstractService<AttendanceRecord>{
 		attendanceName.append(StringUtils.showText(attendanceRecord.getLeaveTime()));
         return attendanceName.toString();
 	}
+	
+	
 }

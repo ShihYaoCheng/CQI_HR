@@ -88,14 +88,7 @@
 										<option value="6">6</option>
 										<option value="7">7</option>
 										<option value="8">8</option>
-										<option value="9">9</option>
-										<option value="10">10</option>
-										<option value="11">11</option>
-										<option value="12">12</option>
-										<option value="13">13</option>
-										<option value="14">14</option>
-										<option value="15">15</option>
-										<option value="16">16</option>
+										
 									</select>
 						            <span id="spendTime-error" class="error_text"></span>
 					            </div>
@@ -115,14 +108,7 @@
 							<div class="form-group">
 					            <label for="recipient-name" class="control-label col-sm-12">公告結束時間：</label>
 					            <div class="col-sm-12">
-						            <div class="form-group">
-						                <div class='input-group date' id='datetimepickerEnd'>
-						                    <input id="endTime" name="endTime" class="form-control" size="16" type="text" value=""/>
-						                    <span class="input-group-addon">
-						                        <span class="glyphicon glyphicon-calendar"></span>
-						                    </span>
-						                </div>
-						            </div>
+						            <input id="endTime" name="endTime" class="form-control" size="16" type="text" value="" readonly="readonly"/>
 						            <span id="endTime-error" class="error_text"></span>
 					            </div>
 							</div>
@@ -182,7 +168,7 @@
 		            	if(e.date.getHours()<12 && setEndDate.getHours()>12){
 		            		setEndDate.setHours(setEndDate.getHours() + 1);
 		            	}
-	            	}else{
+	            	}else if($('#unitType').val()=='天'){
 	            		setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
 	            		setEndDate.setHours(19);
 	            		setEndDate.setMinutes(0);

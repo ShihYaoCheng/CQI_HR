@@ -35,6 +35,7 @@
 						<div class="input-group">
 						</div>
 						<div class="btn-group">
+							<button type="button" class="btn btn-primary btn-lg " id="gotoToday" data-loading-text="前往今日出勤狀況" onclick="goToToday()">前往今日出勤狀況</button>
 							<c:if test="${sessionScope.__session_info.logInInfo.roleId == 2}">
 								<button type="button" class="btn btn-primary btn-lg " id="gotoLeave" data-loading-text="前往請假資料中" onclick="goToLeave()">前往請假資料</button>
 							</c:if>
@@ -89,6 +90,11 @@
 			$('#gotoCheckIn').button('loading');
 			location.href="<c:url value='/security/attendanceRecord'/>";
 		}
+		function goToToday(){
+			$('#gotoToday').button('loading');
+			location.href="<c:url value='/today'/>";
+		}
+		
 	</script>
   </body>
 </html>

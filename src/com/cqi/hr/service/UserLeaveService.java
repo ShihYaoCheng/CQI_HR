@@ -612,6 +612,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		
 		GiveLeaveRecord giveLeaveRecord = giveLeaveRecordDAO.getWithUserAndRule(user.getSysUserId(),giveLeaveRuleList.get(0).getRuleId(), leaveId);
 		if(giveLeaveRecord == null){
+			giveLeaveRecord = new GiveLeaveRecord();
 			giveLeaveRecord.setSysUserId(user.getSysUserId());
 			giveLeaveRecord.setRuleId(giveLeaveRuleList.get(0).getRuleId());
 			giveLeaveRecord.setLeaveId(giveLeaveRuleList.get(0).getLeaveId());

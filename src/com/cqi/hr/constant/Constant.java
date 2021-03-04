@@ -108,13 +108,13 @@ public class Constant {
 	// Developer
 	// 需用ngrok把local8080連接到ngrok.io,並在asana app 設定Redirect URLs,此區也須跟著修改
 	// public final static String ASANA_REDIRECT_URL = "https://c6120ebc8723.ngrok.io/CQIHRManage/asanaCallback";
-	// public final static String ASANA_REDIRECT_URL = "https://c6120ebc8723.ngrok.io/hr-manage/asanaCallback";
+	 public final static String ASANA_REDIRECT_URL = "https://d0e0257a6232.ngrok.io/hr-manage/asanaCallback";
 	
 	
 	// Production
 	public final static String ASANA_CLIENT_ID = "1199599852520253";
 	public final static String ASANA_CLIENT_SECRET = "822216ac72ccc569b152ba3660e99dfb";
-	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
+	// public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
 	
 	
 	

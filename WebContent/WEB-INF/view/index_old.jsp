@@ -14,7 +14,7 @@
 				<!--/span-->
 				<div class="col-xs-12 col-md-9 single_table">
 					<h3><b>HR Manage</b></h3>
-					<h4>版本:2021.2.20</h4>
+					<h4>版本:2021.3.4</h4>
 					<hr style="margin-top:0px;">				
 					<div id="dataContent">
 						<div id="edit">

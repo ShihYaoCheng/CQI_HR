@@ -76,7 +76,7 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		userList = sysUserDAO.getEnableRole2UserOrGraduationInMonth(calendar.getTime());
 		
 		// only for test
-		//date = sdfDate.parse("2021-02-05");
+		//date = sdfDate.parse("2021-02-26");
 		//userList.add(sysUserDAO.get("1147593956675609"));
 		
 		
