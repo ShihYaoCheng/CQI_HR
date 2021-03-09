@@ -36,6 +36,8 @@ public class MonthlyReportController extends AbstractController<MonthlyReport> {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			if(checkUser!=null ) {
+				model.addAttribute("operator",operator);
+				model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
 				return "/MonthlyReport/monthlyReport";
 			}
 		} catch (Exception e) {
@@ -45,16 +47,19 @@ public class MonthlyReportController extends AbstractController<MonthlyReport> {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="manager/ajaxDataLoading")
-	public String managerAjaxDataLoading(HttpServletRequest req, Integer year, Integer month, ModelMap model) {
+	public String managerAjaxDataLoading(HttpServletRequest req, Integer year, Integer month, ModelMap model, String searchSysUserId) {
 		logger.info(FUNCTION_NAME + " managerAjaxDataLoading");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			if(checkUser!=null ) {
 				List<MonthlyReport> monthlyReportList = new ArrayList<MonthlyReport>();
-				if(checkUser.getRoleId().equals("1")) {
+				if(checkUser.getRoleId().equals("1") && searchSysUserId.equals("ALL")) {
 					monthlyReportList = monthlyReportService.getMonthlyReportByYearAndMonth(year, month, null);
-				}else {
+				}else if (checkUser.getRoleId().equals("1")) {
+					SysUser searchSysUser = sysUserService.get(searchSysUserId);
+					monthlyReportList = monthlyReportService.getMonthlyReportByYearAndMonth(year, month, searchSysUser);
+				}else{
 					monthlyReportList = monthlyReportService.getMonthlyReportByYearAndMonth(year, month, checkUser);
 				}
 				

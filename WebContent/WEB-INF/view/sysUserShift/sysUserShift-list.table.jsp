@@ -7,6 +7,7 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
+				<td width="20%">成員</td>
 				<td width="20%">班別</td>
 				<td width="20%">排班月份</td>
 				<td width="20%">修改</td>
@@ -20,6 +21,7 @@
 			</c:if>
 			<c:forEach var="item" items="${dataList}" varStatus="vs">
 				<tr >
+					<td>${mapEnableRule2User.get(item.sysUserId).originalName}</td>
 					<td>
 						${item.boardTime} ~ ${item.finishTime}
 					</td>

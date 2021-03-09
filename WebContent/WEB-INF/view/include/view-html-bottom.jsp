@@ -11,8 +11,8 @@
 <script src="<c:url value='/resources/js/earlyplan.js?version=2'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/js/md5.min.js'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/plugin-js/moment.js'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/plugin-js/bootstrap/js/transition.js'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/plugin-js/bootstrap/js/collapse.js'/>" type="text/javascript"></script>
+<!-- <script src="<c:url value='/resources/plugin-js/bootstrap/js/transition.js'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/plugin-js/bootstrap/js/collapse.js'/>" type="text/javascript"></script> -->		
 <script src="<c:url value='/resources/plugin-js/bootstrap-datetimepicker.min.js'/>" type="text/javascript"></script>
 
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true">

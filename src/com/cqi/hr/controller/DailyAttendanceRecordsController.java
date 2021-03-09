@@ -43,6 +43,8 @@ public class DailyAttendanceRecordsController extends AbstractController<Monthly
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			if(checkUser!=null ) {
+				model.addAttribute("operator",operator);
+				model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
 				return "/DailyAttendanceRecords/dailyAttendanceRecords";
 			}
 		} catch (Exception e) {
@@ -52,7 +54,7 @@ public class DailyAttendanceRecordsController extends AbstractController<Monthly
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="manager/ajaxDataLoading")
-	public String managerAjaxDataLoading(HttpServletRequest req, Integer year, Integer month, ModelMap model) {
+	public String managerAjaxDataLoading(HttpServletRequest req, Integer year, Integer month, String searchSysUserId, ModelMap model) {
 		logger.info(FUNCTION_NAME + " managerAjaxDataLoading");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
@@ -60,12 +62,14 @@ public class DailyAttendanceRecordsController extends AbstractController<Monthly
 			if(checkUser!=null ) {
 				Map<String, SysUserShift> shiftMap = sysUserShiftService.getMapByYearAndMonth(year, month);
 				List<DailyAttendanceRecord> dailyAttendanceRecordList = new ArrayList<DailyAttendanceRecord>();
-				if(checkUser.getRoleId().equals("1")) {
+				if(checkUser.getRoleId().equals("1") && searchSysUserId.equals("ALL")) {
 					dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month, null);
+				}else if (checkUser.getRoleId().equals("1")) {
+					SysUser searchSysUser = sysUserService.get(searchSysUserId);
+					dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month, searchSysUser);
 				}else {
-					dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month,checkUser );
+					dailyAttendanceRecordList = dailyAttendanceRecordService.getDailyAttendanceRecordsByYearAndMonth(year, month, checkUser );
 				}
-				
 				
 				model.addAttribute("userMap", sysUserService.getUserMapping());
 				model.addAttribute("shiftMap", shiftMap );

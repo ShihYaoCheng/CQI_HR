@@ -78,7 +78,7 @@
 					            </label>
 					            <div class="col-sm-12">
 						            <!-- <input type="text" class="form-control" id="spendTime" name="spendTime"/> -->
-						            <select class="form-control" id="spendTime" name="spendTime">
+						            <select class="form-control" id="spendTime" name="spendTime" >
 						            	<option value="">請選擇</option>
 										<option value="1">1</option>
 										<option value="2">2</option>
@@ -154,32 +154,34 @@
 				autoclose: true,
 				minuteStep:30,
 				focusOnShow: false,
-		        allowInputToggle: true
+		        allowInputToggle: true,
+		        startDate: pickerStartDate
 			});
-			$('#datetimepickerEnd').datetimepicker("setStartDate", pickerStartDate);
 			$("#datetimepickerStart").on("changeDate", function (e) {
 	            $('#datetimepickerEnd').datetimepicker("setStartDate", e.date);
-	            if($('#spendTime').val()!=''){
-	            	var setEndDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
-	            	setEndDate.setHours(e.date.getHours());
-	            	setEndDate.setMinutes(e.date.getMinutes());
-	            	if($('#unitType').val()=='小時'){
-	            		setEndDate.setHours(setEndDate.getHours() + parseInt($('#spendTime').val()));
-		            	if(e.date.getHours()<12 && setEndDate.getHours()>12){
-		            		setEndDate.setHours(setEndDate.getHours() + 1);
-		            	}
-	            	}else if($('#unitType').val()=='天'){
-	            		setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
-	            		setEndDate.setHours(19);
-	            		setEndDate.setMinutes(0);
-		            }
-	            	$('#endTime').val(getFormattedDate(setEndDate, "y/M/d H:m"));
-	            }
-	        });
-	        $("#datetimepickerEnd").on("changeDate", function (e) {
-	            $('#datetimepickerStart').datetimepicker("setEndDate", e.date);	            
+	            calEndDateTime(e);
+	            
 	        });
 		});
+		
+		function calEndDateTime(e){
+			if($('#spendTime').val()!='' && $('#leaveId').val()!='' && $('#startTime').val()!=''){
+				var setEndDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
+	        	setEndDate.setHours(e.date.getHours());
+	        	setEndDate.setMinutes(e.date.getMinutes());
+	        	if($('#unitType').val()=='小時'){
+	        		setEndDate.setHours(setEndDate.getHours() + parseInt($('#spendTime').val()));
+	            	if(e.date.getHours()<12 && setEndDate.getHours()>12){
+	            		setEndDate.setHours(setEndDate.getHours() + 1);
+	            	}
+	        	}else if($('#unitType').val()=='天'){
+	        		setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
+	        		setEndDate.setHours(19);
+	        		setEndDate.setMinutes(0);
+	            }
+	        	$('#endTime').val(getFormattedDate(setEndDate, "y/M/d H:m"));
+			}
+		}
 		
 		function selectedLeaveId(data){
 			$('#spendTimeStr').html(data.split("，")[1]);
@@ -322,7 +324,6 @@
 			if(progressing == 1){
 				return;
 			}
-			//$('input[name="mangaRoleTypes"]').attr("checked", false);
 			$('#datetimepickerEnd').datetimepicker("setStartDate", new Date(-8639968443048000));
 			$('#datetimepickerStart').datetimepicker("setEndDate", new Date(8639968443048000));
 			var text = "修改";

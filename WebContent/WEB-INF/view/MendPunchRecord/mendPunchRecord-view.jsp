@@ -119,7 +119,8 @@
 				minuteStep:30,
 		        focusOnShow: false,
 		        allowInputToggle: true,
-		        startDate: pickerStartDate
+		        startDate: pickerStartDate,
+		        endDate: new Date()
 			});
 		});
 		
@@ -260,7 +261,7 @@
 			if(progressing == 1){
 				return;
 			}
-			$('#datetimepickerMend').datetimepicker("setEndDate", new Date(8639968443048000));
+			
 			var text = "新增";
 			$('#mendId').val("");
 			$('#sysUserId').val("");

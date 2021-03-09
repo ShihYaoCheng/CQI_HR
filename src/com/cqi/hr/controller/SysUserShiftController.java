@@ -35,11 +35,13 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 	public String index(HttpServletRequest req, ModelMap model) {
 		logger.info(FUNCTION_NAME + " list");
 		try {
+			model.addAttribute("userList", sysUserService.getUserList());
 		} catch (Exception e) {
 			logger.error(FUNCTION_NAME + "index error:", e);
 		}
 		return "/sysUserShift/sysUserShift-list";
 	}
+	
 	
 	@RequestMapping(method=RequestMethod.GET, value="manager")
 	public String indexManager(HttpServletRequest req, ModelMap model) {
@@ -57,14 +59,26 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 		logger.info(FUNCTION_NAME + " ajaxDataLoading");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
-			PagingList<SysUserShift> shiftList = sysUserShiftService.getList(page, operator);
+			SysUser checkUser = sysUserService.get(operator.getSysUserId());
+			PagingList<SysUserShift> shiftList = new PagingList<SysUserShift>();
+			if(checkUser!=null ) {
+				if(checkUser.getRoleId().equals("1")) {
+					shiftList = sysUserShiftService.getList(page, null);
+				}else {
+					shiftList = sysUserShiftService.getList(page, checkUser);
+				}
+			}
+			
 			createPagingInfo(model, shiftList);
+			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
+			return "/sysUserShift/sysUserShift-list.table";
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}
-		return "/sysUserShift/sysUserShift-list.table";
+		return "redirect:/logout";
 	}
 	
+	/*
 	@RequestMapping(method=RequestMethod.POST, value="manager/ajaxDataLoading")
 	public String ajaxManagerDataLoading(HttpServletRequest req, Long queryUserId, Integer page, ModelMap model) {
 		logger.info(FUNCTION_NAME + " ajaxDataLoading");
@@ -82,6 +96,7 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 		}
 		return "/sysUserShift/manager/sysUserShift-list.table";
 	}
+	*/
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{shiftId}")
 	public void ajaxQuery(HttpServletRequest req, HttpServletResponse resp, @PathVariable Long shiftId){

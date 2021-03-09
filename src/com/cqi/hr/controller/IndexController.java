@@ -243,7 +243,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 			if (!req.getParameter("state").isEmpty()) {
 				String token = app.fetchToken(req.getParameter("code"));
 				String refreshToken = app.credential.getRefreshToken();
-				logger.info("token : " + token + ", refreshToken : " + refreshToken);
+				//logger.info("token : " + token + ", refreshToken : " + refreshToken);
 				app = new OAuthApp(Constant.ASANA_CLIENT_ID,
 						Constant.ASANA_CLIENT_SECRET,
 						Constant.ASANA_REDIRECT_URL,
@@ -259,26 +259,30 @@ public class IndexController extends AbstractController<CreateInfo> {
 		        // find your "Personal Projects" project
 		        Workspace personalWorkspace = null;
 		        for (Workspace workspace : client.workspaces.findAll()) {
-//		        	logger.info("workspace : " + workspace);
-//		        	logger.info("workspace.id : " + workspace.gid);
-//		        	logger.info("workspace.name : " + workspace.name);
+		        	//logger.info("workspace : " + workspace);
+		        	//logger.info("workspace.id : " + workspace.gid);
+		        	//logger.info("workspace.name : " + workspace.name);
 		            if (workspace.name.equals("formoga.com")) {
 		            	personalWorkspace = workspace;
+		            	//logger.info("personalWorkspace=" + personalWorkspace.gid);
 		                break;
 		            }
 		        }
+		        
 		        // 排除非formoga的人
 		        if(personalWorkspace!=null && personalWorkspace.gid.equals("102086551088779")) {
+		        	//logger.info("is formoga" );
 		        	// find Team
 			        Team defaultTeam = null;
 			        List<Team> teams = client.teams.findByOrganization(personalWorkspace.gid).execute();
-//			        logger.info("teams : " + teams.size());
+			        //logger.info("teams : " + teams.size());
 			        for(Team team:teams) {
-//			        	logger.info("team.id : " + team.gid);
-//			        	logger.info("team.name : " + team.name);
+			        	//logger.info("team.id : " + team.gid);
+			        	//logger.info("team.name : " + team.name);
 			        	if(me.name.indexOf("Wendell Chuang")>=0) {
 			        		if (team.name.equals("CQI Services")) {
 			        			defaultTeam = team;
+			        			//logger.info("defaultTeam=" + defaultTeam.name);
 				                break;
 				            }
 			        	}
@@ -292,13 +296,16 @@ public class IndexController extends AbstractController<CreateInfo> {
 			        }
 			        Project demoProject = null;
 			        for (Project project : projects) {
-//			        	logger.info("project.id : " + project.gid);
-//			        	logger.info("project.name : " + project.name);
-			        	if (project.name.indexOf("通知(請假)")>=0) {
+			        	//logger.info("project.id : " + project.gid);
+			        	//logger.info("project.name : " + project.name);
+			        	if (project.name.indexOf("通知(請假)")>=0 || project.name.indexOf("請假")>=0) {
 			                demoProject = project;
+			                //logger.info("demoProject=" + demoProject.name);
 			                break;
 			            }
 			        }
+			        
+			        //logger.info("create SysUser " );
 			        SysUser sysUser = new SysUser();
 			        sysUser.setSysUserId(me.gid);
 			        sysUser.setUserName(me.name);
@@ -323,7 +330,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 			        SessionUtils.setAsanaToken(req, token, refreshToken, req.getParameter("code"));
 					
 					//setup menu
-				
+			        logger.info("setup menu" );
 					Map<String, Map<String, List<SysFunction>>>  menu = new HashMap<String, Map<String, List<SysFunction>>>();
 					SysRole sr =  sysFunctionService.getUserMenu(loginedUser.getRoleId());
 					if(null!=sr){

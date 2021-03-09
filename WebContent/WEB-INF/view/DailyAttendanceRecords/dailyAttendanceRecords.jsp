@@ -39,6 +39,20 @@
 								<option value="11">11</option>
 								<option value="12">12</option>
 							</select>月
+							成員： 
+							<select id="sysUserId" name="sysUserId" onchange="">
+								<c:choose>
+									<c:when test="${operator.roleId == '1'}">
+										<option value="ALL">ALL</option>
+									        <c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
+												<option value="${item['key']}">${item['value'].originalName}</option>
+											</c:forEach>
+									</c:when>  
+									<c:otherwise>
+								        <option value="${operator.sysUserId}">${operator.originalName}</option>
+								    </c:otherwise>
+								</c:choose>
+							</select>
 						</div>
 						<br/>
 						<div class="btn-group">
@@ -69,7 +83,8 @@
 				url : "<c:url value='/security/DailyAttendanceRecords/manager/ajaxDataLoading'/>",
 				data : {
 					year:$('#historyYear').val(),
-					month:$('#historyMonth').val()
+					month:$('#historyMonth').val(),
+					searchSysUserId:$('#sysUserId').val()
 				},
 				success : function(data) {
 					$("body").css("cursor", "auto");

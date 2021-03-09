@@ -27,7 +27,7 @@ public class SysUserShiftDAO extends AbstractDAO<SysUserShift>{
 			criteria.add(Restrictions.eq("sysUserId", sysUser.getSysUserId()));
 		}
 		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
-		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"enableMonth DESC"}));
+		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"enableMonth DESC","sysUserId"}));
 	}
 	
 	@SuppressWarnings("unchecked")

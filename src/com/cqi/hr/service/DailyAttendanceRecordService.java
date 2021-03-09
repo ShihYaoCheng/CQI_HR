@@ -76,8 +76,8 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		userList = sysUserDAO.getEnableRole2UserOrGraduationInMonth(calendar.getTime());
 		
 		// only for test
-		//date = sdfDate.parse("2021-02-26");
-		//userList.add(sysUserDAO.get("1147593956675609"));
+		//userList.add(sysUserDAO.get("1198842813042872"));
+		//date = sdfDate.parse("2021-03-08");
 		
 		
 		for(SysUser sysUser:userList) {
@@ -138,9 +138,9 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 				}
 				
 			}else {//有出勤紀錄
-				//
-				Date boardTime = sdfTime.parse(sysUserShift.getBoardTime());
-				Date finishTime = sdfTime.parse(sysUserShift.getFinishTime());
+				
+				Date boardTime = (sysUserShift == null) ? sdfTime.parse("09:00") :sdfTime.parse(sysUserShift.getBoardTime());
+				Date finishTime = (sysUserShift == null) ? sdfTime.parse("18:00") :sdfTime.parse(sysUserShift.getFinishTime());
 				Date attendanceArriveTime = sdfTime.parse(userAttendanceRecord.getArriveTime());
 				Date attendanceLeaveTime = sdfTime.parse(userAttendanceRecord.getLeaveTime());
 				
