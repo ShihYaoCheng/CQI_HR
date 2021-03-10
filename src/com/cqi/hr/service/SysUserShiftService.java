@@ -66,6 +66,7 @@ public class SysUserShiftService extends AbstractService<SysUserShift>{
 				}
 			}
 		}
+		
 		dbData.setBoardTime(sysUserShift.getBoardTime());
 		dbData.setFinishTime(sysUserShift.getFinishTime());
 		dbData.setEnableMonth(sysUserShift.getEnableMonth());

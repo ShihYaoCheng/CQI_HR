@@ -304,6 +304,9 @@ public class IndexController extends AbstractController<CreateInfo> {
 			                break;
 			            }
 			        }
+			        if (demoProject == null) {
+			        	logger.info("Error: No Default Project" );
+					}
 			        
 			        //logger.info("create SysUser " );
 			        SysUser sysUser = new SysUser();

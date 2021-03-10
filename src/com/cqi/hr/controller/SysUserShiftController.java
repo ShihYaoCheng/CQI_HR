@@ -35,14 +35,17 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 	public String index(HttpServletRequest req, ModelMap model) {
 		logger.info(FUNCTION_NAME + " list");
 		try {
-			model.addAttribute("userList", sysUserService.getUserList());
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			model.addAttribute("operator",operator);
+			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
+			
 		} catch (Exception e) {
 			logger.error(FUNCTION_NAME + "index error:", e);
 		}
 		return "/sysUserShift/sysUserShift-list";
 	}
 	
-	
+	/*
 	@RequestMapping(method=RequestMethod.GET, value="manager")
 	public String indexManager(HttpServletRequest req, ModelMap model) {
 		logger.info(FUNCTION_NAME + " indexManager");
@@ -53,6 +56,7 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 		}
 		return "/sysUserShift/manager/sysUserShift-list";
 	}
+	*/
 	
 	@RequestMapping(method=RequestMethod.POST, value="ajaxDataLoading")
 	public String ajaxDataLoading(HttpServletRequest req, String searchUserName, Integer page, ModelMap model) {
@@ -70,6 +74,7 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 			}
 			
 			createPagingInfo(model, shiftList);
+			model.addAttribute("operator",operator);
 			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
 			return "/sysUserShift/sysUserShift-list.table";
 		} catch (Exception e) {

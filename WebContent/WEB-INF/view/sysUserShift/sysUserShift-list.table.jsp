@@ -34,7 +34,7 @@
 						<fmt:formatDate var="month" value="${today}" pattern="MM" />
 						<fmt:formatDate var="dataYear" value="${item.enableMonth}" pattern="yyyy" />
 						<fmt:formatDate var="dataMonth" value="${item.enableMonth}" pattern="MM" />
-						<c:if test="${dataYear > year || (dataYear==year && dataMonth > month)}">
+						<c:if test="${dataYear > year || (dataYear==year && dataMonth > month) || (operator.roleId == '1' && dataYear==year && dataMonth == month) }">
 							<a href="#" class="btn btn-default function_icon" onclick="active('${item.shiftId}')" title="修改"> 
 								<i class="glyphicon glyphicon-pencil"></i>
 							</a>
