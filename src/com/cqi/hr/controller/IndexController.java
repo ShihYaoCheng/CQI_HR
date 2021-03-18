@@ -79,7 +79,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/")
 	public String welcome(HttpServletRequest req) {
-		logger.info("welcome");
+		//logger.info("welcome");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			if(operator!=null) {

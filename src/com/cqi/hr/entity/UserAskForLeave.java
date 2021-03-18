@@ -34,7 +34,9 @@ public class UserAskForLeave implements Serializable {
 	private String description;
 	private String asanaTaskId;
 	private Date createDate;
+	private String createBy;
 	private Date updateDate;
+	private String updateBy;
 
 	public UserAskForLeave() {
 	}
@@ -135,6 +137,15 @@ public class UserAskForLeave implements Serializable {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
+	
+	@Column(name = "create_by")
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "update_time")
@@ -146,4 +157,13 @@ public class UserAskForLeave implements Serializable {
 		this.updateDate = updateDate;
 	}
 
+	@Column(name = "update_by")
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
+	}
+	
 }

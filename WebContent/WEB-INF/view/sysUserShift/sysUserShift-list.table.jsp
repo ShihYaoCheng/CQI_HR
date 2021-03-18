@@ -3,6 +3,10 @@
 <%@include file="/WEB-INF/view/include/view-lib.jsp"%>
 
 <div class="table-responsive">
+	<c:if test="${operator.roleId == '1'}">
+		<div><h4><b>**注意**修改當月班別可能影響出勤月結**</b></h4></div>
+	</c:if>
+	<br/>
 	<div><h4><b>班別紀錄</b></h4></div>
 	<table class="table table-striped">
 		<thead>

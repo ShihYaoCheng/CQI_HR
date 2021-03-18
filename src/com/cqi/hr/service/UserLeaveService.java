@@ -220,11 +220,8 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		
 		//update dailyAttendanceRecord
 		Date date = DateUtils.clearTime(userAskForLeave.getStartTime());
-		SysUser operator = sysUserDAO.getOneBySysUserId(userAskForLeave.getSysUserId());
-		DailyAttendanceRecord oldDailyAttendanceRecord = dailyAttendanceRecordDAO.getOneByUserIdAndDate(operator.getSysUserId(), date);
-		if(oldDailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.delete(oldDailyAttendanceRecord);}
-		DailyAttendanceRecord dailyAttendanceRecord = dailyAttendanceRecordService.calculateAttendanceRecord (date ,operator);
-		if(dailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.saveOrUpdate(dailyAttendanceRecord);}
+		SysUser sysUser = sysUserDAO.getOneBySysUserId(userAskForLeave.getSysUserId());
+		dailyAttendanceRecordService.updateDailyAttendanceRecordByDateAndUser (date ,sysUser);
 		
 		return true;
 	}
@@ -261,11 +258,8 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		
 		//update dailyAttendanceRecord
 		Date date = DateUtils.clearTime(userAskForLeave.getStartTime());
-		DailyAttendanceRecord oldDailyAttendanceRecord = dailyAttendanceRecordDAO.getOneByUserIdAndDate(operator.getSysUserId(), date);
-		if(oldDailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.delete(oldDailyAttendanceRecord);}
-		DailyAttendanceRecord dailyAttendanceRecord = dailyAttendanceRecordService.calculateAttendanceRecord (date ,operator);
-		if(dailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.saveOrUpdate(dailyAttendanceRecord);}
-		
+		SysUser sysUser = sysUserDAO.getOneBySysUserId(userAskForLeave.getSysUserId());
+		dailyAttendanceRecordService.updateDailyAttendanceRecordByDateAndUser (date ,sysUser);
 		return true;
 	}
 

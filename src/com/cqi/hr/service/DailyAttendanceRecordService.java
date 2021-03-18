@@ -221,5 +221,15 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		System.out.println(sysUser.getSysUserId()+": " + date+ " attendHours:"+attendHours+" absenceHours:"+absenceHours+" overtimeHours:"+overtimeHours+" leaveHours:"+leaveHours);
 		return new DailyAttendanceRecord(sysUser.getSysUserId(), date, (userAttendanceRecord != null && userAttendanceRecord.getArriveTime() != null) ? userAttendanceRecord.getArriveTime() : "", (userAttendanceRecord != null && userAttendanceRecord.getLeaveTime() != null) ? userAttendanceRecord.getLeaveTime() : ""
 			, attendHours, overtimeHours, leaveHours,  absenceHours);
+	}
+
+	@Transactional
+	public void updateDailyAttendanceRecordByDateAndUser(Date date, SysUser sysUser) throws Exception {
+		DailyAttendanceRecord oldDailyAttendanceRecord = dailyAttendanceRecordDAO.getOneByUserIdAndDate(sysUser.getSysUserId(), date);
+		if(oldDailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.delete(oldDailyAttendanceRecord);}
+		DailyAttendanceRecord dailyAttendanceRecord = calculateAttendanceRecord (date ,sysUser);
+		if(dailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.saveOrUpdate(dailyAttendanceRecord);}
+		
+		
 	} 
 }
