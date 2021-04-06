@@ -77,7 +77,7 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		
 		// only for test
 		//userList.add(sysUserDAO.get("1198842813042872"));
-		//date = sdfDate.parse("2021-03-08");
+		//date = sdfDate.parse("2021-04-02");
 		
 		
 		for(SysUser sysUser:userList) {
@@ -85,7 +85,9 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 			
 			DailyAttendanceRecord oldDailyAttendanceRecord = dailyAttendanceRecordDAO.getOneByUserIdAndDate(sysUser.getSysUserId(), date);
 			if(oldDailyAttendanceRecord != null ) {dailyAttendanceRecordDAO.delete(oldDailyAttendanceRecord);}
-			dailyAttendanceRecordsList.add( calculateAttendanceRecord(date, sysUser ));
+			DailyAttendanceRecord newDailyAttendanceRecord = calculateAttendanceRecord(date, sysUser );
+			if(newDailyAttendanceRecord != null) { dailyAttendanceRecordsList.add( newDailyAttendanceRecord) ;}
+			
 		} //end for
 		
 		//save to db

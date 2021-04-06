@@ -12,10 +12,10 @@
 				<th style="width:7%">成員</th>
 				<th style="width:5%">班別</th>
 				<th style="width:4%">缺班計算基數</th>
-				<th style="width:4%">加班計算基數</th>
-				<th style="width:4%">勤務計算基數</th>
-				<th style="width:4%">加班</th>
-				<th style="width:4%">排班</th>
+				<th style="width:4%"><span style="color:lightgray">加班計算基數</span></th>
+				<th style="width:4%"><span style="color:lightgray">勤務計算基數</span></th>
+				<th style="width:4%"><span style="color:lightgray">加班</span></th>
+				<th style="width:4%"><span style="color:lightgray">排班</span></th>
 				<th style="width:4%">作業時數</th>
 				<th style="width:4%">缺席(曠職)</th>
 				<th style="width:4%">特休/額度</th>
@@ -26,9 +26,9 @@
 				<th style="width:4%">產假</th>
 				<th style="width:4%">陪產假</th>
 				<th style="width:4%">喪假</th>
-				<th style="width:4%">婚假</th>
-				<th style="width:4%">無薪假</th>
-				<th style="width:4%">防疫假</th>
+				<th style="width:4%"><span style="color:lightgray">婚假</span></th>
+				<th style="width:4%"><span style="color:lightgray">無薪假</span></th>
+				<th style="width:4%"><span style="color:lightgray">防疫假</span></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -47,88 +47,159 @@
 							<td>${item.originalName }</td>
 							<td>${item.userShift }</td>
 							<td>${item.absentBase }</td>
-							<td>加班</td>
-							<td>勤務</td>
+							<td><span style="color:lightgray">加班 </span></td>
+							<td><span style="color:lightgray">勤務 </span></td>
 							<!-- 加班 -->
-							<c:choose>
-								<c:when test="${item.o1.intValue()+item.o2.intValue() +item.o3.intValue() +item.o4.intValue() > 46 }">
-									<td> <span style="color:red">${item.o1.intValue()+item.o2.intValue() +item.o3.intValue() +item.o4.intValue() }/46時 </span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.o1.intValue()+item.o2.intValue() +item.o3.intValue() +item.o4.intValue() }/46時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.o1.intValue()+item.o2.intValue() +item.o3.intValue() +item.o4.intValue() > 46 }">
+										<span style="color:red">${item.o1.intValue()+item.o2.intValue() +item.o3.intValue() +item.o4.intValue() }/46時 </span>
+									</c:when>
+									<c:otherwise>
+										<span style="color:lightgray">${item.o1.intValue()+item.o2.intValue() +item.o3.intValue() +item.o4.intValue() }/46時 </span>
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 排班 -->
-							<c:choose>
-								<c:when test="${item.schedulingHours.intValue() > 40 }">
-									<td> <span style="color:red">${item.schedulingHours.intValue() }/40時 </span></td>
-								</c:when>
-								<c:otherwise>
-									<!-- <td>${item.schedulingHours.intValue()}/40時</td> -->
-									<td>排/40時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.schedulingHours.intValue() > 40 }">
+										<span style="color:red">${item.schedulingHours.intValue() }/40時 </span>
+									</c:when>
+									<c:otherwise>
+										<!--${item.schedulingHours.intValue()}/40時 -->
+										<span style="color:lightgray">排/40時 </span>
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 作業時數 -->
-							<c:choose>
-								<c:when test="${item.workHours.intValue() > item.needWorkHours.intValue() }">
-									<td> <span style="color:red">${item.workHours.intValue()}/${item.needWorkHours.intValue()}時</span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.workHours.intValue()}/${item.needWorkHours.intValue()}時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.workHours.intValue() > item.needWorkHours.intValue() }">
+										<span style="color:red">${item.workHours.intValue()}/${item.needWorkHours.intValue()}時</span>
+									</c:when>
+									<c:otherwise>
+										${item.workHours.intValue()}/${item.needWorkHours.intValue()}時
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 缺席 -->
-							<c:choose>
-								<c:when test="${item.absenceHours.intValue() > 24 }">
-									<td> <span style="color:red">${item.absenceHours}/24時 </span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.absenceHours}/24時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.absenceHours.intValue() > 24 }">
+										<span style="color:red">${item.absenceHours}/24時 </span>
+									</c:when>
+									<c:when test="${item.absenceHours.intValue() == 0 }">
+										<span style="color:gray">${item.absenceHours}/24時 </span>
+									</c:when>
+									<c:otherwise>
+										${item.absenceHours}/24時
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 特休 -->
-							<c:choose>
-								<c:when test="${item.l4.intValue() > item.ql4.intValue() }">
-									<td> <span style="color:red">${item.l4.intValue()}/${item.ql4.intValue()}時</span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.l4.intValue()}/${item.ql4.intValue()}時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.l4.intValue() > item.ql4.intValue() }">
+										<span style="color:red">${item.l4.intValue()}/${item.ql4.intValue()}時</span>
+									</c:when>
+									<c:when test="${item.l4.intValue() == 0 }">
+										<span style="color:gray">${item.l4.intValue()}/${item.ql4.intValue()}時</span>
+									</c:when>
+									<c:otherwise>
+										${item.l4.intValue()}/${item.ql4.intValue()}時
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 事假 -->
-							<c:choose>
-								<c:when test="${item.l1.intValue() > item.ql1.intValue() }">
-									<td> <span style="color:red">${item.l1.intValue()}/${item.ql1.intValue()}時</span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.l1.intValue()}/${item.ql1.intValue()}時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.l1.intValue() > item.ql1.intValue() }">
+										<span style="color:red">${item.l1.intValue()}/${item.ql1.intValue()}時</span>
+									</c:when>
+									<c:when test="${item.l1.intValue() == 0 }">
+										<span style="color:gray">${item.l1.intValue()}/${item.ql1.intValue()}時</span>
+									</c:when>
+									<c:otherwise>
+										${item.l1.intValue()}/${item.ql1.intValue()}時
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 病假 -->
-							<c:choose>
-								<c:when test="${item.l5.intValue() > item.ql5.intValue() }">
-									<td> <span style="color:red">${item.l5.intValue()}/${item.ql5.intValue()}時</span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.l5.intValue()}/${item.ql5.intValue()}時</td>
-								</c:otherwise>
-							</c:choose>
+							<td> 
+								<c:choose>
+									<c:when test="${item.l5.intValue() > item.ql5.intValue() }">
+										<span style="color:red">${item.l5.intValue()}/${item.ql5.intValue()}時</span>
+									</c:when>
+									<c:when test="${item.l5.intValue() == 0 }">
+										<span style="color:gray">${item.l5.intValue()}/${item.ql5.intValue()}時</span>
+									</c:when>
+									<c:otherwise>
+										${item.l5.intValue()}/${item.ql5.intValue()}時
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<!-- 生理假 -->
-							<c:choose>
-								<c:when test="${item.l3.intValue() > 1 }">
-									<td> <span style="color:red">${item.l3.intValue() }天</span></td>
-								</c:when>
-								<c:otherwise>
-									<td>${item.l3.intValue() }天</td>
-								</c:otherwise>
-							</c:choose>
-							<td>${item.l6.intValue() }時</td>
-							<td>${item.l8.intValue() }天</td>
-							<td>${item.l9.intValue() }天</td>
-							<td>${item.l7.intValue() }天</td>
-							<td>婚假</td>
-							<td>無薪</td>
-							<td>防疫</td>
+							<td> 
+								<c:choose>
+									<c:when test="${item.l3.intValue() > 1 }">
+										<span style="color:red">${item.l3.intValue() }天</span>
+									</c:when>
+									<c:when test="${item.l3.intValue() == 0 }">
+										<span style="color:gray">${item.l3.intValue()}天</span>
+									</c:when>
+									<c:otherwise>
+										${item.l3.intValue()}天
+									</c:otherwise>
+								</c:choose>
+							</td>
+							<!-- 公假 -->
+							<td>
+								<c:choose>
+									<c:when test="${item.l6.intValue() == 0}">
+										<span style="color:gray">${item.l6.intValue() }時</span>
+									</c:when>
+									<c:otherwise>
+										${item.l6.intValue()}時
+									</c:otherwise>
+								</c:choose>
+							</td>
+							<!-- 產假 -->
+							<td>
+								<c:choose>
+									<c:when test="${item.l8.intValue() == 0}">
+										<span style="color:gray">${item.l8.intValue() }天</span>
+									</c:when>
+									<c:otherwise>
+										${item.l8.intValue()}天
+									</c:otherwise>
+								</c:choose>
+							</td>
+							<!-- 陪產假 -->
+							<td>
+								<c:choose>
+									<c:when test="${item.l9.intValue() == 0}">
+										<span style="color:gray">${item.l9.intValue() }天</span>
+									</c:when>
+									<c:otherwise>
+										${item.l9.intValue()}天
+									</c:otherwise>
+								</c:choose>
+							</td>
+							<!-- 喪假 -->
+							<td>
+								<c:choose>
+									<c:when test="${item.l7.intValue() == 0}">
+										<span style="color:gray">${item.l7.intValue() }天</span>
+									</c:when>
+									<c:otherwise>
+										${item.l7.intValue()}天
+									</c:otherwise>
+								</c:choose>
+							</td>
+							<td><span style="color:lightgray">婚假</span></td>
+							<td><span style="color:lightgray">無薪</span></td>
+							<td><span style="color:lightgray">防疫</span></td>
 						</tr>
 					</c:forEach>
 			    </c:otherwise>

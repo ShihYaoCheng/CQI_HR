@@ -26,6 +26,7 @@ public class MonthlyReportDAO extends AbstractDAO<MonthlyReport> {
 		if(operator!=null) {
 			criteria.add(Restrictions.eq("sysUserId", operator.getSysUserId()));
 		}
+		criteria.addOrder(Order.asc("absentBase"));
 		criteria.addOrder(Order.asc("sysUserId"));
 		List<MonthlyReport> monthlyReportsList = criteria.list();
 		return monthlyReportsList;

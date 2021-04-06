@@ -51,39 +51,38 @@ public class PunchRecordsService extends AbstractService<PunchRecords>{
 		
 		//Step 2 Create or Update AttendanceRecord
 		SysUser sUser = sysUserDAO.getOneByCardId(cardID);
-		 
-		AttendanceRecord attendanceRecord = attendanceRecordDAO.getOneByUserIdAndDate(sUser.getSysUserId(), DateUtils.clearTime(PunchTime)); 
-		if(attendanceRecord == null) {
-			attendanceRecord = new AttendanceRecord();
-			attendanceRecord.setSysUserId(sUser.getSysUserId()); 
-			attendanceRecord.setAttendanceDate(DateUtils.clearTime(PunchTime));
-			attendanceRecord.setArriveTime(sdfTime.format(PunchTime));
-			attendanceRecord.setOriginalData(sdfTime.format(PunchTime));
-			attendanceRecord.setStatus(1);
-			attendanceRecord.setCreateDate(new Date());
-			
-		}else {
-			Date arriveTimeDate = sdfTime.parse(attendanceRecord.getArriveTime());
-			arriveTimeDate.setYear(PunchTime.getYear());
-			arriveTimeDate.setMonth(PunchTime.getMonth());
-			arriveTimeDate.setDate(PunchTime.getDate());
-			Date leaveTimeDate = (attendanceRecord.getLeaveTime() == null || attendanceRecord.getLeaveTime().isEmpty() ) ? arriveTimeDate : sdfTime.parse(attendanceRecord.getLeaveTime());
-			leaveTimeDate.setYear(PunchTime.getYear());
-			leaveTimeDate.setMonth(PunchTime.getMonth());
-			leaveTimeDate.setDate(PunchTime.getDate());
-			
-			if(PunchTime.before(arriveTimeDate)) {
-				attendanceRecord.setLeaveTime(attendanceRecord.getArriveTime());
+		if (sUser != null) {
+			AttendanceRecord attendanceRecord = attendanceRecordDAO.getOneByUserIdAndDate(sUser.getSysUserId(), DateUtils.clearTime(PunchTime)); 
+			if(attendanceRecord == null) {
+				attendanceRecord = new AttendanceRecord();
+				attendanceRecord.setSysUserId(sUser.getSysUserId()); 
+				attendanceRecord.setAttendanceDate(DateUtils.clearTime(PunchTime));
 				attendanceRecord.setArriveTime(sdfTime.format(PunchTime));
-			}else if(PunchTime.after(leaveTimeDate)) {
-				attendanceRecord.setLeaveTime(sdfTime.format(PunchTime));
+				attendanceRecord.setOriginalData(sdfTime.format(PunchTime));
+				attendanceRecord.setStatus(1);
+				attendanceRecord.setCreateDate(new Date());
+				
+			}else {
+				Date arriveTimeDate = sdfTime.parse(attendanceRecord.getArriveTime());
+				arriveTimeDate.setYear(PunchTime.getYear());
+				arriveTimeDate.setMonth(PunchTime.getMonth());
+				arriveTimeDate.setDate(PunchTime.getDate());
+				Date leaveTimeDate = (attendanceRecord.getLeaveTime() == null || attendanceRecord.getLeaveTime().isEmpty() ) ? arriveTimeDate : sdfTime.parse(attendanceRecord.getLeaveTime());
+				leaveTimeDate.setYear(PunchTime.getYear());
+				leaveTimeDate.setMonth(PunchTime.getMonth());
+				leaveTimeDate.setDate(PunchTime.getDate());
+				
+				if(PunchTime.before(arriveTimeDate)) {
+					attendanceRecord.setLeaveTime(attendanceRecord.getArriveTime());
+					attendanceRecord.setArriveTime(sdfTime.format(PunchTime));
+				}else if(PunchTime.after(leaveTimeDate)) {
+					attendanceRecord.setLeaveTime(sdfTime.format(PunchTime));
+				}
+				attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";"+sdfTime.format(PunchTime));
+				attendanceRecord.setUpdateDate(new Date());
 			}
-			attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";"+sdfTime.format(PunchTime));
-			attendanceRecord.setUpdateDate(new Date());
+			attendanceRecordDAO.saveOrUpdate(attendanceRecord);
 		}
-		attendanceRecordDAO.saveOrUpdate(attendanceRecord);
-		
-		
 		System.out.println("end savePunchRecordsAndCreateAttendanceRecord");
 	}
 }

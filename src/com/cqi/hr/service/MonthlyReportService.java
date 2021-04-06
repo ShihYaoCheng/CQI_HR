@@ -65,27 +65,21 @@ public class MonthlyReportService extends AbstractService<MonthlyReport>{
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -1);
-		Date startDate = DateUtils.getFirstDateByYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
 		Date endDate = DateUtils.getLastDateByYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)) ;
+		Date startDate;
 		int year = calendar.get(Calendar.YEAR),month = calendar.get(Calendar.MONTH);
 		Map<String,SysUserShift> mapSysUserShift = sysUserShiftService.getMapLastMonth();
 		List<MonthlyReport> monthlyReportList = new ArrayList<MonthlyReport>();
 		List<SysUser> userList = new ArrayList<SysUser>();
 		userList = sysUserDAO.getEnableRole2UserOrGraduationInMonth(calendar.getTime());
 		
-		
-		
 		//for test only
 		//startDate= sdfDate.parse("2021-01-01");
 		//endDate= sdfDate.parse("2021-01-30");
 		//year = 2021; month = 0;
+		//userList.add(sysUserDAO.get("1199963714775439"));
+		//userList.add(sysUserDAO.get("1199948572334531"));
 		//userList.add(sysUserDAO.get("955100567255002"));
-		
-		
-		
-		List<SpecialDateAboutWork> sList = specialDateAboutWorkDAO.getVacationBetweenDate(startDate, endDate);
-		int nonWorkDays = sList.size();
-		double needWorkHours = (DateUtils.diffDays(startDate, endDate)+ 1 - nonWorkDays) * 8;
 		
 		
 		for(SysUser sysUser:userList) {
@@ -94,7 +88,16 @@ public class MonthlyReportService extends AbstractService<MonthlyReport>{
 			double o1=0.0,o2=0.0,o3=0.0,o4=0.0,schedulingH=0.0,overH=0.0, workH=0.0, absenceH=0.0, leaveH=0.0;
 			double L1=0.0,QL1=0.0,L2=0.0,L3=0.0,L4=0.0,QL4=0.0,L5=0.0,QL5=0.0,L6=0.0,L7=0.0,L8=0.0,L9=0.0;
 			String shiftString = (mapSysUserShift.get(sysUser.getSysUserId()) == null) ?  "" : mapSysUserShift.get(sysUser.getSysUserId()).getBoardTime()+"~"+mapSysUserShift.get(sysUser.getSysUserId()).getFinishTime();
-
+			startDate = DateUtils.getFirstDateByYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+			
+			//cal needWorkHours
+			if (startDate.before(sysUser.getInaugurationDate())) {
+				startDate = DateUtils.offsetByDay(sysUser.getInaugurationDate(), 1) ;
+			}
+			List<SpecialDateAboutWork> sList = specialDateAboutWorkDAO.getVacationBetweenDate(startDate, endDate);
+			int nonWorkDays = sList.size();
+			double needWorkHours = (DateUtils.diffDays(startDate, endDate)+ 1 - nonWorkDays) * 8;
+			
 			//cal DailyAttendanceRecord
 			List<DailyAttendanceRecord> dailyAttendanceRecordsList = dailyAttendanceRecordDAO.getMonthlyData(startDate, endDate, sysUser.getSysUserId());
 			for (DailyAttendanceRecord d : dailyAttendanceRecordsList) {
@@ -131,23 +134,25 @@ public class MonthlyReportService extends AbstractService<MonthlyReport>{
 					L3+= ul.getSpendTime();
 					absentBase += clist.get(2).getCalculateBase() * ul.getSpendTime() * 8 ;
 					break;
-				case 4:
+				case 4://特休
 					L4+= ul.getSpendTime();
+					needWorkHours -= ul.getSpendTime();
 					break;
 				case 5://病假
 					L5+= ul.getSpendTime();
 					absentBase += clist.get(4).getCalculateBase() * ul.getSpendTime() ;
 					break;
-				case 6:
+				case 6://公假
 					L6+= ul.getSpendTime();
+					needWorkHours -= ul.getSpendTime();
 					break;
-				case 7:
+				case 7://喪假
 					L7+= ul.getSpendTime();
 					break;
-				case 8:
+				case 8://產假
 					L8+= ul.getSpendTime();
 					break;
-				case 9:
+				case 9://陪產假
 					L9+= ul.getSpendTime();
 					break;
 
