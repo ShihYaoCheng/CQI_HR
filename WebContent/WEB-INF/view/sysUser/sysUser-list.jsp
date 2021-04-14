@@ -96,6 +96,7 @@
 					            		<option value=""></option>
 					            		<option value="26F">26F</option>
 					            		<option value="25F">25F</option>
+					            		<option value="5F">5F</option>
 					            	</select>
 						            <span id="department-error" class="error_text"></span>
 					            </div>

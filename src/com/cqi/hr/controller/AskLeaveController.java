@@ -53,6 +53,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			}else {
 				model.addAttribute("cqiLeaveList", userLeaveService.getCompanyLeaveListWithoutMenstruation());
 			}
+			model.addAttribute("dataUser", dataUser);
 		} catch (Exception e) {
 			logger.error(FUNCTION_NAME + "index error:", e);
 		}

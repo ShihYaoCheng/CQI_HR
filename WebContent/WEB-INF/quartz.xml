@@ -61,8 +61,8 @@
     </bean>
     <!-- #JOB1 月結請假紀錄 END -->
 
-	<!-- #JOB2 特休給假 BEGIN -->
-	<!-- JOB2 特休給假 工作內容 -->
+	<!-- #JOB2 請假給假  BEGIN -->
+	<!-- JOB2 請假給假  工作內容 -->
 	<bean id="jobAnnualLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.AnnualLeaveJob"  />
         <property name="jobDataAsMap">
@@ -74,14 +74,14 @@
             </map>
         </property>   
     </bean>
-    <!-- JOB2 特休給假 排程設定 -->
+    <!-- JOB2 請假給假 排程設定 -->
 	<bean id="cronAnnualLeaveBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <ref bean="jobAnnualLeaveBean"/>
         </property>
         <property name="cronExpression">
-        	<!-- <value>10 * * * * ?</value>-->
-            <value>0 0 6 * * ?</value> 
+        	<!--<value>10 * * * * ?</value> -->
+             <value>0 0 6 * * ?</value>
         </property>
         <!-- 
 			    秒（0-59）
@@ -104,7 +104,7 @@
         	<value>schedulerAnnualLeave</value>
     	</property>
     </bean>
-    <!-- #JOB2 特休給假 END -->
+    <!-- #JOB2 請假給假  END -->
     
     <!-- #JOB3 自動請假 BEGIN -->
 	<!-- JOB3 自動請假 工作內容 -->
@@ -305,8 +305,8 @@
             <ref bean="jobMonthlyReportBean"/>
         </property>
         <property name="cronExpression">
-            <!--  <value>10 * * * * ?</value>  -->
-             <value>0 0 2 4 * ?</value>
+             <!--  <value>10 * * * * ?</value>  -->
+            <value>0 0 2 4 * ?</value>
         </property>
         <!-- 
 			    秒（0-59）

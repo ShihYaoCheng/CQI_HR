@@ -103,18 +103,18 @@ public class Constant {
 	
 	public final static String DEPARTMENT_26F = "26F";
 	public final static String DEPARTMENT_25F = "25F";
+	public final static String DEPARTMENT_5F = "5F";
 	
+	//ASANA
+	public final static String ASANA_CLIENT_ID = "1199599852520253";
+	public final static String ASANA_CLIENT_SECRET = "822216ac72ccc569b152ba3660e99dfb";
 	
 	// Developer
 	// 需用ngrok把local8080連接到ngrok.io,並在asana app 設定Redirect URLs,此區也須跟著修改
-	// public final static String ASANA_REDIRECT_URL = "https://c6120ebc8723.ngrok.io/CQIHRManage/asanaCallback";
-	// public final static String ASANA_REDIRECT_URL = "https://6c71ce73757b.ngrok.io/hr-manage/asanaCallback";
-	
+	 public final static String ASANA_REDIRECT_URL = "https://6f0279ae28e3.ngrok.io/hr-manage/asanaCallback";
 	
 	// Production
-	public final static String ASANA_CLIENT_ID = "1199599852520253";
-	public final static String ASANA_CLIENT_SECRET = "822216ac72ccc569b152ba3660e99dfb";
-	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
+	// public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
 	
 	
 	

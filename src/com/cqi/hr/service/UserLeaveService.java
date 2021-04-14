@@ -327,7 +327,8 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 					// Table : UserLeave沒有調班資料
 					break;
 				case CompanyLeave.MENSTRUATION_LEAVE:
-					// 生理假，每個月額度一次，下個月初始化為零
+					// 生理假，改為一年3天額度
+					/*
 					if (StringUtils.hasText(userMapping.get(userLeave.getSysUserId()).getGender())
 							&& userMapping.get(userLeave.getSysUserId()).getGender().equals(Constant.GENDER_FEMALE)) {
 						if (userMapping.get(userLeave.getSysUserId()).getStatus().equals(Constant.SYSUSER_ENABLE)) {
@@ -337,6 +338,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 						userLeave.setCount(0.0);
 					}
 					userLeaveDAO.update(userLeave);
+					*/
 					break;
 				case CompanyLeave.ANNUAL_LEAVE:
 
@@ -491,6 +493,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 
 	@Transactional
 	public void menstruationLeaveGive() throws Exception {
+		/*
 		List<SysUser> femaleList = sysUserDAO.getFemale();
 		for (SysUser female : femaleList) {
 			UserLeave menstruationLeave = userLeaveDAO.getOneBy2Id(female.getSysUserId(),
@@ -506,6 +509,29 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 				logger.info("新增" + female.getUserName() + "的生理假");
 			}
 		}
+		*/
+		
+		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.SHIFT_MENSTRUATION_ID );
+		logger.info("●●●give MENSTRUATION Leave List : " + giveLeaveRuleList.size());
+		LocalDate localDate = LocalDate.now();
+		List<SysUser> femaleList = new ArrayList<SysUser>();
+		femaleList = sysUserDAO.getFemale();
+		
+		for (SysUser female : femaleList) {
+			// 先撈出是否給過記錄
+			GiveLeaveRecord giveLeaveRecord = giveLeaveRecordDAO.getWithUserAndRule(female.getSysUserId(),giveLeaveRuleList.get(0).getRuleId(), CompanyLeave.SHIFT_MENSTRUATION_ID);
+			if (null == giveLeaveRecord) {
+				saveAndGiveUserLeaveQuota(giveLeaveRuleList, female,CompanyLeave.SHIFT_MENSTRUATION_ID);
+				saveGiveLeaveRecord(giveLeaveRuleList, female,CompanyLeave.SHIFT_MENSTRUATION_ID);
+			}else {
+				if (giveLeaveRecord.getUpdateDate().toInstant().atZone(ZoneId.systemDefault()).getYear() < localDate.getYear()) {
+					saveAndGiveUserLeaveQuota(giveLeaveRuleList, female,CompanyLeave.SHIFT_MENSTRUATION_ID);
+					saveGiveLeaveRecord(giveLeaveRuleList, female,CompanyLeave.SHIFT_MENSTRUATION_ID);
+				}
+			}
+			
+		}
+		
 	}
 
 	@Transactional
@@ -516,6 +542,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		LocalDate localDate = LocalDate.now();
 		List<SysUser> users = new ArrayList<SysUser>();
 		users = sysUserDAO.getEnableRole2User();
+		
 		//for test
 		// users.add(sysUserDAO.get("1198842813042872"));
 		
@@ -590,6 +617,8 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 			logger.info("●●●新增" + user.getUserName() + "的病假額度●●●");
 		}else if (leaveId==5) {
 			logger.info("●●●新增" + user.getUserName() + "的事假額度●●●");
+		}else if (leaveId==3) {
+			logger.info("●●●新增" + user.getUserName() + "的生理假額度●●●");
 		}
 	}
 	
@@ -598,6 +627,8 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 			logger.info("●●●新增" + user.getUserName() + "的病假記錄●●●");
 		}else if (leaveId==5) {
 			logger.info("●●●新增" + user.getUserName() + "的事假記錄●●●");
+		}else if (leaveId==3) {
+			logger.info("●●●新增" + user.getUserName() + "的生理假記錄●●●");
 		}
 	}
 	
