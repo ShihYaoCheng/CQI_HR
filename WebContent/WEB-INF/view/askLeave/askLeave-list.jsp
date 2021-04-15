@@ -244,6 +244,20 @@
 			if($('#endTime').val() == ''){
 				errors['endTime'] = 3;
 			}
+
+			console.log("check menstruation leave rule");
+			console.log('${userMenstruationLeave}');
+			var userMenstruationLeave = {
+				sysUserId: '${userMenstruationLeave.sysUserId}',
+				leaveId: ${userMenstruationLeave.leaveId},
+				startTime: new Date( '${userMenstruationLeave.startTime}' )
+			};
+			console.log(userMenstruationLeave.sysUserId);
+				
+			
+			
+			
+			
 			var targetURL= "<c:url value='/security/askLeave/add'/>";
 			
 			if(Object.keys(errors).length == 0){

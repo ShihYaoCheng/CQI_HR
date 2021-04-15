@@ -59,6 +59,11 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 	}
 	
 	@Transactional
+	public List<UserAskForLeave> getListByUserId(String sysUserId) {
+		return userAskForLeaveDAO.getListByUserId(sysUserId);
+	}
+	
+	@Transactional
 	public JSONArray getCalendarData(Date start, Date end, String userId) throws Exception{
 		SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		JSONArray dataArray = new JSONArray();
@@ -381,4 +386,12 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 		}
 		return "";
 	}
+
+	@Transactional
+	public UserAskForLeave getMenstruationLeaveByUserIdInMonth(String sysUserId) {
+		UserAskForLeave userAskForLeave = userAskForLeaveDAO.getMenstruationLeaveByUserIdInMonth( sysUserId);
+		return userAskForLeave;
+	}
+
+	
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.cqi.hr.constant.Constant;
+import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.util.DateUtils;
@@ -210,6 +211,30 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 		}
 		return null;
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<UserAskForLeave> getListByUserId(String sysUserId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", sysUserId));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public UserAskForLeave getMenstruationLeaveByUserIdInMonth(String sysUserId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", sysUserId));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		criteria.add(Restrictions.eq("leaveId", CompanyLeave.SHIFT_MENSTRUATION_ID));
+		
+		Date firstMonthDay = DateUtils.getFirstDateOfThisMonth();
+		criteria.add(Restrictions.ge("startTime", firstMonthDay));
+		List<UserAskForLeave> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
 	}
 }
 
