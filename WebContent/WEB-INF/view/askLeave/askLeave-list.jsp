@@ -284,6 +284,7 @@
 								$('#endTime-error').hide();
 							}
 
+							// userMenstruationLeave 生理假請假紀錄
 							//console.log("check menstruation leave rule");
 							//console.log('${userMenstruationLeave}');
 							var userMenstruationLeave = {
@@ -297,12 +298,10 @@
 							console.log(userMenstruationLeave.spendTime);
 							// console.log(userMenstruationLeave.sysUserId);
 
-							// 			var userLeaveListM = '${userLeaveListM}';
-							console.log('${userLeaveListM}');
-
+				
 
 							if ($('#leaveId').val() == 3) {
-								console.log($("#spendTime option[value='3']"));
+// 								console.log($("#spendTime option[value='3']"));
 								if ('${userMenstruationLeave.spendTime}' >= 1) {
 									errors['leaveId'] = 5;
 									$('#leaveId-error').show();
@@ -310,7 +309,7 @@
 							}
 
 
-							//userMenstruationLeaveQuota
+							//userMenstruationLeaveQuota  生理假剩餘額度
 							console.log('${userMenstruationLeaveQuota}');
 							var userMenstruationLeaveQuota = {
 								sysUserId: '${userMenstruationLeaveQuota.sysUserId}',
@@ -319,6 +318,18 @@
 							};
 
 
+// 							if ($('#leaveId').val() == 3) {
+								
+// 								if ('${userMenstruationLeaveQuota.count}' <= 0) {
+// 									errors['leaveId'] = 6;
+// 									$('#leaveId-error').show();
+// 								}
+// 							}
+							
+							
+							 var enddate = new Date();
+							 console.log(enddate);
+							
 
 							var targetURL = "<c:url value='/security/askLeave/add'/>";
 
