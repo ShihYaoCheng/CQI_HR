@@ -249,12 +249,18 @@
 			console.log('${userMenstruationLeave}');
 			var userMenstruationLeave = {
 				sysUserId: '${userMenstruationLeave.sysUserId}',
-				leaveId: ${userMenstruationLeave.leaveId},
+				leaveId: '${userMenstruationLeave.leaveId}',
 				startTime: new Date( '${userMenstruationLeave.startTime}' )
 			};
 			console.log(userMenstruationLeave.sysUserId);
 				
-			
+			//userMenstruationLeaveQuota
+			console.log('${userMenstruationLeaveQuota}');
+			var userMenstruationLeaveQuota = {
+				sysUserId: '${userMenstruationLeaveQuota.sysUserId}',
+				leaveId: '${userMenstruationLeaveQuota.leaveId}',
+				count:  '${userMenstruationLeaveQuota.count}'
+			};
 			
 			
 			

@@ -330,4 +330,50 @@
     	</property>
     </bean>
     <!-- #JOB7 月結報表 END -->
+    
+    <!-- #JOB8 未打卡提醒 BEGIN -->
+	<!-- JOB8 未打卡提醒  工作內容 -->
+	<bean id="jobNoPunchRemindBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.NoPunchRemindJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="lineBotService" value-ref="lineBotService"/>
+                <entry key="specialDateAboutWorkService" value-ref="specialDateAboutWorkService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB8 未打卡提醒 排程設定 -->
+	<bean id="cronNoPunchRemindBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobNoPunchRemindBean"/>
+        </property>
+        <property name="cronExpression">
+            <!--   <value>10 * * * * ?</value> -->
+            <value>0 10 9,10 * * ?</value> 
+        </property>
+        <!-- 
+			    秒（0-59）
+			    分（0-59）
+			    小時（0-23）
+			    每月第幾天（1-31）
+			    月（1-12或JAN-DEC）
+			    每星期第幾天（1-7或SUN-SAT）
+			    年（1970-2099）
+			   其中「每月第幾天」與「每星期第幾天是互斥」的，兩個只能設定一個。
+         -->
+    </bean>
+    <bean id="schedulerNoPunchRemindBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronNoPunchRemindBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerNoPunchRemind</value>
+    	</property>
+    </bean>
+    <!-- #JOB8 未打卡提醒 END -->
 </beans>

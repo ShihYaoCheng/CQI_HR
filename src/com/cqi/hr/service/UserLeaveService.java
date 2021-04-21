@@ -656,4 +656,10 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		}
 		
 	}
+
+	@Transactional
+	public UserLeave getMenstruationLeaveQuotaByUserId(String sysUserId) throws Exception {
+		
+		return userLeaveDAO.getOneBy2Id(sysUserId,CompanyLeave.SHIFT_MENSTRUATION_ID);
+	}
 }

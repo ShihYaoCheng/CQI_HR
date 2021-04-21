@@ -1,6 +1,8 @@
 package com.cqi.hr.service;
 
+import java.io.Console;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,11 +22,14 @@ import com.cqi.hr.dao.EmergenceOvertimeSignDAO;
 import com.cqi.hr.dao.LineImageUrlDAO;
 import com.cqi.hr.dao.LineUserDAO;
 import com.cqi.hr.dao.SysUserDAO;
+import com.cqi.hr.dao.SysUserShiftDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
+import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.EmergenceOvertimeSign;
 import com.cqi.hr.entity.LineImageUrl;
 import com.cqi.hr.entity.LineUser;
 import com.cqi.hr.entity.SysUser;
+import com.cqi.hr.entity.SysUserShift;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.LineUtils;
@@ -53,6 +58,7 @@ import com.linecorp.bot.model.message.flex.unit.FlexFontSize;
 import com.linecorp.bot.model.message.flex.unit.FlexLayout;
 import com.linecorp.bot.model.message.flex.unit.FlexMarginSize;
 import com.linecorp.bot.model.profile.UserProfileResponse;
+import com.sun.org.apache.xpath.internal.operations.And;
 
 @Transactional
 @Service
@@ -67,6 +73,10 @@ public class LineBotService extends AbstractService<LineUser>{
 	@Resource LineImageUrlDAO lineImageUrlDAO;
 	
 	@Resource UserAskForOvertimeDAO userAskForOvertimeDAO;
+	
+	@Resource AttendanceRecordService attendanceRecordService;
+	
+	@Resource SysUserShiftDAO sysUserShiftDAO;
 	
 	@Override
 	protected AbstractDAO<LineUser> getDAO() {
@@ -139,13 +149,51 @@ public class LineBotService extends AbstractService<LineUser>{
 				}else if(user.getCompanyGod()!=null && user.getCompanyGod().equals(Constant.STATUS_ENABLE)) {
 					buildListVo(Constant.LINE_EMERGENCE_LEVEL_COMPANY, eventJson.get("replyToken").getAsString());
 				}
+			}else if (messageJson.get("text").getAsString().contains("測試")) {
+				replyTestMessage("", eventJson.get("replyToken").getAsString());
+			}else if (messageJson.get("text").getAsString().contains("綁定")) {
+				//BindLineIdToSysUser(sourceJson.get("userId").getAsString(),messageJson.get("text").getAsString(), eventJson.get("replyToken").getAsString());
 			}
+			
 			break;
 		default:
 			break;
 		}
 	}
 	
+	public void replyTestMessage(String string, String replyToken) throws Exception {
+		
+		SysUser targetUser = sysUserDAO.get("1198842813042872");
+
+
+		
+		//flexMessageVo.setBody(emergenceListBody(emergenceList));
+		//flexMessageVo.setFooter(emergenceListFooter(targetUser.getLineId(), level));
+		
+		
+		logger.info("replyToken : " + replyToken);
+		LineMessageVo lineMessageVo = new LineMessageVo();
+		lineMessageVo.setTargetId(targetUser.getLineId());
+		lineMessageVo.setAltText("TestAltText");
+		lineMessageVo.setHeader(testHeader());
+		//lineMessageVo.setBody(dataVo.getBody());
+		//lineMessageVo.setFooter(dataVo.getFooter());
+		if(StringUtils.hasText(replyToken)) {
+			LineUtils.sendReplyMessage(replyToken, lineMessageVo);
+		}else {
+			LineUtils.sendFlexMessage(lineMessageVo);
+		}
+	}
+
+	private Box testHeader() {
+		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+		headerContents.add(Text.builder().text("測試").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		headerContents.add(Separator.builder().build());
+        
+        return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	}
+
 	public void getPostBack(JsonObject eventJson) throws Exception {
 		JsonObject sourceJson = eventJson.getAsJsonObject("source");
 		SysUser signUser = sysUserDAO.getByLineId(sourceJson.get("userId").getAsString());
@@ -461,5 +509,54 @@ public class LineBotService extends AbstractService<LineUser>{
 	
 	public static String getEmergenceRejectParameter(String token, String level) {
 		return "token=" + token + "&level=" + level + "&response=" + Constant.LINE_EMERGENCE_REJECT;
+	}
+
+	
+	public void NoPunchRemind() throws Exception {
+		Date nowDate = new Date();
+		String nowShift = nowDate.getHours() == 9 ? "09:00":"10:00" ;
+		logger.info("nowShift: " + nowShift);
+		
+		//test
+		//nowShift = "09:00";
+		
+		List<SysUser> userList = sysUserDAO.getEnableRole2LineUser();
+		for (SysUser sysUser : userList) {
+			logger.info(sysUser.getUserName());
+			AttendanceRecord attendanceRecord = attendanceRecordService.getUserToday(sysUser);
+			SysUserShift sysUserShift = sysUserShiftDAO.getOneByIdAndDate(sysUser.getSysUserId(), nowDate);
+			if (attendanceRecord == null && sysUserShift != null) {
+				if (nowShift.equals(sysUserShift.getBoardTime())) {
+					logger.info("line "+sysUser.getUserName());
+					
+					LineMessageVo lineMessageVo = new LineMessageVo();
+					lineMessageVo.setTargetId(sysUser.getLineId());
+					lineMessageVo.setAltText("未打卡提醒");
+					lineMessageVo.setHeader(NoPunchHeader(nowShift));
+					//lineMessageVo.setBody(dataVo.getBody());
+					lineMessageVo.setFooter(NoPunchFooter());
+					LineUtils.sendFlexMessage(lineMessageVo);
+				}
+			}
+		}
+		
+	}
+	
+	public Box NoPunchHeader(String nowShift) {
+		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+		headerContents.add(Text.builder().text(nowShift.substring(0,2)+"點未打卡提醒").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		headerContents.add(Separator.builder().build());
+        return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	}
+	public Box NoPunchFooter() throws URISyntaxException {
+		logger.info("===NoPunchFooter=====");
+		List<FlexComponent> buttonContents = new ArrayList<FlexComponent>();
+		final Button buttonWeb = Button.builder().style(ButtonStyle.PRIMARY).height(ButtonHeight.SMALL)
+	            .action(new URIAction("today", new URI("https://hr.cqiserv.com/today"), null))
+	            .build();
+		buttonContents.add(buttonWeb);
+		
+	    return Box.builder().layout(FlexLayout.VERTICAL).spacing(FlexMarginSize.SM).contents(buttonContents).build();
 	}
 }

@@ -231,7 +231,7 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 		Date firstMonthDay = DateUtils.getFirstDateOfThisMonth();
 		criteria.add(Restrictions.ge("startTime", firstMonthDay));
 		List<UserAskForLeave> list = criteria.list();
-		if(list.size()==1) {
+		if(list.size()>0) {
 			return list.get(0);
 		}
 		return null;
