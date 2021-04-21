@@ -224,35 +224,82 @@
 			});
 		}
 		
+		
+		// "假別：" 點選生理假時，"單位：天" 限制為一天
+		$('#leaveId').change(function() {
+			if($('#leaveId').val()=='3'){
+
+				$('#spendTime').children().each(function(index,el) {
+					if($(el).val()!=='' && $(el).val()!=='1'){
+						$(el).hide()
+					}
+				})
+			}else{
+				$('#spendTime').children().each(function(i,el) {
+						$(el).show()
+				})
+			}	
+		});
+
+		
+		
 		function submit(){
 			var errorCode = {};
 			errorCode["1"] = "請選擇假別";
 			errorCode["2"] = "請選擇天數/時數";
 			errorCode["3"] = "請輸入時間";
 			errorCode["4"] = "時間似乎怪怪的，請確認";
+			errorCode["5"] = "本月已請過生理假，每月限請一天";
+			errorCode["6"] = "本年度生理假已超過額度，請改請病假";
+
 			var errors = {};
 			
 			if($('#leaveId :selected').val() == ''){
 				errors['leaveId'] = 1;
+			}else {
+				$('#leaveId-error').hide();
 			}
 			if($('#spendTime :selected').val() == ''){
 				errors['spendTime'] = 2;
+			}else {
+				$('#spendTime-error').hide();
 			}
 			if($('#startTime').val() == ''){
 				errors['startTime'] = 3;
+			}else {
+				$('#startTime-error').hide();
 			}
 			if($('#endTime').val() == ''){
 				errors['endTime'] = 3;
+			}else {
+				$('#endTime-error').hide();
 			}
 
-			console.log("check menstruation leave rule");
-			console.log('${userMenstruationLeave}');
+			//console.log("check menstruation leave rule");
+			//console.log('${userMenstruationLeave}');
 			var userMenstruationLeave = {
 				sysUserId: '${userMenstruationLeave.sysUserId}',
-				leaveId: ${userMenstruationLeave.leaveId},
-				startTime: new Date( '${userMenstruationLeave.startTime}' )
+				leaveId: '${userMenstruationLeave.leaveId}' ,
+				startTime: new Date( '${userMenstruationLeave.startTime}' ) ,
+				spendTime: '${userMenstruationLeave.spendTime}',
+				
 			};
-			console.log(userMenstruationLeave.sysUserId);
+			// console.log(userMenstruationLeave.startTime);
+			console.log(userMenstruationLeave.spendTime);
+			// console.log(userMenstruationLeave.sysUserId);
+			
+// 			var userLeaveListM = '${userLeaveListM}';
+			console.log('${userLeaveListM}');
+
+			
+			if($('#leaveId').val() == 3){
+				console.log($("#spendTime option[value='3']"));
+				if ('${userMenstruationLeave.spendTime}' >= 1) {
+					errors['leaveId'] = 5;
+					$('#leaveId-error').show();
+				}
+			}
+
 				
 			
 			
