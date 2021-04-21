@@ -222,14 +222,17 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public UserAskForLeave getMenstruationLeaveByUserIdInMonth(String sysUserId) {
+	public UserAskForLeave getMenstruationLeaveByUserIdAndMonth(String sysUserId, Date firstDateOfMonth) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		criteria.add(Restrictions.eq("sysUserId", sysUserId));
 		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
 		criteria.add(Restrictions.eq("leaveId", CompanyLeave.SHIFT_MENSTRUATION_ID));
 		
-		Date firstMonthDay = DateUtils.getFirstDateOfThisMonth();
-		criteria.add(Restrictions.ge("startTime", firstMonthDay));
+		Date lastDateOfMonth = DateUtils.offsetByMonth(firstDateOfMonth,1);
+		
+
+		criteria.add(Restrictions.ge("startTime", firstDateOfMonth));
+		criteria.add(Restrictions.le("startTime", lastDateOfMonth));
 		List<UserAskForLeave> list = criteria.list();
 		if(list.size()>0) {
 			return list.get(0);

@@ -285,20 +285,24 @@
 							}
 
 							//console.log("check menstruation leave rule");
-							//console.log('${userMenstruationLeave}');
-							var userMenstruationLeave = {
-								sysUserId: '${userMenstruationLeave.sysUserId}',
-								leaveId: '${userMenstruationLeave.leaveId}',
-								startTime: new Date('${userMenstruationLeave.startTime}'),
-								spendTime: '${userMenstruationLeave.spendTime}',
+							//console.log('${userMenstruationLeaveThisMonth}');
+							var userMenstruationLeaveThisMonth = {
+								sysUserId: '${userMenstruationLeaveThisMonth.sysUserId}',
+								leaveId: '${userMenstruationLeaveThisMonth.leaveId}',
+								startTime: new Date('${userMenstruationLeaveThisMonth.startTime}'),
+								spendTime: '${userMenstruationLeaveThisMonth.spendTime}',
 
 							};
-							// console.log(userMenstruationLeave.startTime);
-							console.log(userMenstruationLeave.spendTime);
-							// console.log(userMenstruationLeave.sysUserId);
+							
+							//userMenstruationLeaveLastMonth
+							var userMenstruationLeaveLastMonth = {
+								sysUserId: '${userMenstruationLeaveLastMonth.sysUserId}',
+								leaveId: '${userMenstruationLeaveLastMonth.leaveId}',
+								startTime: new Date('${userMenstruationLeaveLastMonth.startTime}'),
+								spendTime: '${userMenstruationLeaveLastMonth.spendTime}',
 
-							// 			var userLeaveListM = '${userLeaveListM}';
-							console.log('${userLeaveListM}');
+							};
+							
 
 
 							if ($('#leaveId').val() == 3) {
