@@ -48,6 +48,15 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		return criteria.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<SysUser> getEnableRole2LineUser()throws Exception{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		criteria.add(Restrictions.eq("roleId", "2"));
+		criteria.add(Restrictions.isNotNull("lineId"));
+		criteria.add(Restrictions.ne("lineId",""));
+		return criteria.list();
+	}
 	
 	/**
 	 * 取得在職員工或是這個月離職的員工，主要用於統計出勤的UserList用

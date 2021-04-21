@@ -1,5 +1,6 @@
 package com.cqi.hr.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -8,8 +9,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.cqi.hr.constant.Constant;
+import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.PagingList;
+import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserLeave;
+import com.cqi.hr.util.DateUtils;
 
 @Repository
 public class UserLeaveDAO extends AbstractDAO<UserLeave> {
@@ -50,6 +54,8 @@ public class UserLeaveDAO extends AbstractDAO<UserLeave> {
 		}
 		return null;
 	}
+
+	
 	
 }
 

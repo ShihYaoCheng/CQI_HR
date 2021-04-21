@@ -57,6 +57,10 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			
 			model.addAttribute("userMenstruationLeave", userAskForLeaveService.getMenstruationLeaveByUserIdInMonth(dataUser.getSysUserId()));
 			
+			//使用者剩餘的假期
+			UserLeave userMenstruationLeaveQuota = userLeaveService.getMenstruationLeaveQuotaByUserId(operator.getSysUserId());
+			model.addAttribute("userMenstruationLeaveQuota", userMenstruationLeaveQuota);
+			
 		} catch (Exception e) {
 			logger.error(FUNCTION_NAME + "index error:", e);
 		}
