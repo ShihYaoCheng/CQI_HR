@@ -286,22 +286,28 @@
 
 							// userMenstruationLeave 生理假請假紀錄
 							//console.log("check menstruation leave rule");
-							//console.log('${userMenstruationLeave}');
-							var userMenstruationLeave = {
-								sysUserId: '${userMenstruationLeave.sysUserId}',
-								leaveId: '${userMenstruationLeave.leaveId}',
-								startTime: new Date('${userMenstruationLeave.startTime}'),
-								spendTime: '${userMenstruationLeave.spendTime}',
+							//console.log('${userMenstruationLeaveThisMonth}');
+							var userMenstruationLeaveThisMonth = {
+								sysUserId: '${userMenstruationLeaveThisMonth.sysUserId}',
+								leaveId: '${userMenstruationLeaveThisMonth.leaveId}',
+								startTime: new Date('${userMenstruationLeaveThisMonth.startTime}'),
+								spendTime: '${userMenstruationLeaveThisMonth.spendTime}',
 
 							};
-							// console.log(userMenstruationLeave.startTime);
-							console.log(userMenstruationLeave.spendTime);
-							// console.log(userMenstruationLeave.sysUserId);
 
-				
+							//userMenstruationLeaveLastMonth
+							var userMenstruationLeaveLastMonth = {
+								sysUserId: '${userMenstruationLeaveLastMonth.sysUserId}',
+								leaveId: '${userMenstruationLeaveLastMonth.leaveId}',
+								startTime: new Date('${userMenstruationLeaveLastMonth.startTime}'),
+								spendTime: '${userMenstruationLeaveLastMonth.spendTime}',
+
+							};
+
+
 
 							if ($('#leaveId').val() == 3) {
-// 								console.log($("#spendTime option[value='3']"));
+								// 								console.log($("#spendTime option[value='3']"));
 								if ('${userMenstruationLeave.spendTime}' >= 1) {
 									errors['leaveId'] = 5;
 									$('#leaveId-error').show();
@@ -318,18 +324,18 @@
 							};
 
 
-// 							if ($('#leaveId').val() == 3) {
-								
-// 								if ('${userMenstruationLeaveQuota.count}' <= 0) {
-// 									errors['leaveId'] = 6;
-// 									$('#leaveId-error').show();
-// 								}
-// 							}
-							
-							
-							 var enddate = new Date();
-							 console.log(enddate);
-							
+							// 							if ($('#leaveId').val() == 3) {
+
+							// 								if ('${userMenstruationLeaveQuota.count}' <= 0) {
+							// 									errors['leaveId'] = 6;
+							// 									$('#leaveId-error').show();
+							// 								}
+							// 							}
+
+
+							var enddate = new Date();
+							console.log(enddate);
+
 
 							var targetURL = "<c:url value='/security/askLeave/add'/>";
 

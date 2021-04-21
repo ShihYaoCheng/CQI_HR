@@ -1,6 +1,8 @@
 package com.cqi.hr.service;
 
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -388,8 +390,17 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 	}
 
 	@Transactional
-	public UserAskForLeave getMenstruationLeaveByUserIdInMonth(String sysUserId) {
-		UserAskForLeave userAskForLeave = userAskForLeaveDAO.getMenstruationLeaveByUserIdInMonth( sysUserId);
+	public UserAskForLeave getMenstruationLeaveByUserIdAndMonth(String sysUserId,int monthDiff ) {
+		Date firstDateOfMonth ;
+		if (monthDiff == 0) {
+			firstDateOfMonth = DateUtils.getFirstDateOfThisMonth();
+		}else if (monthDiff == -1) {
+			firstDateOfMonth = DateUtils.getFirstDateOfLastMonth();
+		}else {
+			return null;
+		}
+		
+		UserAskForLeave userAskForLeave = userAskForLeaveDAO.getMenstruationLeaveByUserIdAndMonth( sysUserId,firstDateOfMonth);
 		return userAskForLeave;
 	}
 
