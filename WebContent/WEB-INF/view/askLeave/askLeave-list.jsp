@@ -259,7 +259,9 @@
 							errorCode["3"] = "請輸入時間";
 							errorCode["4"] = "時間似乎怪怪的，請確認";
 							errorCode["5"] = "本月已請過生理假，每月限請一天";
-							errorCode["6"] = "本年度生理假已超過額度，請改請病假";
+							errorCode["6"] = "上個月已請過生理假，每月限請一天";
+							errorCode["7"] = "本年度生理假已超過額度，請改請病假";
+							errorCode["8"] = "不能提前請非本月的生理假唷";
 
 							var errors = {};
 
@@ -284,7 +286,7 @@
 								$('#endTime-error').hide();
 							}
 
-							// userMenstruationLeave 生理假請假紀錄
+							//userMenstruationLeaveThisMonth 本月份生理假 第一筆資料
 							//console.log("check menstruation leave rule");
 							//console.log('${userMenstruationLeaveThisMonth}');
 							var userMenstruationLeaveThisMonth = {
@@ -292,31 +294,46 @@
 								leaveId: '${userMenstruationLeaveThisMonth.leaveId}',
 								startTime: new Date('${userMenstruationLeaveThisMonth.startTime}'),
 								spendTime: '${userMenstruationLeaveThisMonth.spendTime}',
-
 							};
 
-							//userMenstruationLeaveLastMonth
+							//抓取當前生理假月份
+							var thisMonth = '${userMenstruationLeaveThisMonth.startTime}'.substring(5, 7);
+							//console.log("當前生理假月份：",thisMonth);
+
+
+							//抓取 input公告開始時間： 中的月份
+							var startTimeMonth = $(" #startTime ").val().substring(5, 7);
+							// console.log("input中想請的月份：", startTimeMonth);
+
+
+							//抓取當前月份(不足2位數補0)				
+							var TimeNow = new Date();
+							var currentMonth = (TimeNow.getMonth() + 1 < 10 ? '0' : '') + (TimeNow.getMonth() + 1);
+							// console.log("當前月份：", currentMonth);
+
+
+							//userMenstruationLeaveLastMonth 上個月份生理假 第一筆資料
 							var userMenstruationLeaveLastMonth = {
 								sysUserId: '${userMenstruationLeaveLastMonth.sysUserId}',
 								leaveId: '${userMenstruationLeaveLastMonth.leaveId}',
 								startTime: new Date('${userMenstruationLeaveLastMonth.startTime}'),
 								spendTime: '${userMenstruationLeaveLastMonth.spendTime}',
-
 							};
 
+							//抓取上個月生理假月份
+							var lastMenstruationLeave = '${userMenstruationLeaveLastMonth.startTime}'.substring(5, 7);
+							//console.log("上個月生理假月份：",lastMenstruationLeave);
 
 
-							if ($('#leaveId').val() == 3) {
-								// 								console.log($("#spendTime option[value='3']"));
-								if ('${userMenstruationLeave.spendTime}' >= 1) {
-									errors['leaveId'] = 5;
-									$('#leaveId-error').show();
-								}
-							}
+
+							//抓取上個月份(不足2位數補0)				
+							var TimeNow = new Date();
+							var lastMonth = (TimeNow.getMonth() + 1 < 10 ? '0' : '') + (TimeNow.getMonth());
+							//console.log("上個月份：",lastMonth);
 
 
-							//userMenstruationLeaveQuota  生理假剩餘額度
-							console.log('${userMenstruationLeaveQuota}');
+							//userMenstruationLeaveQuota  每年生理假剩餘額度
+							//console.log('${userMenstruationLeaveQuota}');
 							var userMenstruationLeaveQuota = {
 								sysUserId: '${userMenstruationLeaveQuota.sysUserId}',
 								leaveId: '${userMenstruationLeaveQuota.leaveId}',
@@ -324,17 +341,39 @@
 							};
 
 
-							// 							if ($('#leaveId').val() == 3) {
+							if ($('#leaveId').val() == 3) {
+								//當月限請一天生理假
+								if (currentMonth == startTimeMonth) {
+									if ('${userMenstruationLeaveThisMonth.spendTime}' >= 1) {
+										errors['leaveId'] = 5;
+										$('#leaveId-error').show();
+									}
+								}
 
-							// 								if ('${userMenstruationLeaveQuota.count}' <= 0) {
-							// 									errors['leaveId'] = 6;
-							// 									$('#leaveId-error').show();
-							// 								}
-							// 							}
+								//不能提前請非當月生理假
+								if ((currentMonth < startTimeMonth) && (lastMenstruationLeave !== startTimeMonth)
+									&& (currentMonth !== startTimeMonth)) {
+									errors['leaveId'] = 8; //顯示："不能提前請非本月的生理假唷"
+									$('#leaveId-error').show();
+								}
+								if (currentMonth == 12 && startTimeMonth == 01) {
+									errors['leaveId'] = 8; //顯示："不能提前請非本月的生理假唷"
+									$('#leaveId-error').show();
+								}
 
-
-							var enddate = new Date();
-							console.log(enddate);
+								//上個月限請一天生理假 
+								if (lastMenstruationLeave == startTimeMonth) {
+									if ('${userMenstruationLeaveLastMonth.spendTime}' >= 1) {
+										errors['leaveId'] = 6;
+										$('#leaveId-error').show();
+									}
+								}
+								//每年只能請三天生理假
+								if ('${userMenstruationLeaveQuota.count}' <= 0) {
+									errors['leaveId'] = 7;
+									$('#leaveId-error').show();
+								}
+							}
 
 
 							var targetURL = "<c:url value='/security/askLeave/add'/>";
@@ -352,6 +391,7 @@
 									data: data,
 									dataType: "json",
 									success: function (data) {
+										location.reload();
 										$("body").css("cursor", "auto");
 										if (data.success) {
 											queryData(1);
@@ -404,11 +444,11 @@
 								},
 								dataType: "json",
 								success: function (data) {
+									location.reload(true)
 									$("body").css("cursor", "auto");
 									if (data.success) {
 										queryData(1);
 									}
-
 								}
 							});
 						}
