@@ -21,6 +21,7 @@ import com.cqi.hr.dao.AbstractDAO;
 import com.cqi.hr.dao.EmergenceOvertimeSignDAO;
 import com.cqi.hr.dao.LineImageUrlDAO;
 import com.cqi.hr.dao.LineUserDAO;
+import com.cqi.hr.dao.LineWebhookLogDAO;
 import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.SysUserShiftDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
@@ -28,6 +29,7 @@ import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.EmergenceOvertimeSign;
 import com.cqi.hr.entity.LineImageUrl;
 import com.cqi.hr.entity.LineUser;
+import com.cqi.hr.entity.LineWebhookLog;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.SysUserShift;
 import com.cqi.hr.entity.UserAskForOvertime;
@@ -78,6 +80,8 @@ public class LineBotService extends AbstractService<LineUser>{
 	
 	@Resource SysUserShiftDAO sysUserShiftDAO;
 	
+	@Resource LineWebhookLogDAO lineWebhookLogDAO;
+	
 	@Override
 	protected AbstractDAO<LineUser> getDAO() {
 		return lineUserDAO;
@@ -120,6 +124,10 @@ public class LineBotService extends AbstractService<LineUser>{
 				Calendar createDate = Calendar.getInstance();
 				createDate.setTimeInMillis(eventJson.get("timestamp").getAsLong());
 				lineUserDAO.saveOrUpdate(new LineUser(sourceJson.get("userId").getAsString(), userProfileResponse.getDisplayName(), createDate.getTime(), createDate.getTime(), Constant.STATUS_ENABLE));
+			
+				LineWebhookLog lineLog = new LineWebhookLog("addFriend","userId: "+ sourceJson.get("userId").getAsString() +" getDisplayName: "+userProfileResponse.getDisplayName()) ;
+				lineWebhookLogDAO.saveOrUpdate(lineLog);
+				
 			}
 		}
 	}
@@ -138,7 +146,16 @@ public class LineBotService extends AbstractService<LineUser>{
 		switch (messageType) {
 		case "text":
 			logger.info("message : " + messageJson.get("text").getAsString());
-			if(messageJson.get("text").getAsString().contains("審核") || messageJson.get("text").getAsString().contains("勤務")) {
+			LineWebhookLog lineLog = new LineWebhookLog(messageJson.get("type").getAsString(), messageJson.get("text").getAsString()) ;
+			lineWebhookLogDAO.saveOrUpdate(lineLog);
+			
+			if (messageJson.get("text").getAsString().contains("測試")) {
+				replyTestMessage("", eventJson.get("replyToken").getAsString());
+			}else if (messageJson.get("text").getAsString().contains("綁定")) {
+				BindLineIdToSysUser(sourceJson.get("userId").getAsString(),messageJson.get("text").getAsString(), eventJson.get("replyToken").getAsString());
+			}
+			/* mark 20210421
+			else if(messageJson.get("text").getAsString().contains("審核") || messageJson.get("text").getAsString().contains("勤務")) {
 				SysUser user = sysUserDAO.getByLineId(sourceJson.get("userId").getAsString());
 				if(user.getDepartmentMaster()!=null && user.getDepartmentMaster().equals(Constant.STATUS_ENABLE)) {
 					buildListVo(Constant.LINE_EMERGENCE_LEVEL_DEPARTMENT, eventJson.get("replyToken").getAsString());
@@ -149,11 +166,8 @@ public class LineBotService extends AbstractService<LineUser>{
 				}else if(user.getCompanyGod()!=null && user.getCompanyGod().equals(Constant.STATUS_ENABLE)) {
 					buildListVo(Constant.LINE_EMERGENCE_LEVEL_COMPANY, eventJson.get("replyToken").getAsString());
 				}
-			}else if (messageJson.get("text").getAsString().contains("測試")) {
-				replyTestMessage("", eventJson.get("replyToken").getAsString());
-			}else if (messageJson.get("text").getAsString().contains("綁定")) {
-				//BindLineIdToSysUser(sourceJson.get("userId").getAsString(),messageJson.get("text").getAsString(), eventJson.get("replyToken").getAsString());
 			}
+			*/
 			
 			break;
 		default:
@@ -161,6 +175,79 @@ public class LineBotService extends AbstractService<LineUser>{
 		}
 	}
 	
+	private void BindLineIdToSysUser(String lineUserId, String message, String replyToken) throws Exception {
+		logger.info("lineUserId : " + lineUserId);
+		logger.info("message : " + message);
+		logger.info("replyToken : " + replyToken);
+		
+		//check if lineUserId exist
+		SysUser checkLineId = sysUserDAO.getByLineId(lineUserId);
+		if (checkLineId != null) {
+			//send line
+			LineMessageVo lineMessageVo = new LineMessageVo();
+			lineMessageVo.setTargetId(lineUserId);
+			lineMessageVo.setAltText("綁定結果");
+			
+			List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+			headerContents.add(Text.builder().text("綁定結果").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+			headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+			headerContents.add(Separator.builder().build());
+			headerContents.add(Text.builder().text("綁定失敗").size(FlexFontSize.XS).align(FlexAlign.START).build());
+			headerContents.add(Text.builder().text("此lineId已綁定"+checkLineId.getOriginalName()+", 若需要變更請聯繫管理員").size(FlexFontSize.XS).align(FlexAlign.START).build());
+			
+	        
+			Box headerBox = Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	        lineMessageVo.setHeader(headerBox);
+			
+			sendLineMessage(lineMessageVo,replyToken);
+			return;
+		}
+		
+		//replace message string
+		String messageName = message.replaceAll("綁定", "").replaceAll(" ", "");
+		
+		SysUser sysUser = sysUserDAO.getOneByOriginalName(messageName);
+		if (sysUser != null) {
+			
+			sysUser.setLineId(lineUserId);
+			sysUserDAO.saveOrUpdate(sysUser);
+			
+			//send line
+			LineMessageVo lineMessageVo = new LineMessageVo();
+			lineMessageVo.setTargetId(lineUserId);
+			lineMessageVo.setAltText("綁定結果");
+			
+			List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+			headerContents.add(Text.builder().text("綁定結果").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+			headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+			headerContents.add(Separator.builder().build());
+			headerContents.add(Text.builder().text(sysUser.getOriginalName() +"：" + sysUser.getLineId()).size(FlexFontSize.XS).align(FlexAlign.START).build());
+			
+	        
+			Box headerBox = Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	        lineMessageVo.setHeader(headerBox);
+			
+			sendLineMessage(lineMessageVo,replyToken);
+		}else {
+			//send line
+			LineMessageVo lineMessageVo = new LineMessageVo();
+			lineMessageVo.setTargetId(lineUserId);
+			lineMessageVo.setAltText("綁定結果");
+			
+			List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+			headerContents.add(Text.builder().text("綁定結果").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+			headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+			headerContents.add(Separator.builder().build());
+			headerContents.add(Text.builder().text("綁定失敗").size(FlexFontSize.XS).align(FlexAlign.START).build());
+			
+	        
+			Box headerBox = Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	        lineMessageVo.setHeader(headerBox);
+			
+			sendLineMessage(lineMessageVo,replyToken);
+		}
+	}
+
 	public void replyTestMessage(String string, String replyToken) throws Exception {
 		
 		SysUser targetUser = sysUserDAO.get("1198842813042872");
@@ -178,11 +265,7 @@ public class LineBotService extends AbstractService<LineUser>{
 		lineMessageVo.setHeader(testHeader());
 		//lineMessageVo.setBody(dataVo.getBody());
 		//lineMessageVo.setFooter(dataVo.getFooter());
-		if(StringUtils.hasText(replyToken)) {
-			LineUtils.sendReplyMessage(replyToken, lineMessageVo);
-		}else {
-			LineUtils.sendFlexMessage(lineMessageVo);
-		}
+		sendLineMessage(lineMessageVo,replyToken);
 	}
 
 	private Box testHeader() {
@@ -353,6 +436,14 @@ public class LineBotService extends AbstractService<LineUser>{
 		}
 	}
 	
+	public void sendLineMessage(LineMessageVo dataVo, String replyToken) {
+		if(StringUtils.hasText(replyToken)) {
+			LineUtils.sendReplyMessage(replyToken, dataVo);
+		}else {
+			LineUtils.sendFlexMessage(dataVo);
+		}
+	}
+	
 	public Box emergenceSignHeader(FlexMessageVo dataVo) {
 		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
 		headerContents.add(Text.builder().text("災害處理單申請表").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
@@ -514,37 +605,75 @@ public class LineBotService extends AbstractService<LineUser>{
 	
 	public void NoPunchRemind() throws Exception {
 		Date nowDate = new Date();
-		String nowShift = nowDate.getHours() == 9 ? "09:00":"10:00" ;
+		String nowShift ="";
+		int nowHour = nowDate.getHours();
+		switch (nowHour) {
+		case 9:
+			nowShift = "09:00";
+			break;
+		case 10:
+			nowShift = "10:00";
+			break;
+		case 18:
+			nowShift = "18:00";
+			break;
+		case 19:
+			nowShift = "19:00";
+			break;
+		default:
+			break;
+		}
 		logger.info("nowShift: " + nowShift);
 		
 		//test
-		//nowShift = "09:00";
+		//nowShift = "18:00";
+		//nowHour=18;
 		
 		List<SysUser> userList = sysUserDAO.getEnableRole2LineUser();
 		for (SysUser sysUser : userList) {
 			logger.info(sysUser.getUserName());
 			AttendanceRecord attendanceRecord = attendanceRecordService.getUserToday(sysUser);
 			SysUserShift sysUserShift = sysUserShiftDAO.getOneByIdAndDate(sysUser.getSysUserId(), nowDate);
-			if (attendanceRecord == null && sysUserShift != null) {
-				if (nowShift.equals(sysUserShift.getBoardTime())) {
-					logger.info("line "+sysUser.getUserName());
-					
-					LineMessageVo lineMessageVo = new LineMessageVo();
-					lineMessageVo.setTargetId(sysUser.getLineId());
-					lineMessageVo.setAltText("未打卡提醒");
-					lineMessageVo.setHeader(NoPunchHeader(nowShift));
-					//lineMessageVo.setBody(dataVo.getBody());
+			if (sysUserShift == null) {
+				continue;
+			}
+			
+			LineMessageVo lineMessageVo = new LineMessageVo();
+			lineMessageVo.setTargetId(sysUser.getLineId());
+			
+			//上班檢查
+			if (attendanceRecord == null && nowShift.equals(sysUserShift.getBoardTime()) ) {
+				lineMessageVo.setAltText("上班未打卡提醒");
+				lineMessageVo.setHeader(NoPunchHeader(sysUser.getOriginalName(),nowShift.substring(0,2),"上班" ));
+				lineMessageVo.setFooter(NoPunchFooter());
+				LineUtils.sendFlexMessage(lineMessageVo);
+			}
+			//下班檢查
+			else if ( nowShift.equals(sysUserShift.getFinishTime()) ) {
+				if ( attendanceRecord == null ) {
+					lineMessageVo.setAltText("下班未打卡提醒");
+					lineMessageVo.setHeader(NoPunchHeader(sysUser.getOriginalName(),nowShift.substring(0,2),"下班" ));
 					lineMessageVo.setFooter(NoPunchFooter());
 					LineUtils.sendFlexMessage(lineMessageVo);
+				} else {
+					SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+					Date attendanceLeaveTime = attendanceRecord.getLeaveTime() == null ?  sdfTime.parse("00:00") : sdfTime.parse(attendanceRecord.getLeaveTime()) ;
+					int leaveTimeHour = attendanceLeaveTime.getHours();
+					if (leaveTimeHour < nowHour) {
+						lineMessageVo.setAltText("下班未打卡提醒");
+						lineMessageVo.setHeader(NoPunchHeader(sysUser.getOriginalName(),nowShift.substring(0,2),"下班" ));
+						lineMessageVo.setFooter(NoPunchFooter());
+						LineUtils.sendFlexMessage(lineMessageVo);
+					}
 				}
 			}
 		}
 		
 	}
 	
-	public Box NoPunchHeader(String nowShift) {
+	public Box NoPunchHeader(String userName, String time, String shift) {
 		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
-		headerContents.add(Text.builder().text(nowShift.substring(0,2)+"點未打卡提醒").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text(userName+" "+time+"點"+shift+"未打卡提醒").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
 		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
 		headerContents.add(Separator.builder().build());
         return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
