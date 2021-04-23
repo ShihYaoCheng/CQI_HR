@@ -1,9 +1,12 @@
 package com.cqi.hr.entity;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -15,8 +18,12 @@ public class LineWebhookLog implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "LOG_ID", unique = true, nullable = false)
 	private String logId;
+	
+	@Column(name = "type", length = 45)
+	private String type;
 	
 	@Column(name = "DATA", length = 1000)
 	private String data;
@@ -33,6 +40,13 @@ public class LineWebhookLog implements java.io.Serializable {
 	private Integer status;
 
 	public LineWebhookLog() {}
+	
+	public LineWebhookLog(String type, String data ) {
+		this.type = type;
+		this.data = data;
+		this.status = 1;
+		this.createTime = new Date();
+	}
 
 	public String getLogId() {
 		return logId;
@@ -42,6 +56,14 @@ public class LineWebhookLog implements java.io.Serializable {
 		this.logId = logId;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	public String getData() {
 		return data;
 	}
