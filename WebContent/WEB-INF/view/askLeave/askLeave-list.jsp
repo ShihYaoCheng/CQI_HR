@@ -368,10 +368,11 @@
 										$('#leaveId-error').show();
 									}
 								}
-								//每年只能請三天生理假
-								if ('${userMenstruationLeaveQuota.count}' <= 0) {
-									errors['leaveId'] = 7;
-									$('#leaveId-error').show();
+								//每年請超過三天生理假後，第四天起跳出提醒系統將自動改請病假
+								if ('${userMenstruationLeaveQuota.count}' < 1) {
+									// errors['leaveId'] = 7;
+									// $('#leaveId-error').show();
+									alert("本年度生理假已請三次，此次系統將自動計入病假額度 ❣");
 								}
 							}
 
