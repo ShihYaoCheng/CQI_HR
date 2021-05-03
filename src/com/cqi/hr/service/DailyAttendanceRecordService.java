@@ -77,7 +77,7 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		
 		// only for test
 		//userList.add(sysUserDAO.get("1198842813042872"));
-		//date = sdfDate.parse("2021-04-02");
+		//date = sdfDate.parse("2021-04-29");
 		
 		
 		for(SysUser sysUser:userList) {

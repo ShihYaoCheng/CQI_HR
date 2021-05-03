@@ -81,6 +81,7 @@
 					            	<div class="form-group">
 						            	<select class="form-control" id="shiftDesc" name="shiftDesc">
 						            		<option value="">請選擇</option>
+											<option value="08:00~17:00">08:00~17:00</option>
 											<option value="09:00~18:00">09:00~18:00</option>
 											<option value="10:00~19:00">10:00~19:00</option>
 										</select>

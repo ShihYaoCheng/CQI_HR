@@ -83,25 +83,7 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 		return "redirect:/logout";
 	}
 	
-	/*
-	@RequestMapping(method=RequestMethod.POST, value="manager/ajaxDataLoading")
-	public String ajaxManagerDataLoading(HttpServletRequest req, Long queryUserId, Integer page, ModelMap model) {
-		logger.info(FUNCTION_NAME + " ajaxDataLoading");
-		try {
-			//SysUser operator = SessionUtils.getLoginInfo(req);
-			SysUser queryUser = null;
-			if(queryUserId!=null) {
-				queryUser = sysUserService.get(queryUserId);
-			}
-			model.addAttribute("userMap", sysUserService.getUserMapping());
-			PagingList<SysUserShift> shiftList = sysUserShiftService.getList(page, queryUser);
-			createPagingInfo(model, shiftList);
-		} catch (Exception e) {
-			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
-		}
-		return "/sysUserShift/manager/sysUserShift-list.table";
-	}
-	*/
+	
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{shiftId}")
 	public void ajaxQuery(HttpServletRequest req, HttpServletResponse resp, @PathVariable Long shiftId){
