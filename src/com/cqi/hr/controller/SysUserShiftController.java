@@ -45,18 +45,7 @@ public class SysUserShiftController extends AbstractController<SysUserShift> {
 		return "/sysUserShift/sysUserShift-list";
 	}
 	
-	/*
-	@RequestMapping(method=RequestMethod.GET, value="manager")
-	public String indexManager(HttpServletRequest req, ModelMap model) {
-		logger.info(FUNCTION_NAME + " indexManager");
-		try {
-			model.addAttribute("userList", sysUserService.getUserList());
-		} catch (Exception e) {
-			logger.error(FUNCTION_NAME + "index error:", e);
-		}
-		return "/sysUserShift/manager/sysUserShift-list";
-	}
-	*/
+	
 	
 	@RequestMapping(method=RequestMethod.POST, value="ajaxDataLoading")
 	public String ajaxDataLoading(HttpServletRequest req, String searchUserName, Integer page, ModelMap model) {
