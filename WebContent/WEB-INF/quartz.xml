@@ -351,8 +351,8 @@
             <ref bean="jobNoPunchRemindBean"/>
         </property>
         <property name="cronExpression">
-            <!-- <value>10 * * * * ?</value> -->
-        	 <value>0 10 9,10,18,19 * * ?</value> 
+            <!--  <value>10 * * * * ?</value>  -->
+        	<value>0 10 9,10,18,19 * * ?</value>
         </property>
         <!-- 
 			    秒（0-59）
