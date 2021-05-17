@@ -103,7 +103,8 @@
 												<div class="form-group">
 													<div class="input-group date" id='datetimepickerStart'>
 														<input id="startTime" name="startTime" class="form-control"
-															size="16" type="text" value="" />
+															size="16" type="text" value="" readonly="readonly" style="cursor: pointer;
+															background-color: #fff;" />
 														<span class="input-group-addon"><span
 																class="glyphicon glyphicon-calendar"></span></span>
 													</div>
@@ -236,6 +237,7 @@
 
 						// "假別：" 點選生理假時，"單位：天" 限制為一天
 						$('#leaveId').change(function () {
+
 							if ($('#leaveId').val() == '3') {
 
 								$('#spendTime').children().each(function (index, el) {
@@ -303,7 +305,9 @@
 
 							//抓取 input公告開始時間： 中的月份
 							var startTimeMonth = $(" #startTime ").val().substring(5, 7);
-							// console.log("input中想請的月份：", startTimeMonth);
+							console.log("input中想請的月份：", startTimeMonth);
+							var startTimeMonth = $(" #startTime ").val();
+							console.log(startTimeMonth);
 
 
 							//抓取當前月份(不足2位數補0)				
@@ -432,6 +436,7 @@
 							}
 						}
 
+
 						function deleteData(id) {
 							var targetURL = "<c:url value='/security/askLeave/" + id + "'/>";
 
@@ -508,6 +513,17 @@
 								});
 							}
 						}
+
+						$('#spendTime').change(function () {
+							$('#startTime').val('');
+							$('#endTime').val('');
+						});
+						$('#leaveId').change(function () {
+							$('#spendTime').val('');
+							$('#startTime').val('');
+							$('#endTime').val('');
+						});
+
 					</script>
 		</body>
 

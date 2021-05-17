@@ -51,7 +51,7 @@
 							<td>
 								${item.description}
 							</td>
-
+	
 							<td>
 								<c:set var="today" value="<%=new Date()%>" />
 								<fmt:formatDate var="day" value="${today}" pattern="dd" />
