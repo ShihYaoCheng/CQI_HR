@@ -38,6 +38,27 @@
 
 						</div>
 					</div>
+<<<<<<< HEAD
+=======
+					<%@include file="../include/progressing.jsp"%>
+					<div id="overtimeQuatoContent">
+					</div>
+					<div id="dataContent">
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+	
+	<!-- dialog -->
+	<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">新增調班紀錄</h4>
+>>>>>>> c1a22504c675d74099d18b5245dc08d1a326baa4
 				</div>
 
 				<!-- dialog -->

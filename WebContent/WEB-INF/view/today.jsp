@@ -39,7 +39,7 @@
 						<thead>
 							<tr>
 								<td colspan="2" align="center">樓層</td>
-								<td colspan="10" align="center">時間</td>
+								<td colspan="11" align="center">時間</td>
 								<td align="center">調班</td>
 							</tr>
 						</thead>
@@ -60,9 +60,9 @@
 												<td class="text-center">
 													${user.userName} | <c:if test="${attendance.get(user.sysUserId)!=null}">${attendance.get(user.sysUserId).arriveTime} ~ ${attendance.get(user.sysUserId).leaveTime}</c:if>
 												</td>
-												<c:forEach var="i" begin="9" end="18" step="1">
+												<c:forEach var="i" begin="8" end="18" step="1">
 													<c:choose>
-														<c:when test="${i==12}">
+														<c:when test="${i==12 || shift.get(user.sysUserId)==null}">
 															<td class="text-center rest-time">
 																${i}
 															</td>
@@ -84,12 +84,19 @@
 															<c:choose>
 																<c:when test="${attendance.get(user.sysUserId)==null}">
 																	
-																
-																	<td class="text-center <c:choose>
-																		<c:when test="${ i==9 && shift.get(user.sysUserId) != null && shift.get(user.sysUserId).boardTime!='09:00'  || (i==18 && (shift.get(user.sysUserId)==null || shift.get(user.sysUserId).finishTime!='19:00'))}">rest-time</c:when>
-																		<c:when test="${isLeaveThrough}">ask-leave-time</c:when>
-																		<c:when test="${nowHourNumber<i || (nowHourNumber==i && nowMinute<'15')}">working-time</c:when>
-																		<c:otherwise>absence-time</c:otherwise></c:choose>">
+																	<td class="text-center 
+																	<!-- 123 -->
+																		<c:choose>
+																			
+																			<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='09:00' }">rest-time</c:when>
+																			<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
+																			<c:when test="${ i==9  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
+																			<c:when test="${ i==17 && shift.get(user.sysUserId).finishTime=='17:00' }">rest-time</c:when>
+																			<c:when test="${ i==18 && shift.get(user.sysUserId).finishTime=='17:00' }">rest-time</c:when>
+																			<c:when test="${ i==18 && shift.get(user.sysUserId).finishTime=='18:00' }">rest-time</c:when>
+																			<c:when test="${isLeaveThrough}">ask-leave-time</c:when>
+																			<c:when test="${nowHourNumber<i || (nowHourNumber==i && nowMinute<'15')}">working-time</c:when>
+																			<c:otherwise>absence-time</c:otherwise></c:choose>">
 																		${i}
 																	</td>
 
@@ -102,7 +109,13 @@
 																			<fmt:parseNumber var="leaveHour" type="number" value="${fn:split(attendance.get(user.sysUserId).leaveTime, ':')[0]}" />
 																			<td class="text-center 
 																				<c:choose>
-																					<c:when test="${ i==9 && shift.get(user.sysUserId)!=null && shift.get(user.sysUserId).boardTime!='09:00'  || (i==18 && (shift.get(user.sysUserId)==null || shift.get(user.sysUserId).finishTime!='19:00'))}">rest-time</c:when>
+																					<!--/span WFH-->
+																					<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='09:00' }">rest-time</c:when>
+																					<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
+																					<c:when test="${ i==9  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
+																					<c:when test="${ i==17 && shift.get(user.sysUserId).finishTime=='17:00' }">rest-time</c:when>
+																					<c:when test="${ i==18 && shift.get(user.sysUserId).finishTime=='17:00' }">rest-time</c:when>
+																					<c:when test="${ i==18 && shift.get(user.sysUserId).finishTime=='18:00' }">rest-time</c:when>
 																					<c:when test="${isLeaveThrough}">ask-leave-time</c:when>
 																					<c:when test='${arriveHour==i && arriveMinute > 15}'>absence-time</c:when>
 																					<c:when test='${(arriveHour!=null && arriveHour <= i) && (leaveHour==null || leaveHour>=i)}'>working-time</c:when>

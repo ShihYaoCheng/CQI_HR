@@ -9,14 +9,14 @@
 </head>
 
 <body role="document">
-	<%@include file="../../include/menu.jsp"%>
+	<%@include file="../include/menu.jsp"%>
 	<div class="container theme-showcase page-width" role="main">
 		<div class="row row-offcanvas row-offcanvas-left">
 			
 			<!--/span-->
 			<div class="col-xs-12 col-md-12 single_table">
 				<form class="navbar-form">
-					<h3><b>班別資料管理</b></h3>
+					<h3><b>遠端作業管理</b></h3>
 					<br/>
 					<div class="form-group" style="display: inline;">
 						<div class="input-group">
@@ -29,7 +29,7 @@
 						</div>
 
 					</div>
-					<%@include file="../../include/progressing.jsp"%>
+					<%@include file="../include/progressing.jsp"%>
 					<div id="dataContent">
 					</div>
 				</form>
@@ -54,22 +54,34 @@
 						<input type="hidden" id="finishTime" name="finishTime"/>
 						<div id="edit">
 							<div class="form-group">
-								<label for="recipient-name" class="control-label col-sm-12">人員:</label>
-								<div class="col-sm-12 checkbox">
-									<select class="form-control" id="sysUserId" name="sysUserId">
-						            	<option value="">請選擇</option>
-						            	<c:forEach var="item" items="${userList}" varStatus="vs">
-											<option value="${item.sysUserId}">${item.originalName}</option>
-										</c:forEach>
-									</select>
-								</div>
+								<label for="recipient-name" class="control-label col-sm-12">成員：</label>
+								<div class="col-sm-12">
+						            <div class="form-group">
+										<select class="form-control" id="sysUserId" name="sysUserId" onchange="">
+							            	<c:choose>
+											    <c:when test="${operator.roleId == '1'}">
+											    	<option value="">請選擇</option>
+											        <c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
+														<option value="${item['key']}">${item['value'].originalName}</option>
+													</c:forEach>
+											    </c:when>    
+											    <c:otherwise>
+											        <option value="${operator.sysUserId}">${operator.originalName}</option>
+											    </c:otherwise>
+											</c:choose>
+							            	
+										</select>
+										<span id="sysUserId-error" class="error_text"></span>
+									</div>
+								</div>	
 							</div>
 							<div class="form-group">
 					            <label for="recipient-name" class="control-label col-sm-12">班別:</label>
-					            <div class="col-sm-12 checkbox">
-					            	<div style="float:left;">
+					            <div class="col-sm-12 ">
+					            	<div class="form-group">
 						            	<select class="form-control" id="shiftDesc" name="shiftDesc">
 						            		<option value="">請選擇</option>
+											<option value="08:00~17:00">08:00~17:00</option>
 											<option value="09:00~18:00">09:00~18:00</option>
 											<option value="10:00~19:00">10:00~19:00</option>
 										</select>
@@ -109,7 +121,12 @@
 		jQuery().ready(function (){
 			queryData(1);
 			var today = new Date();
-			var pickerStartDate = getNextFirstDay()
+			var ruleId = ${operator.roleId} ;
+			var pickerStartDate = getNextFirstDay();
+			if(ruleId == '1'){
+				pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
+			}
+			
 			$('#datetimepickerEnable').datepicker({
 				viewMode: "months", 
 			    minViewMode: "months",
@@ -128,7 +145,7 @@
 			$("#progressing").show();
 			$.ajax({
 				type : "POST",
-				url : "<c:url value='/security/sysUserShift/manager/ajaxDataLoading'/>",
+				url : "<c:url value='/security/WorkFromHome/ajaxDataLoading'/>",
 				data : {
 					page:page
 				},
@@ -148,7 +165,12 @@
 			errorCode["1"] = "請選擇班別";
 			errorCode["2"] = "請輸入排班月份";
 			errorCode["3"] = "時間似乎怪怪的，請確認";
+			errorCode["4"] = "請選擇成員";
 			var errors = {};
+			
+			if($('#sysUserId :selected').val() == ''){
+				errors['sysUserId'] = 4;
+			}
 			
 			if($('#shiftDesc :selected').val() == ''){
 				errors['shiftDesc'] = 1;
@@ -247,6 +269,7 @@
 						if (data.success) {
 							$('#shiftId').val(data.sysUserShift.shiftId);
 							$('#sysUserId').val(data.sysUserShift.sysUserId);
+							$('#sysUserId').attr("disabled", true);
 							$('#enableMonth').val(formatJsonDate(data.sysUserShift.enableMonth, "y/M"));
 							$('#status').val(data.sysUserShift.status);
 							$('#boardTime').val(data.sysUserShift.boardTime);

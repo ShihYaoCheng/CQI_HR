@@ -71,15 +71,15 @@ public class MonthlyReportService extends AbstractService<MonthlyReport>{
 		Map<String,SysUserShift> mapSysUserShift = sysUserShiftService.getMapLastMonth();
 		List<MonthlyReport> monthlyReportList = new ArrayList<MonthlyReport>();
 		List<SysUser> userList = new ArrayList<SysUser>();
-		//userList = sysUserDAO.getEnableRole2UserOrGraduationInMonth(calendar.getTime());
+		userList = sysUserDAO.getEnableRole2UserOrGraduationInMonth(calendar.getTime());
 		
 		//for test only
 		//startDate= sdfDate.parse("2021-01-01");
 		//endDate= sdfDate.parse("2021-01-30");
 		//year = 2021; month = 0;
-		userList.add(sysUserDAO.get("719802823720909"));
-		userList.add(sysUserDAO.get("1147593956675609"));
-		//userList.add(sysUserDAO.get("955100567255002"));
+		//userList.add(sysUserDAO.get("1134444221040529"));
+		//userList.add(sysUserDAO.get("1173976137764859"));
+		
 		
 		
 		for(SysUser sysUser:userList) {

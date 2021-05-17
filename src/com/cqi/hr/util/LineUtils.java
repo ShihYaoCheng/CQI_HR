@@ -48,7 +48,7 @@ public class LineUtils {
 			Message messages = new FlexMessage(lineMessageVo.getAltText(), messageBuuble.build());
 			PushMessage pushMessage = new PushMessage(lineMessageVo.getTargetId(), messages);
 			BotApiResponse apiResponse = client.pushMessage(pushMessage).get();
-			logger.info("TestGOgogogrgergrg : " + apiResponse.getMessage());
+			logger.info("sendFlexMessage : " + apiResponse.getMessage() + ";targetId: " +lineMessageVo.getTargetId());
 		} catch (Exception e) {
 			logger.error("sendFlexMessage Exception : ", e);
 		}

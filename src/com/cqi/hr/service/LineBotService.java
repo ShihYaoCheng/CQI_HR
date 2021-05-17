@@ -625,11 +625,16 @@ public class LineBotService extends AbstractService<LineUser>{
 		}
 		logger.info("nowShift: " + nowShift);
 		
+		
+		
+		List<SysUser> userList = new ArrayList<SysUser>();
+		userList = sysUserDAO.getEnableRole2LineUser();
+		
 		//test
 		//nowShift = "18:00";
 		//nowHour=18;
+		//userList.add(sysUserDAO.get("1198842813042872"));
 		
-		List<SysUser> userList = sysUserDAO.getEnableRole2LineUser();
 		for (SysUser sysUser : userList) {
 			logger.info(sysUser.getUserName());
 			AttendanceRecord attendanceRecord = attendanceRecordService.getUserToday(sysUser);
@@ -679,7 +684,6 @@ public class LineBotService extends AbstractService<LineUser>{
         return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
 	}
 	public Box NoPunchFooter() throws URISyntaxException {
-		logger.info("===NoPunchFooter=====");
 		List<FlexComponent> buttonContents = new ArrayList<FlexComponent>();
 		final Button buttonWeb = Button.builder().style(ButtonStyle.PRIMARY).height(ButtonHeight.SMALL)
 	            .action(new URIAction("today", new URI("https://hr.cqiserv.com/today"), null))

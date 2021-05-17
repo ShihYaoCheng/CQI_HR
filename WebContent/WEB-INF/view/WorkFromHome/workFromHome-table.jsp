@@ -3,14 +3,18 @@
 <%@include file="/WEB-INF/view/include/view-lib.jsp"%>
 
 <div class="table-responsive">
-	<div><h4><b>班別紀錄</b></h4></div>
+	
+	<br/>
+	<div><h4><b>紀錄</b></h4></div>
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<td width="20%">人員</td>
-				<td width="20%">班別</td>
-				<td width="20%">排班月份</td>
-				<td width="20%">修改</td>
+				<td width="10%">成員</td>
+				<td width="10%">級別</td>
+				<td width="15%">日期</td>
+				<td width="20%">是由</td>
+				<td width="10%">主管</td>
+				<td width="10%">操作</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -20,24 +24,28 @@
 				</tr>
 			</c:if>
 			<c:forEach var="item" items="${dataList}" varStatus="vs">
-				<tr>
+				<tr >
+					<td>${mapEnableRule2User.get(item.sysUserId).originalName}</td>
 					<td>
-						${userMap.get(item.sysUserId).originalName}
+						${item.level} 
 					</td>
 					<td>
-						${item.boardTime} ~ ${item.finishTime}
+						<fmt:formatDate pattern="yyyy/MM/dd" value="${item.workDate}" />
 					</td>
 					<td>
-						<fmt:formatDate pattern="yyyy/MM/dd" value="${item.enableMonth}" />
+						${item.description} 
+					</td>
+					<td>
+						${item.approvalBy} 
 					</td>
 					<td>
 						<c:set var="today" value="<%=new Date()%>"/>
 						<fmt:formatDate var="year" value="${today}" pattern="yyyy" />
 						<fmt:formatDate var="month" value="${today}" pattern="MM" />
-						<fmt:formatDate var="dataYear" value="${item.enableMonth}" pattern="yyyy" />
-						<fmt:formatDate var="dataMonth" value="${item.enableMonth}" pattern="MM" />
-						<c:if test="${dataYear > year || (dataYear==year && dataMonth > month)}">
-							<a href="#" class="btn btn-default function_icon" onclick="active('${item.shiftId}')" title="修改"> 
+						<fmt:formatDate var="dataYear" value="${item.workDate}" pattern="yyyy" />
+						<fmt:formatDate var="dataMonth" value="${item.workDate}" pattern="MM" />
+						<c:if test="${dataYear > year || (dataYear==year && dataMonth > month) || (operator.roleId == '1' && dataYear==year && dataMonth == month) }">
+							<a href="#" class="btn btn-default function_icon" onclick="active('${item.workFromHomeId}')" title="修改"> 
 								<i class="glyphicon glyphicon-pencil"></i>
 							</a>
 						</c:if>

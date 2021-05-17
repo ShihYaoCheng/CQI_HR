@@ -260,8 +260,8 @@
             <ref bean="jobDailyAttendanceRecordBean"/>
         </property>
         <property name="cronExpression">
-            <!--  <value>10 * * * * ?</value> -->
-     		<value>0 10 1 * * ?</value>
+            <!--  <value>10 * * * * ?</value>-->
+     		<value>0 10 1 * * ?</value> 
         </property>
         <!-- 
 			    秒（0-59）
@@ -305,7 +305,7 @@
             <ref bean="jobMonthlyReportBean"/>
         </property>
         <property name="cronExpression">
-             <!--  <value>10 * * * * ?</value>  -->
+             <!--  <value>10 * * * * ?</value> -->
             <value>0 0 2 4 * ?</value>
         </property>
         <!-- 
@@ -351,8 +351,8 @@
             <ref bean="jobNoPunchRemindBean"/>
         </property>
         <property name="cronExpression">
-            <!-- <value>10 * * * * ?</value> -->
-        	 <value>0 10 9,10,18,19 * * ?</value> 
+            <!--  <value>10 * * * * ?</value>  -->
+        	<value>0 10 9,10,18,19 * * ?</value>
         </property>
         <!-- 
 			    秒（0-59）

@@ -157,7 +157,16 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 				userLeave.setCount(0.0 + (companyLeaveOri.getType() * userAskForLeave.getSpendTime()));
 				userLeaveDAO.persist(userLeave);
 			} else {
-				userLeave.setCount(userLeave.getCount() + (companyLeaveOri.getType() * userAskForLeave.getSpendTime()));
+				//生理假額度為0 時改扣病假額度
+				if (userLeave.getLeaveId() == 3 && userLeave.getCount() <= 0) {
+					companyLeaveOri = companyLeaveDAO.get(CompanyLeave.SICK_LEAVE_ID);
+					userLeave= userLeaveDAO.getOneBy2Id(userAskForLeave.getSysUserId(), CompanyLeave.SICK_LEAVE_ID);
+					userLeave.setCount(userLeave.getCount() + (companyLeaveOri.getType() * 8));
+					
+				}else {
+					userLeave.setCount(userLeave.getCount() + (companyLeaveOri.getType() * userAskForLeave.getSpendTime()));
+				}
+				
 				userLeave.setUpdateDate(new Date());
 				userLeaveDAO.update(userLeave);
 			}
@@ -206,8 +215,15 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 							userLeave.setCount(0.0 + (companyLeaveOri.getType() * userAskForLeave.getSpendTime()));
 							userLeaveDAO.persist(userLeave);
 						} else {
-							userLeave.setCount(userLeave.getCount()
-									+ (companyLeaveOri.getType() * userAskForLeave.getSpendTime()));
+							//生理假額度為0 時改扣病假額度
+							if (userLeave.getLeaveId() == 3 && userLeave.getCount() <= 0) {
+								companyLeaveOri = companyLeaveDAO.get(CompanyLeave.SICK_LEAVE_ID);
+								userLeave= userLeaveDAO.getOneBy2Id(userAskForLeave.getSysUserId(), CompanyLeave.SICK_LEAVE_ID);
+								userLeave.setCount(userLeave.getCount() + (companyLeaveOri.getType() * 8));
+							}else {
+								userLeave.setCount(userLeave.getCount() + (companyLeaveOri.getType() * userAskForLeave.getSpendTime()));
+							}
+							
 							userLeave.setUpdateDate(new Date());
 							userLeaveDAO.update(userLeave);
 						}
