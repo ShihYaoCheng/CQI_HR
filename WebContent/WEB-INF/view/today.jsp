@@ -85,7 +85,9 @@
 																<c:when test="${attendance.get(user.sysUserId)==null}">
 																	
 																	<td class="text-center 
+																	<!-- 123 -->
 																		<c:choose>
+																			
 																			<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='09:00' }">rest-time</c:when>
 																			<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
 																			<c:when test="${ i==9  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
@@ -107,6 +109,7 @@
 																			<fmt:parseNumber var="leaveHour" type="number" value="${fn:split(attendance.get(user.sysUserId).leaveTime, ':')[0]}" />
 																			<td class="text-center 
 																				<c:choose>
+																					<!--/span WFH-->
 																					<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='09:00' }">rest-time</c:when>
 																					<c:when test="${ i==8  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>
 																					<c:when test="${ i==9  && shift.get(user.sysUserId).boardTime=='10:00' }">rest-time</c:when>

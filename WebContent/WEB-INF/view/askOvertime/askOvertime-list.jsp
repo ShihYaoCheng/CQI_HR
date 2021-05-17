@@ -29,7 +29,7 @@
 
 					</div>
 					<%@include file="../include/progressing.jsp"%>
-					<div id="leaveQuatoContent">
+					<div id="overtimeQuatoContent">
 					</div>
 					<div id="dataContent">
 					</div>
@@ -222,16 +222,16 @@
 				return;
 			}
 			$("body").css("cursor", "progress");
-			$('#leaveQuatoContent').hide();
+			$('#overtimeQuatoContent').hide();
 			$('#dataContent').hide();
 			$("#progressing").show();
 			$.ajax({
 				type : "POST",
-				url : "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
+				url : "<c:url value='/security/askOvertime/ajaxOvertimeQuota'/>",
 				data : {},
 				success : function(data) {
-					$('#leaveQuatoContent').html(data);
-					$('#leaveQuatoContent').show();
+					$('#overtimeQuatoContent').html(data);
+					$('#overtimeQuatoContent').show();
 				}
 			});
 			$.ajax({

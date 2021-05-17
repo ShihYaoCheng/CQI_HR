@@ -20,6 +20,7 @@ import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.UserAskForOvertime;
+import com.cqi.hr.entity.UserLeave;
 import com.cqi.hr.service.SysUserService;
 import com.cqi.hr.service.UserAskForOvertimeService;
 import com.cqi.hr.service.UserLeaveService;
@@ -61,6 +62,21 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}
 		return "/askOvertime/askOvertime-list.table";
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="ajaxOvertimeQuota")
+	public String ajaxLeaveQuota(HttpServletRequest req, ModelMap model) {
+		logger.info(FUNCTION_NAME + " ajaxOvertimeQuota");
+		try {
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			//使用者剩餘的假期
+			List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
+			model.addAttribute("userLeaveList", userLeaveList);
+			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+		} catch (Exception e) {
+			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
+		}
+		return "/askOvertime/askOvertimeQuota-list.table";
 	}
 	
 	
