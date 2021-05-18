@@ -66,4 +66,54 @@ public class WorkFromHomeController extends AbstractController<WorkFromHome>{
 		return "redirect:/logout";
 	}
 	
+	@RequestMapping(method=RequestMethod.POST, value="/add")
+	public void ajaxAdd(HttpServletRequest req, HttpServletResponse resp, @Valid WorkFromHome workFromHome){
+		logger.info(FUNCTION_NAME + " ajaxAdd: ");
+		Map<Object, Object> map = null;
+		try{
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			if(operator == null){
+				map = createResponseMsg(false, "", "請重新登入");
+			}else{
+				Calendar now = Calendar.getInstance();
+				workFromHome.setCreateTime(now.getTime());
+				workFromHome.setModifyTime(now.getTime());
+				workFromHome.setStatus(Constant.STATUS_ENABLE);
+				String errorMsg = workFromHomeService.addWorkFromHome(workFromHome);
+				if(StringUtils.hasText(errorMsg)) {
+					map = createResponseMsg(false, "", errorMsg);
+				}else {
+					map = createResponseMsg(true, "", "");
+				}
+			}
+		}catch(Exception e){
+			logger.error(FUNCTION_NAME + " ajaxAdd error: ", e);
+			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
+		}
+		returnJsonMap(req, resp, map);
+	}
+	
+	@RequestMapping(method=RequestMethod.DELETE, value="/{workFromHomeId}")
+	public void ajaxDelete(HttpServletRequest req, HttpServletResponse resp, @PathVariable Long workFromHomeId){
+		logger.info(FUNCTION_NAME + " ajaxDelete: " + workFromHomeId);
+		Map<Object, Object> map = null;
+		try{
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			SysUser dataUser = sysUserService.get(operator.getSysUserId());
+			if(dataUser == null){
+				map = createResponseMsg(false, "", "請重新登入");
+			}
+			boolean isSuccess = workFromHomeService.deleteWorkFromHome(workFromHomeId,dataUser);
+			if(isSuccess){
+				map = createResponseMsg(true, Constant.SUCCESS, "");
+			}else{
+				map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
+			}
+		}catch(Exception e){
+			logger.error(FUNCTION_NAME + " ajaxDelete error: ", e);
+			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
+		}
+		returnJsonMap(req, resp, map);
+	}
+	
 }

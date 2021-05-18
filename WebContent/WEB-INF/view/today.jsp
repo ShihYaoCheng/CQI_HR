@@ -58,15 +58,14 @@
 													${user.department}
 												</td>
 												<td class="text-center">
-													${user.userName} | <c:if test="${attendance.get(user.sysUserId)!=null}">${attendance.get(user.sysUserId).arriveTime} ~ ${attendance.get(user.sysUserId).leaveTime}</c:if>
+													<c:if test="${todayWorkFromHome.get(user.sysUserId)!=null}">(WFH)</c:if>
+													${user.userName} | 
+													<c:if test="${attendance.get(user.sysUserId)!=null}">${attendance.get(user.sysUserId).arriveTime} ~ ${attendance.get(user.sysUserId).leaveTime}</c:if>
+													
 												</td>
 												<c:forEach var="i" begin="8" end="18" step="1">
 													<c:choose>
-														<c:when test="${i==10 && todayWorkFromHome.get(user.sysUserId)!=null}">
-															<td class="text-center absence-time">
-																	${i} (WFH)
-															</td>
-														</c:when>
+														
 														<c:when test="${i==12 || shift.get(user.sysUserId)==null}">
 															<td class="text-center rest-time">
 																${i}

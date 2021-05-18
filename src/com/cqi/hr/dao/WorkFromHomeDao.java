@@ -32,6 +32,20 @@ public class WorkFromHomeDao extends AbstractDAO<WorkFromHome>{
 		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
 		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"workDate DESC","sysUserId"}));
 	}
+
+	public String addWorkFromHome(WorkFromHome workFromHome) throws Exception {
+		WorkFromHome criteria = new WorkFromHome();
+		criteria.setSysUserId(workFromHome.getSysUserId());
+		criteria.setWorkDate(workFromHome.getWorkDate());
+		criteria.setStatus(1);
+		List<WorkFromHome> dbDataList = getByExample(criteria, "workDate desc");
+		if(dbDataList.size()>0) {
+			return Constant.DATA_DUPLICATED;
+		}
+		
+		persist(workFromHome);
+		return "";
+	}
 	
 	
 	
