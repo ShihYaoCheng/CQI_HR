@@ -65,7 +65,7 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="ajaxOvertimeQuota")
-	public String ajaxLeaveQuota(HttpServletRequest req, ModelMap model) {
+	public String ajaxOvertimeQuota(HttpServletRequest req, ModelMap model) {
 		logger.info(FUNCTION_NAME + " ajaxOvertimeQuota");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);

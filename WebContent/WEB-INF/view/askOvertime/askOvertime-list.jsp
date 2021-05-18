@@ -12,8 +12,6 @@
 				<div class="container theme-showcase page-width" role="main">
 					<div class="row row-offcanvas row-offcanvas-left">
 
-						<!--/span-->
-
 						<div class="col-xs-12 col-md-9 single_table">
 							<form class="navbar-form">
 								<h3><b>調班資料管理</b></h3>
@@ -30,7 +28,7 @@
 
 								</div>
 								<%@include file="../include/progressing.jsp" %>
-									<div id="leaveQuotaContent">
+									<div id="overtimeQuotaContent">
 									</div>
 									<div id="dataContent">
 									</div>
@@ -38,16 +36,8 @@
 
 						</div>
 					</div>
-					<%@include file="../include/progressing.jsp"%>
-					<div id="overtimeQuotaContent">
-					</div>
-					<div id="dataContent">
-					</div>
-				</form>
-
 			</div>
-		</div>
-	</div>
+	
 	
 
 
@@ -113,7 +103,7 @@
 												<span id="spendTime-error" class="error_text"></span>
 											</div>
 										</div>
-										<div class="form-group">
+										<div class="form-group" style="margin-bottom: 0px;">
 											<label for="recipient-name" class="control-label col-sm-12">調班起始時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -129,7 +119,7 @@
 												<span id="startTime-error" class="error_text"></span>
 											</div>
 										</div>
-										<div class="form-group">
+										<div class="form-group" style="margin-bottom: 0px;">
 											<label for="recipient-name" class="control-label col-sm-12">調班結束時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -150,7 +140,7 @@
 
 
 										<!-- -------------------排休-------------------- -->
-										<div class="form-group">
+										<div class="form-group" style="margin-bottom: 0px;">
 											<label for="recipient-name" class="control-label col-sm-12">排休起始時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -168,7 +158,7 @@
 										</div>
 
 
-										<div class="form-group">
+										<div class="form-group" style="margin-bottom: 0px;">
 											<label for="recipient-name" class="control-label col-sm-12">排休結束時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -213,11 +203,13 @@
 											<option value="">請選擇</option>
 											<option value="1">Sam</option>
 											<option value="2">Reila</option>
-
 										</select>
+
+											
 										<span id="QuotasysUserId-error" class="error_text"></span>
 									</div>
 								</div> 
+
 
 								<!-- <div class="form-group">
 									<label for="recipient-name" class="control-label col-sm-12">成員：</label>
@@ -243,8 +235,10 @@
 								</div> -->
 
 
+
+
 								<div class="form-group">
-									<label for="recipient-name" class="control-label col-sm-12">調班剩餘額度：</label>
+									<label for="recipient-name" class="control-label col-sm-12">調班額度 (每周)：</label>
 									<div class="col-sm-12">
 										<select class="form-control" id="shiftQuota" name="shiftQuota">
 											<option value="">請選擇</option>
@@ -437,16 +431,16 @@
 							}
 							$("body").css("cursor", "progress");
 							// $('#leaveContent').hide();
-							$('#leaveQuotaContent').hide();
+							$('#overtimeQuotaContent').hide();
 							$('#dataContent').hide();
 							$("#progressing").show();
 							$.ajax({
 								type: "POST",
-								url: "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
+								url: "<c:url value='/security/askOvertime/ajaxOvertimeQuota'/>",
 								data: {},
 								success: function (data) {
-									$('#leaveQuotaContent').html(data);
-									$('#leaveQuotaContent').show();
+									$('#overtimeQuotaContent').html(data);
+									$('#overtimeQuotaContent').show();
 								}
 							});
 							$.ajax({

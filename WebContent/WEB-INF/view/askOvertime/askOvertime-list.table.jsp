@@ -34,8 +34,6 @@
 								<c:if test="${mappingOvertime.get(item.overtimeId).unitType == 2}">小時</c:if>
 							</td>
 
-
-
 							<!-- 調班時間 -->
 							<td>
 								<div>

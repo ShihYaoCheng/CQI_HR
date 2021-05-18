@@ -27,34 +27,42 @@
 								<i class="glyphicon glyphicon-plus"></i>
 							</a>
 						</div>
-
 					</div>
-
-
+					<br>
 					<table class="table table-striped">
 						<h4>
+							<b>*** 因 COVID-19 或政府宣告之傳染病，於當地政府規範下，得由公司公布或成員申請遠端工作佈署 ***</b>
+							<br><br><br>
 							<b>遠端作業模式</b>
 						</h4>
 						<thead>
 							<tr style="background-color: #edf8ff; font-weight: bold;">
-								<td width="50%">程度</td>
-								<td width="50%">實施日數</td>
+								<td width="30%">疫情警戒程度</td>
+								<td width="70%">實施日數</td>
 								
 							</tr>
 						</thead>
 						<tbody>
-			
-							<c:forEach var="userLeave" items="${userLeaveList}">
-								<tr>
-									<td>
-										1
-									</td>
-									<td>
-										3天
-									</td>
-									
-								</tr>
-							</c:forEach>
+							<tr>
+								<td>一級</td>
+								<td>三天</td>
+							</tr>
+							<tr>
+								<td>二級</td>
+								<td>七天</td>
+							</tr>
+							<tr>
+								<td>三級</td>
+								<td>十四天</td>
+							</tr>
+							<tr>
+								<td>四級</td>
+								<td>一個月</td>
+							</tr>
+							<tr>
+								<td>五級</td>
+								<td>超過一個月</td>
+							</tr>
 						</tbody>
 					</table>
 
@@ -130,7 +138,7 @@
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">公告開始時間：</label>
 								<div class="col-sm-12">
-									<div class="form-group">
+									<div class="form-group" style="margin-bottom: 0px;">
 										<div class="input-group date" id='datetimepickerStart'>
 											<input id="startTime" name="startTime" class="form-control"
 												size="16" type="text" value="" readonly="readonly" style="cursor: pointer;
@@ -142,7 +150,7 @@
 									<span id="startTime-error" class="error_text"></span>
 								</div>
 							</div>
-							<div class="form-group">
+			 				<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">公告結束時間：</label>
 								<div class="col-sm-12">
 									<input id="endTime" name="endTime" class="form-control" size="16"
@@ -150,14 +158,50 @@
 									<span id="endTime-error" class="error_text"></span>
 								</div>
 							</div>
-							<div class="form-group">
+
+							<!-- <div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">事由：</label>
 								<div class="col-sm-12">
 									<input type="text" class="form-control" id="description"
 										name="description" />
 									<span id="description-error" class="error_text"></span>
 								</div>
+							</div> -->
+
+							<div class="form-group">
+								<label for="recipient-name" class="control-label col-sm-12">
+									事由：
+								</label>
+								<div class="col-sm-12">
+									<!-- <input type="text" class="form-control" id="spendTime" name="spendTime"/> -->
+									<select class="form-control" id="description" name="description">
+
+										<optgroup label="A 地區關聯">
+											<option value="">請選擇</option>
+											<option>A 一級-1 居住於確診熱區(萬華)</option>
+											<option>A 一級-2 跨縣市通勤, 所跨縣市政府宣布三級防疫(新北, 台北)</option>
+											<option>A 一級-3 所居住社區出現確診案例, 未共用通風管道或共用電梯</option>
+											<option>A 二級-1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</option>
+											<option>A 三級-1 本司辦公所在大樓出現確診案例, 或由公司行政統一發布</option>
+										</optgroup>
+									
+										<optgroup label="B 親友關聯">
+											<option>B 一級-1 直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者</option>
+											<option>B 二級-1 一周內同室社交過的親友確診</option>
+											<option>B 三級-1 同居親友確診或收到自主通知單</option>
+											<option>B 四級-1 同居親友確診, 因故無法在院隔離, 須在家隔離者</option>
+										</optgroup>
+
+										<optgroup label="C 個人">
+											<option>C 三級-1 本人, 配偶確診或收到自主通知單</option>
+											<option>C 四級-1 本人確診</option>
+										</optgroup>
+
+									</select>
+									<span id="description-error" class="error_text"></span>
+								</div>
 							</div>
+
 
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">主管：</label>
@@ -291,7 +335,8 @@
 			errorCode["1"] = "請選擇成員";
 			errorCode["2"] = "請選擇遠端級別";
 			errorCode["3"] = "請輸入時間";
-			errorCode["4"] = "請輸入主管";
+			errorCode["4"] = "請輸入事由";
+			errorCode["5"] = "請輸入主管";
 			var errors = {};
 			
 			if($('#sysUserId :selected').val() == ''){
@@ -314,8 +359,13 @@
 			} else {
 				$('#endTime-error').hide();
 			}
+			if ($('#description').val() == '') {
+				errors['description'] = 4;
+			} else {
+				$('#description-error').hide();
+			}
 			if ($('#approvalBy').val() == '') {
-				errors['approvalBy'] = 4;
+				errors['approvalBy'] = 5;
 			} else {
 				$('#approvalBy-error').hide();
 			}
@@ -395,7 +445,7 @@
 				$('#boardTime').val("");
 				$('#finishTime').val("");
 				$('#status').val("");
-				$('#basicModal').find('.modal-title').text(text + "班別紀錄");
+				$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
 				$('#basicModal').modal('toggle');
 			}else{
 				progressing = 1;
@@ -420,7 +470,7 @@
 							$('#finishTime').val(data.sysUserShift.finishTime);
 							selectedShift(data.sysUserShift.boardTime, data.sysUserShift.finishTime);
 							
-							$('#basicModal').find('.modal-title').text(text + "請假紀錄");
+							$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
 							$('#basicModal').modal('toggle');
 							progressing = 0;
 						}else{

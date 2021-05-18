@@ -48,7 +48,7 @@
 			<thead>
 				<tr style="background-color: #edf8ff; font-weight: bold;">
 					<td width="50%">成員</td>
-					<td width="35%">調班剩餘額度</td>
+					<td width="35%">調班額度 (每周)</td>
 					<td width="15%">修改</td>
 				</tr>
 			</thead>
