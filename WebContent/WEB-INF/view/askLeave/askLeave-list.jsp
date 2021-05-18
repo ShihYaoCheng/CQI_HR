@@ -29,7 +29,7 @@
 
 								</div>
 								<%@include file="../include/progressing.jsp" %>
-									<div id="leaveQuatoContent">
+									<div id="leaveQuotaContent">
 									</div>
 									<div id="dataContent">
 									</div>
@@ -207,7 +207,7 @@
 								return;
 							}
 							$("body").css("cursor", "progress");
-							$('#leaveQuatoContent').hide();
+							$('#leaveQuotaContent').hide();
 							$('#dataContent').hide();
 							$("#progressing").show();
 							$.ajax({
@@ -215,8 +215,8 @@
 								url: "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
 								data: {},
 								success: function (data) {
-									$('#leaveQuatoContent').html(data);
-									$('#leaveQuatoContent').show();
+									$('#leaveQuotaContent').html(data);
+									$('#leaveQuotaContent').show();
 								}
 							});
 							$.ajax({
