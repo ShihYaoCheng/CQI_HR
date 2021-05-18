@@ -44,7 +44,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">新增班別紀錄</h4>
+					<h4 class="modal-title" id="myModalLabel">新增遠端作業紀錄</h4>
 				</div>
 				<div class="modal-body">
 					<form id="shiftForm" name="shiftForm">
@@ -75,21 +75,86 @@
 									</div>
 								</div>	
 							</div>
-							<div class="form-group">
-					            <label for="recipient-name" class="control-label col-sm-12">班別:</label>
+
+							<!-- <div class="form-group">
+					            <label for="recipient-name" class="control-label col-sm-12">遠端級別:</label>
 					            <div class="col-sm-12 ">
 					            	<div class="form-group">
 						            	<select class="form-control" id="shiftDesc" name="shiftDesc">
 						            		<option value="">請選擇</option>
-											<option value="08:00~17:00">08:00~17:00</option>
-											<option value="09:00~18:00">09:00~18:00</option>
-											<option value="10:00~19:00">10:00~19:00</option>
+											<option value="1">遠端一級（３天）</option>
+											<option value="2">遠端二級（７天）</option>
+											<option value="3">遠端三級（１４天）</option>
+											<option value="4">遠端四級（１個月）</option>
+											<option value="5">遠端五級（超過１個月）</option>
 										</select>
 										<span id="shiftDesc-error" class="error_text"></span>
 									</div>
 								</div>
+							</div> -->
+
+							<div class="form-group">
+								<label for="recipient-name" class="control-label col-sm-12"
+									id="spendTimeStr" name="spendTimeStr">
+									遠端級別：
+								</label>
+								<div class="col-sm-12">
+									<!-- <input type="text" class="form-control" id="spendTime" name="spendTime"/> -->
+									<select class="form-control" id="spendTime" name="spendTime">
+										<option value="">請選擇</option>
+										<option value="3">遠端一級 (３天)</option>
+										<option value="7">遠端二級 (７天)</option>
+										<option value="14">遠端三級 (１４天)</option>
+										<option value="30">遠端四級 (１個月)</option>
+										<option value="5">遠端五級 (超過１個月)</option>
+
+									</select>
+									<span id="spendTime-error" class="error_text"></span>
+								</div>
 							</div>
 							<div class="form-group">
+								<label for="recipient-name" class="control-label col-sm-12">公告開始時間：</label>
+								<div class="col-sm-12">
+									<div class="form-group">
+										<div class="input-group date" id='datetimepickerStart'>
+											<input id="startTime" name="startTime" class="form-control"
+												size="16" type="text" value="" readonly="readonly" style="cursor: pointer;
+												background-color: #fff;" />
+											<span class="input-group-addon"><span
+													class="glyphicon glyphicon-calendar"></span></span>
+										</div>
+									</div>
+									<span id="startTime-error" class="error_text"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="recipient-name" class="control-label col-sm-12">公告結束時間：</label>
+								<div class="col-sm-12">
+									<input id="endTime" name="endTime" class="form-control" size="16"
+										type="text" value="" readonly="readonly" />
+									<span id="endTime-error" class="error_text"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="recipient-name" class="control-label col-sm-12">事由：</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" id="description"
+										name="description" />
+									<span id="description-error" class="error_text"></span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="recipient-name" class="control-label col-sm-12">主管：</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" id="approvalBy"
+										name="approvalBy" />
+									<span id="approvalBy-error" class="error_text"></span>
+								</div>
+							</div>
+
+
+							<!-- <div class="form-group">
 					            <label for="recipient-name" class="control-label col-sm-12">排班月份：</label>
 					            <div class="col-sm-12">
 						            <div class="form-group">
@@ -100,7 +165,7 @@
 						            </div>
 						            <span id="enableMonth-error" class="error_text"></span>
 					            </div>
-							</div>
+							</div> -->
 						</div>
 			        </form>
 				</div>
@@ -134,7 +199,57 @@
 	            autoclose: true,
 		        startDate: pickerStartDate
 			});
+
+
+			$('#datetimepickerStart').datetimepicker({
+				// format: 'yyyy/mm/dd hh:ii',
+				format: 'yyyy/mm/dd',
+				autoclose: true,
+				// minuteStep: 30,
+				minuteStep: false,
+				hourStep: false,
+				focusOnShow: false,
+				allowInputToggle: true,
+				startDate: pickerStartDate,
+				// minViewMode: "months",
+			});
+
+			$('#datetimepickerEnd').datetimepicker({
+				// format: 'yyyy/mm/dd hh:ii',
+				format: 'yyyy/mm/dd',
+				autoclose: true,
+				minuteStep: 30,
+				focusOnShow: false,
+				allowInputToggle: true,
+				startDate: pickerStartDate
+			});
+			$("#datetimepickerStart").on("changeDate", function (e) {
+				$('#datetimepickerEnd').datetimepicker("setStartDate", e.date);
+				calEndDateTime(e);
+
+			});
 		});
+
+		function calEndDateTime(e) {
+			if ($('#spendTime').val() != '' && $('#leaveId').val() != '' && $('#startTime').val() != '') {
+				var setEndDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
+				setEndDate.setHours(e.date.getHours());
+				setEndDate.setMinutes(e.date.getMinutes());
+				if ($('#unitType').val() == '小時') {
+					setEndDate.setHours(setEndDate.getHours() + parseInt($('#spendTime').val()));
+					if (e.date.getHours() < 12 && setEndDate.getHours() > 12) {
+						setEndDate.setHours(setEndDate.getHours() + 1);
+					}
+				} else if ($('#unitType').val() == '天') {
+					setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
+					setEndDate.setHours(19);
+					setEndDate.setMinutes(0);
+				}
+				// $('#endTime').val(getFormattedDate(setEndDate, "y/M/d H:m"));
+				$('#endTime').val(getFormattedDate(setEndDate, "y/M/d"));
+			}
+		}
+
 		
 		function queryData(page) {
 			if(page == 0){

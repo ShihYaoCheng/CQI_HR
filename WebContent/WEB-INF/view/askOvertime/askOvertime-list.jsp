@@ -30,7 +30,7 @@
 
 								</div>
 								<%@include file="../include/progressing.jsp" %>
-									<div id="leaveQuatoContent">
+									<div id="leaveQuotaContent">
 									</div>
 									<div id="dataContent">
 									</div>
@@ -38,10 +38,8 @@
 
 						</div>
 					</div>
-<<<<<<< HEAD
-=======
 					<%@include file="../include/progressing.jsp"%>
-					<div id="overtimeQuatoContent">
+					<div id="overtimeQuotaContent">
 					</div>
 					<div id="dataContent">
 					</div>
@@ -51,15 +49,7 @@
 		</div>
 	</div>
 	
-	<!-- dialog -->
-	<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">新增調班紀錄</h4>
->>>>>>> c1a22504c675d74099d18b5245dc08d1a326baa4
-				</div>
+
 
 				<!-- dialog -->
 				<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal"
@@ -446,7 +436,8 @@
 								return;
 							}
 							$("body").css("cursor", "progress");
-							$('#leaveQuatoContent').hide();
+							// $('#leaveContent').hide();
+							$('#leaveQuotaContent').hide();
 							$('#dataContent').hide();
 							$("#progressing").show();
 							$.ajax({
@@ -454,8 +445,8 @@
 								url: "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
 								data: {},
 								success: function (data) {
-									$('#leaveQuatoContent').html(data);
-									$('#leaveQuatoContent').show();
+									$('#leaveQuotaContent').html(data);
+									$('#leaveQuotaContent').show();
 								}
 							});
 							$.ajax({
@@ -690,8 +681,6 @@
 									$('#asanaTaskId').val("");
 									$('#status').val("");
 
-									$('#asanaTaskId').val("");
-									$('#shiftQuota').val("");
 
 									$('#basicModal').find('.modal-title').text(text + "調班紀錄");
 									$('#basicModal').modal('toggle');
@@ -744,4 +733,4 @@
 					</script>
 		</body>
 
-		</html>
+	</html>

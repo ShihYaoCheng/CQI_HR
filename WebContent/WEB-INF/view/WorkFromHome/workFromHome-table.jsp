@@ -5,16 +5,16 @@
 <div class="table-responsive">
 	
 	<br/>
-	<div><h4><b>紀錄</b></h4></div>
+	<div><h4><b>遠端作業紀錄</b></h4></div>
 	<table class="table table-striped">
 		<thead>
-			<tr>
+			<tr style="background-color: #edf8ff; font-weight: bold;">
 				<td width="10%">成員</td>
 				<td width="10%">級別</td>
 				<td width="15%">日期</td>
-				<td width="20%">是由</td>
-				<td width="10%">主管</td>
-				<td width="10%">操作</td>
+				<td width="15%">事由</td>
+				<td width="15%">主管</td>
+				<td width="10%">修改</td>
 			</tr>
 		</thead>
 		<tbody>
