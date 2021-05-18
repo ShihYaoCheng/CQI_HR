@@ -29,6 +29,36 @@
 						</div>
 
 					</div>
+
+
+					<table class="table table-striped">
+						<h4>
+							<b>遠端作業模式</b>
+						</h4>
+						<thead>
+							<tr style="background-color: #edf8ff; font-weight: bold;">
+								<td width="50%">程度</td>
+								<td width="50%">實施日數</td>
+								
+							</tr>
+						</thead>
+						<tbody>
+			
+							<c:forEach var="userLeave" items="${userLeaveList}">
+								<tr>
+									<td>
+										1
+									</td>
+									<td>
+										3天
+									</td>
+									
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+
+
 					<%@include file="../include/progressing.jsp"%>
 					<div id="dataContent">
 					</div>
@@ -76,22 +106,7 @@
 								</div>	
 							</div>
 
-							<!-- <div class="form-group">
-					            <label for="recipient-name" class="control-label col-sm-12">遠端級別:</label>
-					            <div class="col-sm-12 ">
-					            	<div class="form-group">
-						            	<select class="form-control" id="shiftDesc" name="shiftDesc">
-						            		<option value="">請選擇</option>
-											<option value="1">遠端一級（３天）</option>
-											<option value="2">遠端二級（７天）</option>
-											<option value="3">遠端三級（１４天）</option>
-											<option value="4">遠端四級（１個月）</option>
-											<option value="5">遠端五級（超過１個月）</option>
-										</select>
-										<span id="shiftDesc-error" class="error_text"></span>
-									</div>
-								</div>
-							</div> -->
+							
 
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12"
@@ -106,7 +121,7 @@
 										<option value="7">遠端二級 (７天)</option>
 										<option value="14">遠端三級 (１４天)</option>
 										<option value="30">遠端四級 (１個月)</option>
-										<option value="5">遠端五級 (超過１個月)</option>
+										<option value="30">遠端五級 (超過１個月)</option>
 
 									</select>
 									<span id="spendTime-error" class="error_text"></span>
@@ -192,33 +207,31 @@
 				pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
 			}
 			
-			$('#datetimepickerEnable').datepicker({
-				viewMode: "months", 
-			    minViewMode: "months",
-	            format: 'yyyy/mm',
-	            autoclose: true,
-		        startDate: pickerStartDate
-			});
+			// $('#datetimepickerEnable').datepicker({
+			// 	viewMode: "months", 
+			//     minViewMode: "months",
+	        //     format: 'yyyy/mm',
+	        //     autoclose: true,
+		    //     startDate: pickerStartDate
+			// });
 
 
 			$('#datetimepickerStart').datetimepicker({
-				// format: 'yyyy/mm/dd hh:ii',
+				minView: "month",  //只顯示到日期，不顯示分秒
 				format: 'yyyy/mm/dd',
 				autoclose: true,
 				// minuteStep: 30,
-				minuteStep: false,
-				hourStep: false,
 				focusOnShow: false,
 				allowInputToggle: true,
 				startDate: pickerStartDate,
-				// minViewMode: "months",
+				
 			});
 
 			$('#datetimepickerEnd').datetimepicker({
-				// format: 'yyyy/mm/dd hh:ii',
+				minView: "month",  //只顯示到日期，不顯示分秒
 				format: 'yyyy/mm/dd',
 				autoclose: true,
-				minuteStep: 30,
+				// minuteStep: 30,
 				focusOnShow: false,
 				allowInputToggle: true,
 				startDate: pickerStartDate
@@ -235,20 +248,18 @@
 				var setEndDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
 				setEndDate.setHours(e.date.getHours());
 				setEndDate.setMinutes(e.date.getMinutes());
-				if ($('#unitType').val() == '小時') {
-					setEndDate.setHours(setEndDate.getHours() + parseInt($('#spendTime').val()));
-					if (e.date.getHours() < 12 && setEndDate.getHours() > 12) {
-						setEndDate.setHours(setEndDate.getHours() + 1);
-					}
-				} else if ($('#unitType').val() == '天') {
-					setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
-					setEndDate.setHours(19);
-					setEndDate.setMinutes(0);
-				}
+				setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
+				setEndDate.setHours(19);
+				setEndDate.setMinutes(0);
 				// $('#endTime').val(getFormattedDate(setEndDate, "y/M/d H:m"));
 				$('#endTime').val(getFormattedDate(setEndDate, "y/M/d"));
 			}
 		}
+
+		$('#spendTime').change(function () {
+			$('#startTime').val('');
+			$('#endTime').val('');
+		});
 
 		
 		function queryData(page) {
@@ -277,22 +288,40 @@
 			resetInput('shiftDesc');
 			resetInput('enableMonth');
 			var errorCode = {};
-			errorCode["1"] = "請選擇班別";
-			errorCode["2"] = "請輸入排班月份";
-			errorCode["3"] = "時間似乎怪怪的，請確認";
-			errorCode["4"] = "請選擇成員";
+			errorCode["1"] = "請選擇成員";
+			errorCode["2"] = "請選擇遠端級別";
+			errorCode["3"] = "請輸入時間";
+			errorCode["4"] = "請輸入主管";
 			var errors = {};
 			
 			if($('#sysUserId :selected').val() == ''){
-				errors['sysUserId'] = 4;
+				errors['sysUserId'] = 1;
+			}else {
+				$('#sysUserId-error').hide();
 			}
+			if ($('#spendTime :selected').val() == '') {
+				errors['spendTime'] = 2;
+			} else {
+				$('#spendTime-error').hide();
+			}
+			if ($('#startTime').val() == '') {
+				errors['startTime'] = 3;
+			} else {
+				$('#startTime-error').hide();
+			}
+			if ($('#endTime').val() == '') {
+				errors['endTime'] = 3;
+			} else {
+				$('#endTime-error').hide();
+			}
+			if ($('#approvalBy').val() == '') {
+				errors['approvalBy'] = 4;
+			} else {
+				$('#approvalBy-error').hide();
+			}
+
+
 			
-			if($('#shiftDesc :selected').val() == ''){
-				errors['shiftDesc'] = 1;
-			}
-			if($('#enableMonth').val() == ''){
-				errors['enableMonth'] = 2;
-			}
 			var targetURL= "<c:url value='/security/sysUserShift/add'/>";
 			
 			if(Object.keys(errors).length == 0){
