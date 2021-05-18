@@ -38,6 +38,7 @@ import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.SysFunction;
 import com.cqi.hr.entity.SysRole;
 import com.cqi.hr.entity.SysUser;
+import com.cqi.hr.entity.WorkFromHome;
 import com.cqi.hr.service.AttendanceRecordService;
 import com.cqi.hr.service.CreateInfo;
 import com.cqi.hr.service.SpecialDateAboutWorkService;
@@ -47,6 +48,7 @@ import com.cqi.hr.service.SysUserService;
 import com.cqi.hr.service.SysUserShiftService;
 import com.cqi.hr.service.UserAskForLeaveService;
 import com.cqi.hr.service.UserAskForOvertimeService;
+import com.cqi.hr.service.WorkFromHomeService;
 import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.SessionUtils;
 import com.cqi.hr.vo.WeatherLocation;
@@ -67,6 +69,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 	@Resource SpecialDateAboutWorkService specialDateAboutWorkService;
 	@Resource AttendanceRecordService attendanceRecordService;
 	@Resource SysUserShiftService sysUserShiftService;
+	@Resource WorkFromHomeService workFromHomeService;
 	
 	@RequestMapping(value = "/robots.txt")
 	public void robots(HttpServletRequest request, HttpServletResponse response) {
@@ -428,8 +431,11 @@ public class IndexController extends AbstractController<CreateInfo> {
 				model.put("todayLeave", userAskForLeaveService.getTodayLeave());
 				model.put("todayOvertime", userAskForOvertimeService.getTodayOvertime());
 				model.put("shift", sysUserShiftService.getMapThisMonth());
-				Map<String, AttendanceRecord>  a = attendanceRecordService.getMapToday();
 				model.put("attendance", attendanceRecordService.getMapToday());
+				
+				Map<String, WorkFromHome> wMap = workFromHomeService.getMapToday();
+				model.put("todayWorkFromHome", wMap);
+				
 			}
 		}catch (Exception e) {
 			logger.error("today Exception: ", e);
