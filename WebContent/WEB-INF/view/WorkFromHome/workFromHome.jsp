@@ -77,28 +77,20 @@
 					<h4 class="modal-title" id="myModalLabel">新增遠端作業紀錄</h4>
 				</div>
 				<div class="modal-body">
-					<form id="shiftForm" name="shiftForm">
-						<input type="hidden" id="shiftId" name="shiftId"/>
+					<form id="wfhForm" name="wfhForm">
+						<input type="hidden" id="workFromHomeId" name="workFromHomeId"/>
 						<input type="hidden" id="status" name="status"/>
-						<input type="hidden" id="boardTime" name="boardTime"/>
-						<input type="hidden" id="finishTime" name="finishTime"/>
 						<div id="edit">
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">成員：</label>
 								<div class="col-sm-12">
 						            <div class="form-group">
 										<select class="form-control" id="sysUserId" name="sysUserId" onchange="">
-							            	<c:choose>
-											    <c:when test="${operator.roleId == '1'}">
-											    	<option value="">請選擇</option>
-											        <c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
-														<option value="${item['key']}">${item['value'].originalName}</option>
-													</c:forEach>
-											    </c:when>    
-											    <c:otherwise>
-											        <option value="${operator.sysUserId}">${operator.originalName}</option>
-											    </c:otherwise>
-											</c:choose>
+							            	
+									    	<option value="">請選擇</option>
+									        <c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
+												<option value="${item['key']}">${item['value'].originalName}</option>
+											</c:forEach>
 							            	
 										</select>
 										<span id="sysUserId-error" class="error_text"></span>
@@ -106,25 +98,21 @@
 								</div>	
 							</div>
 
-							
-
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12"
-									id="spendTimeStr" name="spendTimeStr">
+									id="levelStr" name="levelStr">
 									遠端級別：
 								</label>
 								<div class="col-sm-12">
-									<!-- <input type="text" class="form-control" id="spendTime" name="spendTime"/> -->
-									<select class="form-control" id="spendTime" name="spendTime">
+									<select class="form-control" id="level" name="level">
 										<option value="">請選擇</option>
-										<option value="3">遠端一級 (３天)</option>
-										<option value="7">遠端二級 (７天)</option>
-										<option value="14">遠端三級 (１４天)</option>
-										<option value="30">遠端四級 (１個月)</option>
-										<option value="30">遠端五級 (超過１個月)</option>
-
+										<option value="1">遠端一級 (３天)</option>
+										<option value="2">遠端二級 (７天)</option>
+										<option value="3">遠端三級 (１４天)</option>
+										<option value="4">遠端四級 (１個月)</option>
+										<option value="5">遠端五級 (超過１個月)</option>
 									</select>
-									<span id="spendTime-error" class="error_text"></span>
+									<span id="level-error" class="error_text"></span>
 								</div>
 							</div>
 							<div class="form-group">
@@ -132,14 +120,14 @@
 								<div class="col-sm-12">
 									<div class="form-group">
 										<div class="input-group date" id='datetimepickerStart'>
-											<input id="startTime" name="startTime" class="form-control"
+											<input id="workDate" name="workDate" class="form-control"
 												size="16" type="text" value="" readonly="readonly" style="cursor: pointer;
 												background-color: #fff;" />
 											<span class="input-group-addon"><span
 													class="glyphicon glyphicon-calendar"></span></span>
 										</div>
 									</div>
-									<span id="startTime-error" class="error_text"></span>
+									<span id="workDate-error" class="error_text"></span>
 								</div>
 							</div>
 							<div class="form-group">
@@ -244,11 +232,11 @@
 		});
 
 		function calEndDateTime(e) {
-			if ($('#spendTime').val() != '' && $('#leaveId').val() != '' && $('#startTime').val() != '') {
+			if ($('#level').val() != '' && $('#workDate').val() != '') {
 				var setEndDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
 				setEndDate.setHours(e.date.getHours());
 				setEndDate.setMinutes(e.date.getMinutes());
-				setEndDate.setDate(setEndDate.getDate() + parseInt($('#spendTime').val()) - 1);
+				setEndDate.setDate(setEndDate.getDate() + parseInt($('#level').val()) - 1);
 				setEndDate.setHours(19);
 				setEndDate.setMinutes(0);
 				// $('#endTime').val(getFormattedDate(setEndDate, "y/M/d H:m"));
@@ -256,8 +244,8 @@
 			}
 		}
 
-		$('#spendTime').change(function () {
-			$('#startTime').val('');
+		$('#level').change(function () {
+			$('#workDate').val('');
 			$('#endTime').val('');
 		});
 
@@ -285,8 +273,6 @@
 		}
 		
 		function submit(){
-			resetInput('shiftDesc');
-			resetInput('enableMonth');
 			var errorCode = {};
 			errorCode["1"] = "請選擇成員";
 			errorCode["2"] = "請選擇遠端級別";
@@ -299,15 +285,15 @@
 			}else {
 				$('#sysUserId-error').hide();
 			}
-			if ($('#spendTime :selected').val() == '') {
-				errors['spendTime'] = 2;
+			if ($('#level :selected').val() == '') {
+				errors['level'] = 2;
 			} else {
-				$('#spendTime-error').hide();
+				$('#level-error').hide();
 			}
-			if ($('#startTime').val() == '') {
-				errors['startTime'] = 3;
+			if ($('#workDate').val() == '') {
+				errors['workDate'] = 3;
 			} else {
-				$('#startTime-error').hide();
+				$('#workDate-error').hide();
 			}
 			if ($('#endTime').val() == '') {
 				errors['endTime'] = 3;
@@ -322,15 +308,13 @@
 
 
 			
-			var targetURL= "<c:url value='/security/sysUserShift/add'/>";
+			var targetURL= "<c:url value='/security/WorkFromHome/add'/>";
 			
 			if(Object.keys(errors).length == 0){
-				$('#boardTime').val($('#shiftDesc').val().split("~")[0]);
-				$('#finishTime').val($('#shiftDesc').val().split("~")[1]);
-				$('#enableMonth').val($('#enableMonth').val() + "/01");
-				var data = $('#shiftForm').serialize();
-				if(typeof($('#shiftId').val()) != 'undefined' && $('#shiftId').val() != ''){//easier
-					targetURL= "<c:url value='/security/sysUserShift/update'/>";
+				
+				var data = $('#wfhForm').serialize();
+				if(typeof($('#workFromHomeId').val()) != 'undefined' && $('#workFromHomeId').val() != ''){//easier
+					targetURL= "<c:url value='/security/WorkFromHome/update'/>";
 				}//yeah 
 				$('#save').button('loading');
 				$("body").css("cursor", "progress");
@@ -381,6 +365,26 @@
 			}
 		}
 		
+		function deleteData(id) {
+			var targetURL = "<c:url value='/security/WorkFromHome/" + id + "'/>";
+
+			$("body").css("cursor", "progress");
+			$.ajax({
+				type: "DELETE",
+				url: targetURL,
+				data: {
+				},
+				dataType: "json",
+				success: function (data) {
+					location.reload(true)
+					$("body").css("cursor", "auto");
+					if (data.success) {
+						queryData(1);
+					}
+				}
+			});
+		}
+		
 		function active(id){
 			if(progressing == 1){
 				return;
@@ -388,19 +392,19 @@
 			var text = "修改";
 			if(typeof(id) == "undefined"){
 				text = "新增";
-				$('#shiftId').val("");
+				$('#workFromHomeId').val("");
 				$('#sysUserId').val("");
-				$('#shiftDesc').val("");
-				$('#enableMonth').val("");
-				$('#boardTime').val("");
-				$('#finishTime').val("");
+				$('#level').val("");
+				$('#workDate').val("");
+				$('#description').val("");
+				$('#approvalBy').val("");
 				$('#status').val("");
-				$('#basicModal').find('.modal-title').text(text + "班別紀錄");
+				$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
 				$('#basicModal').modal('toggle');
 			}else{
 				progressing = 1;
 				$("body").css("cursor", "progress");
-				var targetURL= "<c:url value='/security/sysUserShift/"+id+"'/>";
+				var targetURL= "<c:url value='/security/WorkFromHome/"+id+"'/>";
 				$.ajax({
 					type : "GET",
 					url : targetURL,
@@ -431,9 +435,7 @@
 			}	
 		}
 		
-		function selectedShift(boardTime, finishTime){
-			$('#shiftDesc').val(boardTime + "~" + finishTime);
-		}
+		
 	</script>
 </body>
 </html>
