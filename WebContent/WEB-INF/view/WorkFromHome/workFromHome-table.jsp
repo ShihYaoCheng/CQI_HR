@@ -12,8 +12,8 @@
 				<td width="10%">成員</td>
 				<td width="10%">級別</td>
 				<td width="15%">日期</td>
-				<td width="15%">事由</td>
-				<td width="15%">主管</td>
+				<td width="45%">事由</td>
+				<td width="10%">主管</td>
 				<td width="10%">修改</td>
 			</tr>
 		</thead>

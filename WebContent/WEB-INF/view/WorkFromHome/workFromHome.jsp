@@ -39,7 +39,7 @@
 							<tr style="background-color: #edf8ff; font-weight: bold;">
 								<td width="30%">疫情警戒程度</td>
 								<td width="70%">實施日數</td>
-								
+								<td width="70%">實施日數</td>
 							</tr>
 						</thead>
 						<tbody>
@@ -123,6 +123,17 @@
 									<span id="level-error" class="error_text"></span>
 								</div>
 							</div>
+
+							<div class="form-group" id="levelFive" style="display: none;">
+								<label for="recipient-name" class="control-label col-sm-12">五級遠端天數：</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" id="levelFiveDay"
+										name="levelFiveDay" />
+									<span id="levelFiveDay-error" class="error_text"></span>
+								</div>
+							</div>
+
+
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">公告開始時間：</label>
 								<div class="col-sm-12">
@@ -147,14 +158,6 @@
 								</div>
 							</div>
 
-							<!-- <div class="form-group">
-								<label for="recipient-name" class="control-label col-sm-12">事由：</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" id="description"
-										name="description" />
-									<span id="description-error" class="error_text"></span>
-								</div>
-							</div> -->
 
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">
@@ -275,6 +278,27 @@
 				levelWFHDays = "30";
 				console.log("四級：" + levelWFHDays　+ "天");
 			}
+
+			// 五級時手動輸入天數
+			if ($('#level').val() == '5') {
+				$('#levelFive').show();
+
+				$('#levelFiveDay').blur(function () {
+					if (($('#levelFiveDay').val()) !== "") {
+						levelWFHDays = $('#levelFiveDay').val();
+						console.log("五級：" + levelWFHDays+ "天");
+
+						$('#levelFiveDay').change(function(){
+							$('#workDate').val('');
+							$('#endTime').val('');
+						});
+					}
+				});
+
+			}else{
+				$('#levelFive').hide();
+				$('#levelFiveDay').val("");
+			}
 		});
 
 		
@@ -330,6 +354,7 @@
 			errorCode["3"] = "請輸入時間";
 			errorCode["4"] = "請輸入事由";
 			errorCode["5"] = "請輸入主管";
+			errorCode["6"] = "請輸入五級遠端天數";
 			var errors = {};
 			
 			if($('#sysUserId :selected').val() == ''){
@@ -361,6 +386,11 @@
 				errors['approvalBy'] = 5;
 			} else {
 				$('#approvalBy-error').hide();
+			}
+			if ($('#levelFiveDay').val() == '') {
+				errors['levelFiveDay'] = 6;
+			} else {
+				$('#levelFiveDay-error').hide();
 			}
 
 
@@ -423,6 +453,7 @@
 		}
 		
 		function deleteData(id) {
+			confirm('您確定要刪除此筆遠端作業紀錄嗎？');
 			var targetURL = "<c:url value='/security/WorkFromHome/" + id + "'/>";
 
 			$("body").css("cursor", "progress");
@@ -452,6 +483,8 @@
 				$('#workFromHomeId').val("");
 				$('#sysUserId').val("");
 				$('#level').val("");
+				$('#levelFiveDay').val("");
+				$('#levelFive').hide();
 				$('#workDate').val("");
 				$('#endTime').val("");
 				$('#description').val("");
