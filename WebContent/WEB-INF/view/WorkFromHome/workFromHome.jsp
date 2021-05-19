@@ -347,11 +347,13 @@
 			} else {
 				$('#workDate-error').hide();
 			}
+			/*
 			if ($('#endTime').val() == '') {
 				errors['endTime'] = 3;
 			} else {
 				$('#endTime-error').hide();
 			}
+			*/
 			if ($('#description').val() == '') {
 				errors['description'] = 4;
 			} else {
@@ -473,14 +475,14 @@
 					success : function(data) {
 						$("body").css("cursor", "auto");
 						if (data.success) {
-							$('#shiftId').val(data.sysUserShift.shiftId);
-							$('#sysUserId').val(data.sysUserShift.sysUserId);
+							$('#workFromHomeId').val(data.workFromHome.workFromHomeId);
+							$('#sysUserId').val(data.workFromHome.sysUserId);
 							$('#sysUserId').attr("disabled", true);
-							$('#enableMonth').val(formatJsonDate(data.sysUserShift.enableMonth, "y/M"));
-							$('#status').val(data.sysUserShift.status);
-							$('#boardTime').val(data.sysUserShift.boardTime);
-							$('#finishTime').val(data.sysUserShift.finishTime);
-							selectedShift(data.sysUserShift.boardTime, data.sysUserShift.finishTime);
+							$('#level').val(data.workFromHome.level);
+							$('#workDate').val(formatJsonDate(data.workFromHome.workDate, "y/M/d"));
+							$('#description').val(data.workFromHome.description);
+							$('#approvalBy').val(data.workFromHome.approvalBy);
+							$('#status').val(data.workFromHome.status);
 							
 							$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
 							$('#basicModal').modal('toggle');
