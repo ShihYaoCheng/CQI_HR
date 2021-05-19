@@ -133,6 +133,7 @@ public class Constant {
 	public final static String LINE_CHANNEL_ACCESS_TOKEN = "uV0vhaGIS0iiTNYwxmMHR9Ck3hsHDlM/sdU75CYLhnd5G0WWJjYo/Bk3fNe8RRBMco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2NInI5vBQXrzlIyexdkJ21Zig5OgfSte2QS+3qS1ri1hQdB04t89/1O/w1cDnyilFU=";
 	public final static String LINE_CHANNEL_SECRET = "2599f73f1a402479584066720b7ae7dd";
 	
+	
 	public final static String LINE_FLEX_MESSAGE_ALT_TEXT_EMERGENCE_REQUEST = "災害處理單申請";
 	
 	public final static String LINE_IMAGE_TYPE_PROJECT = "Project";

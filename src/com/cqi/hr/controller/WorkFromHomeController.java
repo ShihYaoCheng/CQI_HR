@@ -116,4 +116,41 @@ public class WorkFromHomeController extends AbstractController<WorkFromHome>{
 		returnJsonMap(req, resp, map);
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/{workFromHomeId}")
+	public void ajaxQuery(HttpServletRequest req, HttpServletResponse resp, @PathVariable Long workFromHomeId){
+		logger.info(FUNCTION_NAME + " ajaxQuery: " + workFromHomeId);
+		Map<Object, Object> map = null;
+		try{
+			String result = "";
+			WorkFromHome data = workFromHomeService.get(workFromHomeId);
+			map = createResponseMsg(!StringUtils.hasText(result), "", result);
+			map.put("workFromHome", data);
+		}catch(Exception e){
+			logger.error(FUNCTION_NAME + " ajaxQuery error: ", e);
+			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
+		}
+		returnJsonMap(req, resp, map);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/update")
+	public void ajaxUpdate(HttpServletRequest req, HttpServletResponse resp, @Valid WorkFromHome workFromHome){
+		logger.info(FUNCTION_NAME + " ajaxUpdate: ");
+		Map<Object, Object> map = null;
+		try{
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			SysUser dataUser = sysUserService.get(operator.getSysUserId());
+			if(dataUser == null){
+				map = createResponseMsg(false, "", "請重新登入");
+			}
+			
+			String errorMsg = workFromHomeService.updateWorkFromHome(workFromHome,dataUser);
+			map = createResponseMsg(!StringUtils.hasText(errorMsg), "", errorMsg);
+		}catch(Exception e){
+			logger.error(FUNCTION_NAME + " ajaxUpdate error: ", e);
+			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
+		}
+		returnJsonMap(req, resp, map);
+	}
+	
+	
 }

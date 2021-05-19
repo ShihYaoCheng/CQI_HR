@@ -108,5 +108,20 @@ public class WorkFromHomeService  extends AbstractService<WorkFromHome>{
 		
 	}
 
+	public String updateWorkFromHome(WorkFromHome workFromHome, SysUser dataUser) throws Exception{
+		WorkFromHome w = workFromHomeDao.get(workFromHome.getWorkFromHomeId());
+		if (w ==null) {
+			return Constant.RECORD_NOT_EXIST;
+		}
+		w.setLevel(workFromHome.getLevel());
+		w.setWorkDate(workFromHome.getWorkDate());
+		w.setDescription(workFromHome.getDescription());
+		w.setApprovalBy(workFromHome.getApprovalBy());
+		w.setModifyTime(new Date());
+		w.setModifyBy(dataUser.getSysUserId());
+		workFromHomeDao.update(w);
+		return "";
+	}
+
 	
 }
