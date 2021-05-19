@@ -59,7 +59,6 @@
 												</td>
 												<td class="text-center">
 													<c:if test="${todayWorkFromHome.get(user.sysUserId)!=null && todayWorkFromHome.get(user.sysUserId).status == 1 }"> <span style="background-color:rgb(255 237 62); font-weight: bold;">&nbsp;(WFH)&nbsp;</span></c:if>
-													
 													${user.userName} | 
 													<c:if test="${attendance.get(user.sysUserId)!=null}">${attendance.get(user.sysUserId).arriveTime} ~ ${attendance.get(user.sysUserId).leaveTime}</c:if>
 													

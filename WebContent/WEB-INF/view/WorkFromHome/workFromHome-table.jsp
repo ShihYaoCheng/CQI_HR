@@ -45,9 +45,8 @@
 						<fmt:formatDate var="dataYear" value="${item.workDate}" pattern="yyyy" />
 						<fmt:formatDate var="dataMonth" value="${item.workDate}" pattern="MM" />
 						<c:if test="${dataYear > year || (dataYear==year && dataMonth > month) || (operator.roleId == '1' && dataYear==year && dataMonth == month) }">
-							<!-- <a href="#" class="btn btn-default function_icon" onclick="active('${item.workFromHomeId}')" title="修改"> 
-								<i class="glyphicon glyphicon-pencil"></i>
-							</a> -->
+							
+							
 							<a href="#" class="btn btn-default function_icon" onclick="deleteData('${item.workFromHomeId}')" title="刪除">
 								<i class="glyphicon glyphicon-remove"></i>
 							</a>
