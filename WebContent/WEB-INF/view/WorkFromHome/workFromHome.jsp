@@ -200,19 +200,6 @@
 								</div>
 							</div>
 
-
-							<!-- <div class="form-group">
-					            <label for="recipient-name" class="control-label col-sm-12">排班月份：</label>
-					            <div class="col-sm-12">
-						            <div class="form-group">
-						                <div class="input-group date" id='datetimepickerEnable'>
-						                    <input id="enableMonth" name="enableMonth" class="form-control" size="16" type="text" value=""/>
-											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-						                </div>
-						            </div>
-						            <span id="enableMonth-error" class="error_text"></span>
-					            </div>
-							</div> -->
 						</div>
 			        </form>
 				</div>
@@ -238,15 +225,6 @@
 			if(ruleId == '1'){
 				pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
 			}
-			
-			// $('#datetimepickerEnable').datepicker({
-			// 	viewMode: "months", 
-			//     minViewMode: "months",
-	        //     format: 'yyyy/mm',
-	        //     autoclose: true,
-		    //     startDate: pickerStartDate
-			// });
-
 
 			$('#datetimepickerStart').datetimepicker({
 				minView: "month",  //只顯示到日期，不顯示分秒
@@ -275,18 +253,47 @@
 			});
 		});
 
+
+		var levelWFHDays;
+
+		// level轉換天數
+		$('#level').change(function () {
+
+			if ($('#level').val() == '1') {
+				levelWFHDays = '3';
+				console.log("一級：" + levelWFHDays　+ "天");
+			}
+			if ($('#level').val() == '2') {
+				levelWFHDays = '7';
+				console.log("二級：" + levelWFHDays　+ "天");
+			}
+			if ($('#level').val() == '3') {
+				levelWFHDays = "14";
+				console.log("三級：" + levelWFHDays　+ "天");
+			}
+			if ($('#level').val() == '4') {
+				levelWFHDays = "30";
+				console.log("四級：" + levelWFHDays　+ "天");
+			}
+		});
+
+		
+
 		function calEndDateTime(e) {
+
 			if ($('#level').val() != '' && $('#workDate').val() != '') {
 				var setEndDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
 				setEndDate.setHours(e.date.getHours());
 				setEndDate.setMinutes(e.date.getMinutes());
-				setEndDate.setDate(setEndDate.getDate() + parseInt($('#level').val()) - 1);
+				// setEndDate.setDate(setEndDate.getDate() + parseInt($('#level').val()) - 1);
+				setEndDate.setDate(setEndDate.getDate() + parseInt(levelWFHDays) - 1);
 				setEndDate.setHours(19);
 				setEndDate.setMinutes(0);
-				// $('#endTime').val(getFormattedDate(setEndDate, "y/M/d H:m"));
 				$('#endTime').val(getFormattedDate(setEndDate, "y/M/d"));
+
 			}
 		}
+
 
 		$('#level').change(function () {
 			$('#workDate').val('');
@@ -446,6 +453,7 @@
 				$('#sysUserId').val("");
 				$('#level').val("");
 				$('#workDate').val("");
+				$('#endTime').val("");
 				$('#description').val("");
 				$('#approvalBy').val("");
 				$('#status').val("");
