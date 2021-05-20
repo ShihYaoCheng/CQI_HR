@@ -9,10 +9,10 @@
 			<table class="table table-striped">
 				<thead>
 					<tr style="background-color: #edf8ff; font-weight: bold;">
-						<td width="20%">班別</td>
-						<td width="20%">天數/時數</td>
-						<td width="20%">調班時間</td>
-						<td width="20%">排休時間</td>
+						<td width="10%">班別</td>
+						<td width="10%">天數/時數</td>
+						<td width="30%">調班時間</td>
+						<td width="30%">排休時間</td>
 						<td width="20%">修改</td>
 					</tr>
 				</thead>
@@ -27,8 +27,8 @@
 							<td>
 								${mappingOvertime.get(item.overtimeId).leaveName}
 							</td>
-							<td> 
 							
+							<td> 
 								${item.spendTime.intValue()}
 								<c:if test="${mappingOvertime.get(item.overtimeId).unitType == 1}">天</c:if>
 								<c:if test="${mappingOvertime.get(item.overtimeId).unitType == 2}">小時</c:if>

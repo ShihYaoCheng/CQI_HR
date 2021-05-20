@@ -57,7 +57,7 @@ public class Constant {
 	
 	public final static int    PAGE_SIZE 					= 10;
 	public final static String SUCCESS = "成功";//
-	public final static String NETWORK_BUSY = "系統或網路繁忙，請稍候在試。";//network.busy
+	public final static String NETWORK_BUSY = "系統或網路繁忙，請稍候再試。";//network.busy
 	public final static String DATA_DUPLICATED = "資料重複，請重新確認";
 	public final static String NAME_DUPLICATED = "名稱重複";
 	public final static String RECORD_NOT_EXIST = "紀錄不存在";

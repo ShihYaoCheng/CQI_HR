@@ -261,11 +261,6 @@
 									data-loading-text="儲存中" onclick="submit()">儲存</button>
 							</div>
 						</div>
-
-
-
-
-
 					</div>
 				</div>
 
@@ -277,7 +272,6 @@
 
 							var today = new Date();
 							var pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
-							console.log()
 							console.log("pickerStartDate：" + pickerStartDate);　//pickerStartDate：2021/05/01 00:00
 							if (today.getDate() < 4) {
 								pickerStartDate = getFormattedDate(getLastMonth(), 'y/M/d H:m');
@@ -520,9 +514,6 @@
 							errorCode["5"] = "請選擇調班額度";
 							var errors = {};
 
-
-
-
 							if ($('#overtimeId :selected').val() == '') {
 								errors['overtimeId'] = 1;
 							} else {
@@ -648,13 +639,17 @@
 							if (progressing == 1) {
 								return;
 							}
+							// 1.如果點擊的id是askOvertimeEdit
+							// 2.如果點擊的id不是askOvertimeEdit
+							// 2-1. 如果active(id)中的id是未定義
 							if($(event.target).attr('id') ===  'askOvertimeEdit'){
 								console.log("修改")
+
 								$('#shiftScheduleDialog').css("display","none");
 								$('#askOvertimeEditDialog').css("display","block");
-								$('#basicModal').modal('toggle');
-							}
-							if ($(event.target).attr('id') ===  'shiftSchedule' ){
+								$('#basicModal').modal('show');
+
+							} else {
 								$('#askOvertimeEditDialog').css("display","none");
 								$('#shiftScheduleDialog').css("display","block");
 								// console.log("新增")
@@ -675,9 +670,9 @@
 									$('#asanaTaskId').val("");
 									$('#status').val("");
 
-
 									$('#basicModal').find('.modal-title').text(text + "調班紀錄");
-									$('#basicModal').modal('toggle');
+									$('#basicModal').modal('show');
+
 								} else {
 									progressing = 1;
 									$("body").css("cursor", "progress");
@@ -707,12 +702,15 @@
 												$('#status').val(data.userAskForOvertime.status);
 												selectedLeaveId($('#overtimeId option:selected').html());
 												$('#basicModal').find('.modal-title').text(text + "調班紀錄");
-												$('#basicModal').modal('toggle');
+												$('#basicModal').modal('show');
 												progressing = 0;
 											} else {
 												alert(data.message);
 											}
-
+										},
+										error: function(err){
+											alert('error')
+											$("body").css("cursor", "auto");
 										}
 									});
 								}	

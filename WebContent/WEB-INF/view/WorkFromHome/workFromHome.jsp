@@ -33,35 +33,57 @@
 						<h4>
 							<b>*** 因 COVID-19 或政府宣告之傳染病，於當地政府規範下，得由公司公布或成員申請遠端工作佈署 ***</b>
 							<br><br><br>
-							<b>遠端作業模式</b>
+							<b>遠端作業說明</b>
 						</h4>
 						<thead>
 							<tr style="background-color: #edf8ff; font-weight: bold;">
-								<td width="30%">疫情警戒程度</td>
-								<td width="70%">實施日數</td>
-								<td width="70%">實施日數</td>
+								<td width="10%">警戒程度</td>
+								<td width="10%">遠端日數</td>
+								<td width="30%">A 地區關聯</td>
+								<td width="30%">B 親友關聯</td>
+								<td width="20%">C 個人</td>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>一級</td>
 								<td>三天</td>
+								<td>A1.1 居住於確診熱區(萬華5/17)(台北新北5/20)
+									<br>
+									A1.2 使用跨縣市大眾通勤, 所跨縣市政府宣布三級防疫(新北台北5/17)(全國5/20)
+									<br>
+									A1.3 所居住社區出現確診案例, 未共用通風管道或共用電梯
+								</td>
+								<td>B1.1 直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者</td>
+								<td></td>
 							</tr>
 							<tr>
 								<td>二級</td>
 								<td>七天</td>
+								<td>A2.1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</td>
+								<td>B2.1 一周內同室社交過的親友確診</td>
+								<td></td>
 							</tr>
 							<tr>
 								<td>三級</td>
 								<td>十四天</td>
+								<td>A3.1 本司辦公所在大樓出現確診案例, 或由公司行政統一發布</td>
+								<td>B3.1 同居親友確診或收到自主通知單</td>
+								<td>C3.1 本人, 配偶, 同居直系確診或收到自主通知單</td>
 							</tr>
 							<tr>
 								<td>四級</td>
 								<td>一個月</td>
+								<td></td>
+								<td>B4.1 同居親友確診, 因故無法在院隔離, 須在家隔離者</td>
+								<td>C4.1 本人確診</td>
 							</tr>
 							<tr>
 								<td>五級</td>
 								<td>超過一個月</td>
+								<td></td>
+								<td></td>
+								<td></td>
 							</tr>
 						</tbody>
 					</table>
@@ -111,7 +133,7 @@
 									id="levelStr" name="levelStr">
 									遠端級別：
 								</label>
-								<div class="col-sm-12">
+								<div class="col-sm-12" id="levelForm">
 									<select class="form-control" id="level" name="level">
 										<option value="">請選擇</option>
 										<option value="1">遠端一級 (３天)</option>
@@ -135,13 +157,12 @@
 
 
 							<div class="form-group">
-								<label for="recipient-name" class="control-label col-sm-12">公告開始時間：</label>
+								<label for="recipient-name" class="control-label col-sm-12" id="workDateTitle">公告開始時間：</label>
 								<div class="col-sm-12">
-									<div class="form-group" style="margin-bottom: 0px;">
+									<div class="form-group" style="margin-bottom: 0px;" id="workDateForm">
 										<div class="input-group date" id='datetimepickerStart'>
 											<input id="workDate" name="workDate" class="form-control"
-												size="16" type="text" value="" readonly="readonly" style="cursor: pointer;
-												background-color: #fff;" />
+												size="16" type="text" value="" readonly="readonly"  placeholder="請點選右方日曆"/>
 											<span class="input-group-addon"><span
 													class="glyphicon glyphicon-calendar"></span></span>
 										</div>
@@ -149,7 +170,7 @@
 									<span id="workDate-error" class="error_text"></span>
 								</div>
 							</div>
-			 				<div class="form-group">
+			 				<div class="form-group" id="endTimeForm">
 								<label for="recipient-name" class="control-label col-sm-12">公告結束時間：</label>
 								<div class="col-sm-12">
 									<input id="endTime" name="endTime" class="form-control" size="16"
@@ -166,11 +187,10 @@
 								<div class="col-sm-12">
 									<!-- <input type="text" class="form-control" id="spendTime" name="spendTime"/> -->
 									<select class="form-control" id="description" name="description">
-
+										<option value="">請選擇</option>
 										<optgroup label="A 地區關聯">
-											<option value="">請選擇</option>
-											<option>A 一級-1 居住於確診熱區(萬華)</option>
-											<option>A 一級-2 跨縣市通勤, 所跨縣市政府宣布三級防疫(新北, 台北)</option>
+											<option>A 一級-1 居住於確診熱區(萬華5/17)(台北新北5/20)</option>
+											<option>A 一級-2 使用跨縣市大眾通勤, 所跨縣市政府宣布三級防疫(新北台北5/17)(全國5/20)</option>
 											<option>A 一級-3 所居住社區出現確診案例, 未共用通風管道或共用電梯</option>
 											<option>A 二級-1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</option>
 											<option>A 三級-1 本司辦公所在大樓出現確診案例, 或由公司行政統一發布</option>
@@ -348,6 +368,14 @@
 		}
 		
 		function submit(){
+
+			console.log($('#sysUserId').val());
+			console.log($('#sysUserId').val());
+			console.log($('#sysUserId').val());
+			console.log($('#sysUserId').val());
+			console.log($('#sysUserId').val());
+			
+
 			var errorCode = {};
 			errorCode["1"] = "請選擇成員";
 			errorCode["2"] = "請選擇遠端級別";
@@ -389,11 +417,18 @@
 			} else {
 				$('#approvalBy-error').hide();
 			}
-			if ($('#levelFiveDay').val() == '') {
-				errors['levelFiveDay'] = 6;
-			} else {
+
+			if ($('#level').val() == '5'){
+				if ($('#levelFiveDay').val() == '') {
+					errors['levelFiveDay'] = 6;
+				} else {
+					$('#levelFiveDay-error').hide();
+				}
+			}if ($('#level').val() !== '5'){
 				$('#levelFiveDay-error').hide();
 			}
+
+			
 
 
 			
@@ -455,24 +490,24 @@
 		}
 		
 		function deleteData(id) {
-			confirm('您確定要刪除此筆遠端作業紀錄嗎？');
-			var targetURL = "<c:url value='/security/WorkFromHome/" + id + "'/>";
-
-			$("body").css("cursor", "progress");
-			$.ajax({
-				type: "DELETE",
-				url: targetURL,
-				data: {
-				},
-				dataType: "json",
-				success: function (data) {
-					location.reload(true)
-					$("body").css("cursor", "auto");
-					if (data.success) {
-						queryData(1);
+			if(confirm("您確定要刪除此筆紀錄嗎？")) {
+				var targetURL = "<c:url value='/security/WorkFromHome/" + id + "'/>";
+				$("body").css("cursor", "progress");
+				$.ajax({
+					type: "DELETE",
+					url: targetURL,
+					data: {
+					},
+					dataType: "json",
+					success: function (data) {
+						location.reload(true)
+						$("body").css("cursor", "auto");
+						if (data.success) {
+							queryData(1);
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 		
 		function active(id){
@@ -493,6 +528,16 @@
 				$('#approvalBy').val("");
 				$('#status').val("");
 				$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
+				$('#sysUserId').attr("disabled", false);
+				$('#level').css({"background-color": "#fff","pointer-events":"all"});
+				$('#levelForm').css({"cursor": "auto"});
+				$('#workDate').css({"background-color": "#fff","cursor": "auto"});
+				$('#workDateForm').css({"cursor": "auto"});
+				$('#datetimepickerStart').css({"pointer-events":"auto"});
+				$('#basicModal').find('#workDateTitle').text("公告開始時間：");
+				$('#endTimeForm').show();
+				$('#levelFive').hide();
+				$('#levelFiveDay-error').hide();
 				$('#basicModal').modal('toggle');
 			}else{
 				progressing = 1;
@@ -510,15 +555,26 @@
 						if (data.success) {
 							$('#workFromHomeId').val(data.workFromHome.workFromHomeId);
 							$('#sysUserId').val(data.workFromHome.sysUserId);
-							$('#sysUserId').attr("disabled", true);
+							$('#sysUserId').attr("disabled", true); //後端已擋，其他欄位後端未設定不能用disabled
 							$('#level').val(data.workFromHome.level);
+							$('#level').css({"background-color": "#eee","pointer-events":"none"});
+							$('#levelForm').css({"cursor": "not-allowed"});
 							$('#workDate').val(formatJsonDate(data.workFromHome.workDate, "y/M/d"));
+							$('#workDate').css({"background-color": "#eee","cursor": "not-allowed","pointer-events":"none"});
+							$('#workDateForm').css({"cursor": "not-allowed"});
+							$('#datetimepickerStart').css({"pointer-events":"none"});
 							$('#description').val(data.workFromHome.description);
 							$('#approvalBy').val(data.workFromHome.approvalBy);
 							$('#status').val(data.workFromHome.status);
-							
+							$('#basicModal').find('#workDateTitle').text("日期：");
 							$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
+							$('#endTimeForm').hide();
+							$('#levelFive').hide();
+
+
 							$('#basicModal').modal('toggle');
+
+
 							progressing = 0;
 						}else{
 							alert(data.message);

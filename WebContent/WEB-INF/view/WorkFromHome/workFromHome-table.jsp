@@ -10,11 +10,11 @@
 		<thead>
 			<tr style="background-color: #edf8ff; font-weight: bold;">
 				<td width="10%">成員</td>
-				<td width="10%">級別</td>
-				<td width="15%">日期</td>
-				<td width="45%">事由</td>
+				<td width="8%">級別</td>
+				<td width="12%">日期</td>
+				<td width="48%">事由</td>
 				<td width="10%">主管</td>
-				<td width="10%">修改</td>
+				<td width="12%">編輯</td>
 			</tr>
 		</thead>
 		<tbody>
