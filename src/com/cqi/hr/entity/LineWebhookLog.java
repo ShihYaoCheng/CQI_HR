@@ -22,6 +22,9 @@ public class LineWebhookLog implements java.io.Serializable {
 	@Column(name = "LOG_ID", unique = true, nullable = false)
 	private String logId;
 	
+	@Column(name = "line_id", length = 50)
+	private String lineId;
+	
 	@Column(name = "type", length = 45)
 	private String type;
 	
@@ -47,6 +50,14 @@ public class LineWebhookLog implements java.io.Serializable {
 		this.status = 1;
 		this.createTime = new Date();
 	}
+	
+	public LineWebhookLog(String lineId,String type, String data ) {
+		this.lineId = lineId;
+		this.type = type;
+		this.data = data;
+		this.status = 1;
+		this.createTime = new Date();
+	}
 
 	public String getLogId() {
 		return logId;
@@ -54,6 +65,14 @@ public class LineWebhookLog implements java.io.Serializable {
 
 	public void setLogId(String logId) {
 		this.logId = logId;
+	}
+	
+	public String getLineId() {
+		return lineId;
+	}
+
+	public void setLineId(String lineId) {
+		this.lineId = lineId;
 	}
 
 	public String getType() {

@@ -1,6 +1,7 @@
 package com.cqi.hr.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.cqi.hr.constant.Constant;
+import com.cqi.hr.entity.DailyAttendanceRecord;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.SysUserShift;
@@ -45,6 +47,19 @@ public class WorkFromHomeDao extends AbstractDAO<WorkFromHome>{
 		
 		persist(workFromHome);
 		return "";
+	}
+	
+	@SuppressWarnings("unchecked")
+	public WorkFromHome getOneByUserIdAndDate(String userId, Date workDate) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", userId));
+		criteria.add(Restrictions.eq("workDate", workDate));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		List<WorkFromHome> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		return null;
 	}
 	
 	
