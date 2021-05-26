@@ -61,7 +61,7 @@
 								<td>二級</td>
 								<td>七天</td>
 								<td>A2.1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</td>
-								<td>B2.1 一周內同室社交過的親友確診</td>
+								<td>B2.1 一周內同室(同車)社交過的親友確診, 過程未戴口罩超過15分鐘</td>
 								<td></td>
 							</tr>
 							<tr>
@@ -73,7 +73,7 @@
 							</tr>
 							<tr>
 								<td>四級</td>
-								<td>一個月</td>
+								<td>三十天</td>
 								<td></td>
 								<td>B4.1 同居親友確診, 因故無法在院隔離, 須在家隔離者</td>
 								<td>C4.1 本人確診</td>
@@ -139,7 +139,7 @@
 										<option value="1">遠端一級 (３天)</option>
 										<option value="2">遠端二級 (７天)</option>
 										<option value="3">遠端三級 (１４天)</option>
-										<option value="4">遠端四級 (１個月)</option>
+										<option value="4">遠端四級 (３０天)</option>
 										<option value="5">遠端五級 (超過１個月)</option>
 									</select>
 									<span id="level-error" class="error_text"></span>
@@ -198,7 +198,7 @@
 									
 										<optgroup label="B 親友關聯">
 											<option>B 一級-1 直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者</option>
-											<option>B 二級-1 一周內同室社交過的親友確診</option>
+											<option>B 二級-1 一周內同室(同車)社交過的親友確診, 過程未戴口罩超過15分鐘</option>
 											<option>B 三級-1 同居親友確診或收到自主通知單</option>
 											<option>B 四級-1 同居親友確診, 因故無法在院隔離, 須在家隔離者</option>
 										</optgroup>
@@ -368,13 +368,6 @@
 		}
 		
 		function submit(){
-
-			console.log($('#sysUserId').val());
-			console.log($('#sysUserId').val());
-			console.log($('#sysUserId').val());
-			console.log($('#sysUserId').val());
-			console.log($('#sysUserId').val());
-			
 
 			var errorCode = {};
 			errorCode["1"] = "請選擇成員";

@@ -44,6 +44,11 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 		logger.info(FUNCTION_NAME + " list");
 		try {
 			model.addAttribute("cqiOvertimeList", userLeaveService.getCompanyOvertimeList());
+
+			SysUser operator = SessionUtils.getLoginInfo(req);
+			model.addAttribute("operator",operator);
+			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
+			
 		} catch (Exception e) {
 			logger.error(FUNCTION_NAME + "index error:", e);
 		}
@@ -58,6 +63,9 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 			model.addAttribute("mappingOvertime", userLeaveService.getCompanyOvertimeMapping());
 			PagingList<UserAskForOvertime> askOvertimeList = userAskForOvertimeService.getListByPage(page, operator.getSysUserId());
 			createPagingInfo(model, askOvertimeList);
+
+			model.addAttribute("operator",operator);
+			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}

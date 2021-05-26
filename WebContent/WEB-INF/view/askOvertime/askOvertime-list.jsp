@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<%@include file="/WEB-INF/view/include/view-lib.jsp" %>
-		<html>
+	<html>
 
 		<head>
 			<%@include file="/WEB-INF/view/include/view-html-head.jsp" %>
@@ -12,7 +12,7 @@
 				<div class="container theme-showcase page-width" role="main">
 					<div class="row row-offcanvas row-offcanvas-left">
 
-						<div class="col-xs-12 col-md-9 single_table">
+						<div class="col-xs-12 col-md-12 single_table">
 							<form class="navbar-form">
 								<h3><b>調班資料管理</b></h3>
 								<br />
@@ -27,6 +27,16 @@
 									</div>
 
 								</div>
+
+								<div>
+									<h4>
+										<b>***為方便結算出勤時數，每月四日零時零分起將無法更動上個月的出勤資料。感謝配合。***
+											<br />*特休功能上線，有問題請回報。目前特休以小時計算。一天工時8小時。</b>
+									</h4>
+									<br>
+
+								</div>
+
 								<%@include file="../include/progressing.jsp" %>
 									<div id="overtimeQuotaContent">
 									</div>
@@ -192,68 +202,6 @@
 
 
 
-							<!-- -------------------調班剩餘額度------------------- -->
-							<div class="modal-body" id="askOvertimeEditDialog">
-															
-
-								<div class="form-group">
-									<label for="recipient-name" class="control-label col-sm-12">成員：</label>
-									<div class="col-sm-12">
-										<select class="form-control" id="QuotasysUserId" name="QuotasysUserId">
-											<option value="">請選擇</option>
-											<option value="1">Sam</option>
-											<option value="2">Reila</option>
-										</select>
-
-											
-										<span id="QuotasysUserId-error" class="error_text"></span>
-									</div>
-								</div> 
-
-
-								<!-- <div class="form-group">
-									<label for="recipient-name" class="control-label col-sm-12">成員：</label>
-									<div class="col-sm-12">
-										<div class="form-group">
-											<select class="form-control" id="sysUserId" name="sysUserId" onchange="">
-												<c:choose>
-													<c:when test="${operator.roleId == '1'}">
-														<option value="">請選擇</option>
-														<c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
-															<option value="${item['key']}">${item['value'].originalName}</option>
-														</c:forEach>
-													</c:when>    
-													<c:otherwise>
-														<option value="${operator.sysUserId}">${operator.originalName}</option>
-													</c:otherwise>
-												</c:choose>
-												
-											</select>
-											<span id="sysUserId-error" class="error_text"></span>
-										</div>
-									</div>	
-								</div> -->
-
-
-
-
-								<div class="form-group">
-									<label for="recipient-name" class="control-label col-sm-12">調班額度 (每周)：</label>
-									<div class="col-sm-12">
-										<select class="form-control" id="shiftQuota" name="shiftQuota">
-											<option value="">請選擇</option>
-											<option value="1">1</option>
-											<option value="2">2</option>
-
-										</select>
-										<span id="shiftQuota-error" class="error_text"></span>
-									</div>
-								</div>
-							</div>
-
-							
-						
-
 							<div style="clear:both;"></div>
 							<div class="modal-footer" style="margin-top:20px">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -263,6 +211,81 @@
 						</div>
 					</div>
 				</div>
+
+
+
+				<!-- dialog 調班剩餘額度-->
+				<div class="modal fade" id="basicModalEdit" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">調班額度</h4>
+							</div>
+							<div class="modal-body">
+								<form id="shiftForm" name="shiftForm">
+									<input type="hidden" id="shiftId" name="shiftId"/>
+									<input type="hidden" id="status" name="status"/>
+									<input type="hidden" id="shiftQuota" name="shiftQuota"/>
+									<div id="edit">
+										<div class="form-group">
+											<label for="recipient-name" class="control-label col-sm-12">成員：</label>
+											<div class="col-sm-12">
+												<div class="form-group">
+													<select class="form-control" id="sysUserId" name="sysUserId" onchange="">
+														<c:choose>
+															<c:when test="${operator.roleId == '1'}">
+																<option value="">請選擇</option>
+																<c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
+																	<option value="${item['key']}">${item['value'].originalName}</option>
+																</c:forEach>
+															</c:when>    
+															<c:otherwise>
+																<option value="${operator.sysUserId}">${operator.originalName}</option>
+															</c:otherwise>
+														</c:choose>
+														
+													</select>
+													<span id="sysUserId-error" class="error_text"></span>
+												</div>
+											</div>	
+										</div>
+										<div class="form-group">
+											<label for="recipient-name" class="control-label col-sm-12">調班額度（每周）：</label>
+											<div class="col-sm-12 ">
+												<div class="form-group">
+													<select class="form-control" id="shiftQuota" name="shiftQuota">
+														<option value="">請選擇</option>
+														<option value="1">1</option>
+														<option value="2">2</option>
+														<option value="3">3</option>
+													</select>
+													<span id="shiftQuota-error" class="error_text"></span>
+												</div>
+											</div>
+										</div>
+										
+									</div>
+								</form>
+							</div>
+							<div style="clear:both;"></div>
+							<div class="modal-footer" style="margin-top:20px">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary btn-lg " id="save" data-loading-text="儲存中" onclick="submitEdit()">儲存</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+
+
+
+
+
+
+
 
 				<%@include file="/WEB-INF/view/include/view-html-bottom.jsp" %>
 					<script type="text/javascript">
@@ -388,7 +411,7 @@
 								$('#datetimepickerStartLeave').datetimepicker("setEndDate", e.date);
 							});
 
-							//-------------------排休--------------------
+							//---------------------------------------
 
 
 						});
@@ -642,21 +665,22 @@
 							// 1.如果點擊的id是askOvertimeEdit
 							// 2.如果點擊的id不是askOvertimeEdit
 							// 2-1. 如果active(id)中的id是未定義
-							if($(event.target).attr('id') ===  'askOvertimeEdit'){
-								console.log("修改")
+							// if($(event.target).attr('id') ===  'askOvertimeEdit'){
+								
+							// 	console.log("修改")
 
-								$('#shiftScheduleDialog').css("display","none");
-								$('#askOvertimeEditDialog').css("display","block");
-								$('#basicModal').modal('show');
+							// 	$('#shiftScheduleDialog').hide();
+							// 	$('#askOvertimeEditDialog').show();
+							// 	$('#basicModal').modal('toggle');
 
-							} else {
-								$('#askOvertimeEditDialog').css("display","none");
-								$('#shiftScheduleDialog').css("display","block");
+							// } else {
+							// 	$('#shiftScheduleDialog').show();
+							// 	$('#askOvertimeEditDialog').hide();
 								// console.log("新增")
 							
-							//$('input[name="mangaRoleTypes"]').attr("checked", false);  //原本就註解
-							// $('#datetimepickerEnd').datetimepicker("setStartDate", new Date(-8639968443048000)); //0512註解
-							// $('#datetimepickerStart').datetimepicker("setEndDate", new Date(8639968443048000));  //0512註解
+								//$('input[name="mangaRoleTypes"]').attr("checked", false);  //原本就註解
+								// $('#datetimepickerEnd').datetimepicker("setStartDate", new Date(-8639968443048000)); //0512註解
+								// $('#datetimepickerStart').datetimepicker("setEndDate", new Date(8639968443048000));  //0512註解
 								var text = "修改";
 								if (typeof (id) == "undefined") {
 									text = "新增";
@@ -671,7 +695,7 @@
 									$('#status').val("");
 
 									$('#basicModal').find('.modal-title').text(text + "調班紀錄");
-									$('#basicModal').modal('show');
+									$('#basicModal').modal('toggle');
 
 								} else {
 									progressing = 1;
@@ -702,7 +726,7 @@
 												$('#status').val(data.userAskForOvertime.status);
 												selectedLeaveId($('#overtimeId option:selected').html());
 												$('#basicModal').find('.modal-title').text(text + "調班紀錄");
-												$('#basicModal').modal('show');
+												$('#basicModal').modal('toggle');
 												progressing = 0;
 											} else {
 												alert(data.message);
@@ -713,8 +737,8 @@
 											$("body").css("cursor", "auto");
 										}
 									});
-								}	
-							}
+								}
+							// }
 
 						}
 
@@ -722,7 +746,66 @@
 							$("#" + id + "-error").text('');
 							$("#" + id + "-error").hide();
 						}
+
+
+
+						// 調班額度管理
+
+						function edit(id){
+							if(progressing == 1){
+								return;
+							}
+							var text = "修改";
+							if(typeof(id) == "undefined"){
+								text = "新增";
+								$('#shiftId').val("");
+								$('#sysUserId').val("");
+								$('#shiftQuota').val("");
+
+								$('#status').val("");
+								$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
+								$('#basicModalEdit').modal('toggle');
+							}else{
+								progressing = 1;
+								$("body").css("cursor", "progress");
+								var targetURL= "<c:url value='/security/askOvertimeQuota/"+id+"'/>";
+								$.ajax({
+									type : "GET",
+									url : targetURL,
+									data : {
+										shiftId:id
+									},
+									dataType: "json",
+									success : function(data) {
+										$("body").css("cursor", "auto");
+										if (data.success) {
+											$('#shiftId').val(data.sysUserShift.shiftId);
+											$('#sysUserId').val(data.sysUserShift.sysUserId);
+											$('#sysUserId').attr("disabled", true);
+											$('#shiftQuota').val(data.sysUserShift.status);
+											selectedShift(data.sysUserShift.boardTime, data.sysUserShift.finishTime);
+											
+											$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
+											$('#basicModalEdit').modal('toggle');
+											progressing = 0;
+										}else{
+											alert(data.message);
+										}
+									}
+								});				
+							}	
+						}
+
+
+
+
+
+
+
+
+
 					</script>
+
 		</body>
 
 	</html>

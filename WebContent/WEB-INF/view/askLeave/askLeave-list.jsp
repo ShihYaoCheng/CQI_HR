@@ -264,7 +264,6 @@
 							errorCode["6"] = "上個月已請過生理假，每月限請一天";
 							errorCode["7"] = "本年度生理假已超過額度，請改請病假";
 							errorCode["8"] = "不能提前請非本月的生理假唷";
-
 							var errors = {};
 
 							if ($('#leaveId :selected').val() == '') {
@@ -305,15 +304,13 @@
 
 							//抓取 input公告開始時間： 中的月份
 							var startTimeMonth = $(" #startTime ").val().substring(5, 7);
-							console.log("input中想請的月份：", startTimeMonth);
-							var startTimeMonth = $(" #startTime ").val();
-							console.log(startTimeMonth);
+							console.log("input中想請的月份startTimeMonth：", startTimeMonth);
 
 
 							//抓取當前月份(不足2位數補0)				
 							var TimeNow = new Date();
 							var currentMonth = (TimeNow.getMonth() + 1 < 10 ? '0' : '') + (TimeNow.getMonth() + 1);
-							// console.log("當前月份：", currentMonth);
+							console.log("當前月份currentMonth：", currentMonth);
 
 
 							//userMenstruationLeaveLastMonth 上個月份生理假 第一筆資料
@@ -326,14 +323,15 @@
 
 							//抓取上個月生理假月份
 							var lastMenstruationLeave = '${userMenstruationLeaveLastMonth.startTime}'.substring(5, 7);
-							//console.log("上個月生理假月份：",lastMenstruationLeave);
+							console.log("上個月生理假月份lastMenstruationLeave ：",lastMenstruationLeave);
 
 
 
 							//抓取上個月份(不足2位數補0)				
 							var TimeNow = new Date();
 							var lastMonth = (TimeNow.getMonth() + 1 < 10 ? '0' : '') + (TimeNow.getMonth());
-							//console.log("上個月份：",lastMonth);
+							console.log("上個月份lastMonth：",lastMonth);
+							//如果 lastMonth=00 ，顯示12
 
 
 							//userMenstruationLeaveQuota  每年生理假剩餘額度
@@ -355,19 +353,19 @@
 								}
 
 								//不能提前請非當月生理假
-								if ((currentMonth < startTimeMonth) && (lastMenstruationLeave !== startTimeMonth)
-									&& (currentMonth !== startTimeMonth)) {
+								if((currentMonth < startTimeMonth) && (lastMonth != startTimeMonth)) {
 									errors['leaveId'] = 8; //顯示："不能提前請非本月的生理假唷"
 									$('#leaveId-error').show();
 								}
+
 								if (currentMonth == 12 && startTimeMonth == 01) {
 									errors['leaveId'] = 8; //顯示："不能提前請非本月的生理假唷"
 									$('#leaveId-error').show();
 								}
 
 								//上個月限請一天生理假 
-								if (lastMenstruationLeave == startTimeMonth) {
-									if ('${userMenstruationLeaveLastMonth.spendTime}' >= 1) {
+								if (lastMonth == startTimeMonth) {
+									if ('${userMenstruationLeaveLastMonth.spendTime}' > 1) {
 										errors['leaveId'] = 6;
 										$('#leaveId-error').show();
 									}
