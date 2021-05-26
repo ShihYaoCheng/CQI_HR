@@ -375,5 +375,42 @@
         	<value>schedulerNoPunchRemind</value>
     	</property>
     </bean>
-<!--     #JOB8 未打卡提醒 END -->
+	<!--     #JOB8 未打卡提醒 END -->
+	
+	<!-- #JOB9 線上打卡BEGIN -->
+	<!-- #JOB9 線上打卡  工作內容 -->
+	<bean id="jobOnlinePunchSendPasswordBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.OnlinePunchSendPasswordJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="lineBotService" value-ref="lineBotService"/>
+                <entry key="specialDateAboutWorkService" value-ref="specialDateAboutWorkService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- #JOB9 線上打卡 排程設定 -->
+	<bean id="cronOnlinePunchSendPasswordBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobOnlinePunchSendPasswordBean"/>
+        </property>
+        <property name="cronExpression">
+             <!--<value>10 * * * * ?</value>  -->
+        	 <value>10 30 7-18/1 * * ?</value>
+        </property>
+    </bean>
+    <bean id="schedulerOnlinePunchSendPasswordBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronOnlinePunchSendPasswordBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerOnlinePunchSendPassword</value>
+    	</property>
+    </bean>
+	<!--     #JOB9 線上打卡 END -->
+	
 </beans>

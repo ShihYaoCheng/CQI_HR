@@ -61,6 +61,7 @@
 								<td>二級</td>
 								<td>七天</td>
 								<td>A2.1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</td>
+								<td>A2.2 本司辦公所在位於確診熱區(板橋中和5/25)</td>
 								<td>B2.1 一周內同室(同車)社交過的親友確診, 過程未戴口罩超過15分鐘</td>
 								<td></td>
 							</tr>
@@ -193,6 +194,7 @@
 											<option>A 一級-2 使用跨縣市大眾通勤, 所跨縣市政府宣布三級防疫(新北台北5/17)(全國5/20)</option>
 											<option>A 一級-3 所居住社區出現確診案例, 未共用通風管道或共用電梯</option>
 											<option>A 二級-1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</option>
+											<option>A 二級-2 本司辦公所在位於確診熱區(板橋中和5/25)</option>
 											<option>A 三級-1 本司辦公所在大樓出現確診案例, 或由公司行政統一發布</option>
 										</optgroup>
 									
@@ -284,19 +286,19 @@
 
 			if ($('#level').val() == '1') {
 				levelWFHDays = '3';
-				console.log("一級：" + levelWFHDays　+ "天");
+				console.log("一級：" + levelWFHDays + "天");
 			}
 			if ($('#level').val() == '2') {
 				levelWFHDays = '7';
-				console.log("二級：" + levelWFHDays　+ "天");
+				console.log("二級：" + levelWFHDays + "天");
 			}
 			if ($('#level').val() == '3') {
 				levelWFHDays = "14";
-				console.log("三級：" + levelWFHDays　+ "天");
+				console.log("三級：" + levelWFHDays + "天");
 			}
 			if ($('#level').val() == '4') {
 				levelWFHDays = "30";
-				console.log("四級：" + levelWFHDays　+ "天");
+				console.log("四級：" + levelWFHDays + "天");
 			}
 
 			// 五級時手動輸入天數
