@@ -27,6 +27,7 @@ import com.cqi.hr.dao.LineWebhookLogDAO;
 import com.cqi.hr.dao.OnlinePunchDAO;
 import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.SysUserShiftDAO;
+import com.cqi.hr.dao.UserAskForLeaveDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
 import com.cqi.hr.dao.WorkFromHomeDao;
 import com.cqi.hr.entity.AttendanceRecord;
@@ -37,6 +38,7 @@ import com.cqi.hr.entity.LineWebhookLog;
 import com.cqi.hr.entity.OnlinePunch;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.SysUserShift;
+import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.entity.WorkFromHome;
 import com.cqi.hr.util.DateUtils;
@@ -94,6 +96,8 @@ public class LineBotService extends AbstractService<LineUser>{
 	@Resource WorkFromHomeDao workFromHomeDao ;
 	
 	@Resource PunchRecordsService punchRecordsService;
+	
+	@Resource UserAskForLeaveDAO userAskForLeaveDAO;
 	
 	@Override
 	protected AbstractDAO<LineUser> getDAO() {
@@ -725,27 +729,42 @@ public class LineBotService extends AbstractService<LineUser>{
 	}
 
 	public void OnlinePunchSendPassword() throws Exception {
-		String nowShift = getNowShift();
-		logger.info(nowShift);
-		
 		Random random = new Random();
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		List<SysUser> userList = new ArrayList<SysUser>();
+		
+		String nowShift = getNowShift();
+		Date nowTime = sdf.parse(nowShift);
+		logger.info(nowShift);
 		userList = sysUserDAO.getEnableRole2LineUser();
 		
 		//test
-		//nowShift = "18:00";
+		//nowShift = "09:00";
+		//nowTime = sdf.parse(nowShift);
 		//userList.add(sysUserDAO.get("1198842813042872"));
 		
 	
 		
 		
 		for (SysUser sysUser : userList) {
-			
+			//WFH check
+			WorkFromHome workFromHome = workFromHomeDao.getOneByUserIdAndDate(sysUser.getSysUserId(),DateUtils.clearTime(new Date()));
+			if (workFromHome == null) {
+				continue;
+			}
+			//Shift check
 			SysUserShift sysUserShift = sysUserShiftDAO.getOneByIdAndDate(sysUser.getSysUserId(), new Date());
 			if (sysUserShift == null) {
 				continue;
 			}
+			Date boardTime = sdf.parse(sysUserShift.getBoardTime());
+			Date finishTime = sdf.parse(sysUserShift.getFinishTime());
+			if (nowTime.before(boardTime) || nowTime.after(finishTime)) {
+				continue;
+			}
+				
+			
+			
 			
 			LineMessageVo lineMessageVo = new LineMessageVo();
 			lineMessageVo.setTargetId(sysUser.getLineId());
@@ -756,38 +775,78 @@ public class LineBotService extends AbstractService<LineUser>{
 			pw = random.ints(1000, 9990 + 1).findFirst().getAsInt();
 			logger.info(pw);
 			
+			UserAskForLeave userAskForLeave= userAskForLeaveDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),new Date());
+			OnlinePunch dbData = onlinePunchDAO.getOneByUserIdAndDate(sysUser.getSysUserId(), DateUtils.clearTime(new Date()));
 			
-			if (nowShift.equals(sysUserShift.getBoardTime())  ) {//上班檢查
-				//存DB
-				OnlinePunch dbData = onlinePunchDAO.getOneByUserIdAndDate(sysUser.getSysUserId(), DateUtils.clearTime(new Date()));
-				if (dbData == null) {
+			if (userAskForLeave == null) {
+				if (nowShift.equals(sysUserShift.getBoardTime())  ) {//上班檢查
+					//存DB
+					if (dbData == null) {
+						OnlinePunch onlinePunch = new OnlinePunch(sysUser.getSysUserId(), DateUtils.clearTime(new Date()),String.valueOf(pw), null ) ;
+						onlinePunchDAO.saveOrUpdate(onlinePunch);
+					} else {
+						dbData.setPunchInPw(String.valueOf(pw));
+						dbData.setModifyTime(new Date());
+						onlinePunchDAO.saveOrUpdate(dbData);
+					}
+					
+					//發line
+					lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
+					LineUtils.sendFlexMessage(lineMessageVo);
+				}else if (nowShift.equals(sysUserShift.getFinishTime())) { //下班檢查
+					//存DB
+					if (dbData == null) {
+						OnlinePunch onlinePunch = new OnlinePunch(sysUser.getSysUserId(), DateUtils.clearTime(new Date()), null ,String.valueOf(pw)) ;
+						onlinePunchDAO.saveOrUpdate(onlinePunch);
+					} else {
+						dbData.setPunchOutPw(String.valueOf(pw));
+						dbData.setModifyTime(new Date());
+						onlinePunchDAO.saveOrUpdate(dbData);
+					}
+					
+					//發line
+					lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
+					LineUtils.sendFlexMessage(lineMessageVo);
+				}
+			} else {//當天有請假記錄
+				logger.info("leave: "+ userAskForLeave.getStartTime()+"; "+userAskForLeave.getEndTime());
+				
+				//檢查是否在請假區間內
+				if (userAskForLeave.getStartTime().before(new Date()) && userAskForLeave.getEndTime().after(new Date())) {
+					continue;
+				}
+				
+				if (dbData == null) {//上班檢查
 					OnlinePunch onlinePunch = new OnlinePunch(sysUser.getSysUserId(), DateUtils.clearTime(new Date()),String.valueOf(pw), null ) ;
 					onlinePunchDAO.saveOrUpdate(onlinePunch);
-				} else {
-					dbData.setPunchInPw(String.valueOf(pw));
-					dbData.setModifyTime(new Date());
-					onlinePunchDAO.saveOrUpdate(dbData);
+					//發line
+					lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
+					LineUtils.sendFlexMessage(lineMessageVo);
+					
+				} else {//下班檢查
+					if (userAskForLeave.getEndTime().before(new Date()) 
+							&& nowTime.equals(finishTime) ) {//請假時段在前面
+						dbData.setPunchOutPw(String.valueOf(pw));
+						dbData.setModifyTime(new Date());
+						onlinePunchDAO.saveOrUpdate(dbData);
+						
+						//發line
+						lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
+						LineUtils.sendFlexMessage(lineMessageVo);
+					}else if (userAskForLeave.getStartTime().after(new Date()) 
+							&& nowTime.equals(DateUtils.offsetByHour(finishTime ,-1)) ){//請假時段在後面
+						dbData.setPunchOutPw(String.valueOf(pw));
+						dbData.setModifyTime(new Date());
+						onlinePunchDAO.saveOrUpdate(dbData);
+						
+						//發line
+						lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
+						LineUtils.sendFlexMessage(lineMessageVo);
+					}
 				}
-				
-				//發line
-				lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
-				LineUtils.sendFlexMessage(lineMessageVo);
-			}else if (nowShift.equals(sysUserShift.getFinishTime())) { //下班檢查
-				//存DB
-				OnlinePunch dbData = onlinePunchDAO.getOneByUserIdAndDate(sysUser.getSysUserId(), DateUtils.clearTime(new Date()));
-				if (dbData == null) {
-					OnlinePunch onlinePunch = new OnlinePunch(sysUser.getSysUserId(), DateUtils.clearTime(new Date()), null ,String.valueOf(pw)) ;
-					onlinePunchDAO.saveOrUpdate(onlinePunch);
-				} else {
-					dbData.setPunchOutPw(String.valueOf(pw));
-					dbData.setModifyTime(new Date());
-					onlinePunchDAO.saveOrUpdate(dbData);
-				}
-				
-				//發line
-				lineMessageVo.setHeader(OnlinePunchSendPasswordHeader(sysUser.getOriginalName(),nowShift,String.valueOf(pw)));
-				LineUtils.sendFlexMessage(lineMessageVo);
 			}
+			
+			
 		}
 	}
 	
@@ -795,7 +854,7 @@ public class LineBotService extends AbstractService<LineUser>{
 		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
 		headerContents.add(Text.builder().text(userName+" "+nowShift+" 打卡密碼: "+pw).size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
 
-		headerContents.add(Text.builder().text("請在一小時內回覆 '打卡 打卡密碼' 進行線上打卡" ).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text("請在一小時內回覆 '打卡 ####' 進行線上打卡" ).size(FlexFontSize.XS).align(FlexAlign.START).build());
 		headerContents.add(Text.builder().text("例如: 打卡 1234" ).size(FlexFontSize.XS).align(FlexAlign.START).build());
 		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
 		headerContents.add(Separator.builder().build());
@@ -841,7 +900,7 @@ public class LineBotService extends AbstractService<LineUser>{
 					attendanceRecord.setStatus(1);
 					attendanceRecord.setCreateDate(new Date());
 				}
-				if (nowShift.equals(sysUserShift.getBoardTime()) && messagePW.equals(onlinePunch.getPunchInPw()) ) {
+				if ( messagePW.equals(onlinePunch.getPunchInPw()) ) {
 					attendanceRecord.setArriveTime(nowShift);
 					attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";Online"+nowShift);
 					attendanceRecord.setUpdateDate(new Date());
@@ -849,7 +908,7 @@ public class LineBotService extends AbstractService<LineUser>{
 					
 					sendOnlinePunchSucessReply(lineUserId,nowShift+"上班打卡成功",replyToken);
 					
-				}else if (nowShift.equals(sysUserShift.getFinishTime()) && messagePW.equals(onlinePunch.getPunchOutPw()) ) {
+				}else if ( messagePW.equals(onlinePunch.getPunchOutPw()) ) {
 					attendanceRecord.setLeaveTime(nowShift);
 					attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";Online"+nowShift);
 					attendanceRecord.setUpdateDate(new Date());
