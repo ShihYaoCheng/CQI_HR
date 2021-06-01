@@ -97,7 +97,7 @@
 												<span id="spendTime-error" class="error_text"></span>
 											</div>
 										</div>
-										<div class="form-group">
+										<div class="form-group" style="margin-bottom: 0px;">
 											<label for="recipient-name" class="control-label col-sm-12">公告開始時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -323,15 +323,19 @@
 
 							//抓取上個月生理假月份
 							var lastMenstruationLeave = '${userMenstruationLeaveLastMonth.startTime}'.substring(5, 7);
-							console.log("上個月生理假月份lastMenstruationLeave ：",lastMenstruationLeave);
+							console.log("上個月生理假月份lastMenstruationLeave ：", lastMenstruationLeave);
 
 
 
 							//抓取上個月份(不足2位數補0)				
 							var TimeNow = new Date();
 							var lastMonth = (TimeNow.getMonth() + 1 < 10 ? '0' : '') + (TimeNow.getMonth());
-							console.log("上個月份lastMonth：",lastMonth);
+							console.log("上個月份lastMonth：", lastMonth);
 							//如果 lastMonth=00 ，顯示12
+							if (lastMonth == "00") {
+								lastMonth = "12";
+								console.log("00 + 12 =" + lastMonth);
+							}
 
 
 							//userMenstruationLeaveQuota  每年生理假剩餘額度
@@ -346,14 +350,14 @@
 							if ($('#leaveId').val() == 3) {
 								//當月限請一天生理假
 								if (currentMonth == startTimeMonth) {
-									if ('${userMenstruationLeaveThisMonth.spendTime}' >= 1) {
+									if ('${userMenstruationLeaveThisMonth.spendTime}' > 1) {
 										errors['leaveId'] = 5;
 										$('#leaveId-error').show();
 									}
 								}
 
 								//不能提前請非當月生理假
-								if((currentMonth < startTimeMonth) && (lastMonth != startTimeMonth)) {
+								if ((currentMonth < startTimeMonth) && (lastMonth != startTimeMonth)) {
 									errors['leaveId'] = 8; //顯示："不能提前請非本月的生理假唷"
 									$('#leaveId-error').show();
 								}
