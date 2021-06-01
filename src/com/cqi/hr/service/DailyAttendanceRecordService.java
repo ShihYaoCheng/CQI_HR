@@ -24,7 +24,7 @@ import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.SysUserShiftDAO;
 import com.cqi.hr.dao.UserAskForLeaveDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
-import com.cqi.hr.dao.UserOvertimeDAO;
+import com.cqi.hr.dao.UserShiftQuotaDAO;
 import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.DailyAttendanceRecord;
@@ -33,7 +33,7 @@ import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.SysUserShift;
 import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserAskForOvertime;
-import com.cqi.hr.entity.UserOvertime;
+import com.cqi.hr.entity.UserShiftQuota;
 import com.cqi.hr.util.DateUtils;
 
 @Service

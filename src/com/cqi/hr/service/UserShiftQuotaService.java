@@ -3,6 +3,7 @@ package com.cqi.hr.service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -12,38 +13,44 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cqi.hr.dao.AbstractDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
 import com.cqi.hr.dao.UserLeaveDAO;
-import com.cqi.hr.dao.UserOvertimeDAO;
+import com.cqi.hr.dao.UserShiftQuotaDAO;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.UserAskForOvertime;
-import com.cqi.hr.entity.UserOvertime;
+import com.cqi.hr.entity.UserLeave;
+import com.cqi.hr.entity.UserShiftQuota;
 
+@Transactional
 @Service
-public class UserOvertimeService extends AbstractService<UserOvertime>{
-	@Resource UserOvertimeDAO userOvertimeDAO;
+public class UserShiftQuotaService extends AbstractService<UserShiftQuota>{
+	@Resource UserShiftQuotaDAO userShiftQuotaDAO;
 	@Resource UserLeaveDAO userLeaveDAO;
 	@Resource UserAskForOvertimeDAO userAskForOvertimeDAO;
 	
 	@Override
-	protected AbstractDAO<UserOvertime> getDAO() {
-		return userOvertimeDAO;
+	protected AbstractDAO<UserShiftQuota> getDAO() {
+		return userShiftQuotaDAO;
 	}
 	
-	@Transactional
-	public PagingList<UserOvertime> getListByPage(Integer page, String userId) throws Exception {
-		return userOvertimeDAO.getListByPage(page, userId);
+	
+	public PagingList<UserShiftQuota> getListByPage(Integer page, String userId) throws Exception {
+		return userShiftQuotaDAO.getListByPage(page, userId);
 	}
 	
-	@Transactional
+	
 	public PagingList<UserAskForOvertime> getAskOvertimeListByPage(Integer page, String userId) throws Exception {
 		return userAskForOvertimeDAO.getListByPage(page, userId);
+	}
+	
+	public List<UserShiftQuota> getListByUserId(String userId) throws Exception {
+		return userShiftQuotaDAO.getListByUserId(userId);
 	}
 	
 	/*
 	 * 更新加班資料
 	 * @type 1是新增，2是更新
 	 */
-	@Transactional
+	
 	public boolean updateUserOvertime(UserAskForOvertime userAskForOvertime, Integer type) throws Exception{
 		//UserOvertime userOvertime = userOvertimeDAO.getOneByUserId(userAskForOvertime.getSysUserId());
 		Calendar calendar = Calendar.getInstance();
@@ -116,7 +123,6 @@ public class UserOvertimeService extends AbstractService<UserOvertime>{
 	/*
 	 * 刪除加班紀錄
 	 */
-	@Transactional
 	public boolean deleteAskOvertime(Long askForLeaveId, SysUser operator) throws Exception{
 		UserAskForOvertime userAskForOvertime = userAskForOvertimeDAO.get(askForLeaveId);
 		if(null==userAskForOvertime){
@@ -159,12 +165,12 @@ public class UserOvertimeService extends AbstractService<UserOvertime>{
 	 * 新增UserOvertime資料
 	 */
 	public void newUserOvertime(String sysUserId, Double spendTime, Date nowDate) throws Exception{
-		UserOvertime userOvertime = new UserOvertime();
-		userOvertime.setSysUserId(sysUserId);
-		userOvertime.setCreateDate(nowDate);
-		userOvertime.setUpdateDate(nowDate);
-		userOvertime.setStatus(1);
-		userOvertime.setCount(spendTime);					
-		userOvertimeDAO.persist(userOvertime);
+		UserShiftQuota userShiftQuota = new UserShiftQuota();
+		userShiftQuota.setSysUserId(sysUserId);
+		userShiftQuota.setCreateTime(nowDate);
+		userShiftQuota.setUpdateTime(nowDate);
+		userShiftQuota.setStatus(1);
+		userShiftQuota.setCount(spendTime);					
+		userShiftQuotaDAO.persist(userShiftQuota);
 	}
 }

@@ -20,7 +20,7 @@ import com.cqi.hr.service.EmergenceOvertimeService;
 import com.cqi.hr.service.SysUserService;
 import com.cqi.hr.service.UserAskForOvertimeService;
 import com.cqi.hr.service.UserLeaveService;
-import com.cqi.hr.service.UserOvertimeService;
+import com.cqi.hr.service.UserShiftQuotaService;
 import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.SessionUtils;
 
@@ -30,7 +30,7 @@ import com.cqi.hr.util.SessionUtils;
 public class EmergenceOvertimeController extends AbstractController<EmergenceOvertimeSign> {
 	@Resource SysUserService sysUserService;
 	@Resource UserLeaveService userLeaveService;
-	@Resource UserOvertimeService userOvertimeService;
+	@Resource UserShiftQuotaService userOvertimeService;
 	@Resource UserAskForOvertimeService userAskForOvertimeService;
 	@Resource EmergenceOvertimeService emergenceOvertimeService;
 	private static String FUNCTION_NAME = "Emergence"; 

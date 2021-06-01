@@ -14,7 +14,7 @@
 
 						<div class="col-xs-12 col-md-12 single_table">
 							<form class="navbar-form">
-								<h3><b>調班資料管理</b></h3>
+								<h3><b>加班資料管理</b></h3>
 								<br />
 								<div class="form-group" style="display: inline;">
 									<div class="input-group">
@@ -25,9 +25,7 @@
 											<i class="glyphicon glyphicon-plus"></i>
 										</a>
 									</div>
-
 								</div>
-
 								<div>
 									<h4>
 										<b>***為方便結算出勤時數，每月四日零時零分起將無法更動上個月的出勤資料。感謝配合。***
@@ -59,7 +57,7 @@
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal"
 									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">新增調班紀錄</h4>
+								<h4 class="modal-title" id="myModalLabel">新增加班紀錄</h4>
 							</div>
 							<div class="modal-body" id="shiftScheduleDialog">
 								<input type="hidden" id="unitType" name="unitType" />
@@ -70,7 +68,7 @@
 									<input type="hidden" id="asanaTaskId" name="asanaTaskId" />
 									<div id="edit">
 										<div class="form-group">
-											<label for="recipient-name" class="control-label col-sm-12">班別:</label>
+											<label for="recipient-name" class="control-label col-sm-12">加班種類:</label>
 											<div class="col-sm-12 checkbox">
 												<div id="roleTypeDiv" style="float:left;">
 													<select class="form-control" id="overtimeId" name="overtimeId"
@@ -114,7 +112,7 @@
 											</div>
 										</div>
 										<div class="form-group" style="margin-bottom: 0px;">
-											<label for="recipient-name" class="control-label col-sm-12">調班起始時間：</label>
+											<label for="recipient-name" class="control-label col-sm-12">加班起始時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
 													<div class='input-group date' id='datetimepickerStart'>
@@ -130,7 +128,7 @@
 											</div>
 										</div>
 										<div class="form-group" style="margin-bottom: 0px;">
-											<label for="recipient-name" class="control-label col-sm-12">調班結束時間：</label>
+											<label for="recipient-name" class="control-label col-sm-12">加班結束時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
 													<div class='input-group date' id='datetimepickerEnd'
@@ -155,7 +153,7 @@
 											<div class="col-sm-12">
 												<div class="form-group">
 													<div class='input-group date' id='datetimepickerStartLeave'>
-														<input id="startTimeLeave" name="startTime" type='text'
+														<input id="startTimeLeave" name="startTimeLeave" type='text'
 															class="form-control" value="" readonly="readonly" style="cursor: pointer;
 															background-color: #fff;" />
 														<span class="input-group-addon">
@@ -174,7 +172,7 @@
 												<div class="form-group">
 													<div class='input-group date' id='datetimepickerEndLeave'
 														style="width: 100%;pointer-events: none;">
-														<input id="endTimeLeave" name="endTime" type='text'
+														<input id="endTimeLeave" name="endTimeLeave" type='text'
 															class="form-control" value="" readonly="readonly" />
 														<span class="input-group-addon" style="display: none;">
 															<span class="glyphicon glyphicon-calendar"
@@ -295,7 +293,8 @@
 
 							var today = new Date();
 							var pickerStartDate = getFormattedDate(getCurrentFirstDay(), 'y/M/d H:m');
-							console.log("pickerStartDate：" + pickerStartDate);　//pickerStartDate：2021/05/01 00:00
+							console.log("pickerStartDate：" + pickerStartDate);
+							// pickerStartDate：2021/05/01 00:00
 							if (today.getDate() < 4) {
 								pickerStartDate = getFormattedDate(getLastMonth(), 'y/M/d H:m');
 							}
@@ -573,19 +572,23 @@
 							} else {
 								$('#QuotasysUserId-error').hide();
 							}
-							if ($('#shiftQuota').val() == '') {
+							/* if ($('#shiftQuota').val() == '') {
 								errors['shiftQuota'] = 5;
 							} else {
 								$('#shiftQuota-error').hide();
-							}
+							} */
 
+							
+							
 							var targetURL = "<c:url value='/security/askOvertime/add'/>";
-
+							
+							console.log(Object.keys(errors).length);
 							if (Object.keys(errors).length == 0) {
 								var data = $('#askForOvertimeForm').serialize();
 								if (typeof ($('#askForOvertimeId').val()) != 'undefined' && $('#askForOvertimeId').val() != '') {
 									targetURL = "<c:url value='/security/askOvertime/update'/>";
 								}
+								console.log(targetURL);
 								$('#save').button('loading');
 								$("body").css("cursor", "progress");
 								$.ajax({

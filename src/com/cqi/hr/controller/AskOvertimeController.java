@@ -19,13 +19,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
+import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.entity.UserLeave;
+import com.cqi.hr.entity.UserShiftQuota;
 import com.cqi.hr.service.SysUserService;
+import com.cqi.hr.service.UserAskForLeaveService;
 import com.cqi.hr.service.UserAskForOvertimeService;
 import com.cqi.hr.service.UserLeaveService;
-import com.cqi.hr.service.UserOvertimeService;
+import com.cqi.hr.service.UserShiftQuotaService;
 import com.cqi.hr.util.AsanaUtils;
+import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.SessionUtils;
 import com.cqi.hr.util.StringUtils;
 
@@ -35,8 +39,11 @@ import com.cqi.hr.util.StringUtils;
 public class AskOvertimeController extends AbstractController<UserAskForOvertime> {	
 	@Resource SysUserService sysUserService;
 	@Resource UserLeaveService userLeaveService;
-	@Resource UserOvertimeService userOvertimeService;
+	@Resource UserShiftQuotaService userOvertimeQuotaService;
 	@Resource UserAskForOvertimeService userAskForOvertimeService;
+
+	@Resource UserAskForLeaveService userAskForLeaveService;
+	
 	private static String FUNCTION_NAME = "Ask Overtime"; 
 	
 	@RequestMapping(method=RequestMethod.GET)
@@ -78,9 +85,9 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			//使用者剩餘的假期
-			List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
-			model.addAttribute("userLeaveList", userLeaveList);
-			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+			List<UserShiftQuota> userOvertimeList = userOvertimeQuotaService.getListByUserId(operator.getSysUserId());
+			model.addAttribute("userOvertimeList", userOvertimeList);
+			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}
@@ -128,32 +135,58 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/add")
-	public void ajaxAdd(HttpServletRequest req, HttpServletResponse resp, @Valid UserAskForOvertime userAskForOvertime){
+	public void ajaxAdd(HttpServletRequest req, HttpServletResponse resp, @Valid UserAskForOvertime userAskForOvertime, @Valid Date startTimeLeave, @Valid Date endTimeLeave){
 		logger.info(FUNCTION_NAME + " ajaxAdd: ");
 		Map<Object, Object> map = null;
 		try{
 			String result = "";
 			SysUser operator = SessionUtils.getLoginInfo(req);
-			
+			Calendar calendar = Calendar.getInstance();
 			if(operator == null){
 				map = createResponseMsg(false, "", "請重新登入");
 			}else{
+				UserAskForLeave userAskForLeave = new UserAskForLeave();
+				userAskForLeave.setSysUserId(operator.getSysUserId());
+				userAskForLeave.setLeaveId(userAskForOvertime.getOvertimeId());
+				userAskForLeave.setSpendTime(userAskForOvertime.getSpendTime());
+				userAskForLeave.setStartTime(startTimeLeave);
+				userAskForLeave.setEndTime(endTimeLeave);
+				userAskForLeave.setDescription(userAskForOvertime.getDescription());
+				
+				String errorMsgLeave = userAskForLeaveService.checkRule(userAskForLeave);
+				
+				
 				userAskForOvertime.setSysUserId(operator.getSysUserId());
 				String errorMsg = userAskForOvertimeService.checkRule(userAskForOvertime);
-				if(StringUtils.hasText(errorMsg)) {
+				if(StringUtils.hasText(errorMsg) ||StringUtils.hasText(errorMsgLeave)) {
 					map = createResponseMsg(false, "", errorMsg);
 				}else {
-					Calendar calendar = Calendar.getInstance();
+					userAskForLeave.setStatus(1);
+					userAskForLeave.setCreateDate(calendar.getTime());
+					userAskForLeave.setUpdateDate(calendar.getTime());
 					userAskForOvertime.setStatus(1);
 					userAskForOvertime.setCreateDate(calendar.getTime());
 					userAskForOvertime.setUpdateDate(calendar.getTime());
-					if(userAskForOvertimeService.checkEmergenceRule(userAskForOvertime)) {
-						boolean isSuccess = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 1);
-						if(isSuccess){
+					if(!DateUtils.isTheSameMonth(userAskForLeave.getStartTime(), userAskForLeave.getEndTime())) {
+						map = createResponseMsg(false, "", Constant.DIFFERENT_MONTH);
+					}else if( !userAskForOvertimeService.checkEmergenceRule(userAskForOvertime)) {
+						map = createResponseMsg(false, "", Constant.EMERGENCE_ILLEGAL);
+					}else {
+						boolean isSuccessLeave = userLeaveService.updateUserLeave(userAskForLeave, 1);
+						boolean isSuccessOvertime = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 1);
+						if(isSuccessLeave || isSuccessOvertime){
 							String token = SessionUtils.getAsanaToken(req);
 							if(token != null) {
-								boolean addTaskSucceed = AsanaUtils.addOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
-								if(!addTaskSucceed) {
+								boolean addLeaveTaskSucceed = AsanaUtils.addLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyLeaveMapping());
+								if(!addLeaveTaskSucceed) {
+									userAskForLeave.setDescription("Asana新增Task失敗\n" + userAskForLeave.getDescription());
+								}
+								logger.info("Asana Id ajaxAdd : " + userAskForLeave.getAsanaTaskId());
+								//將Asana狀況儲存，AsanaId和Description
+								userAskForLeaveService.update(userAskForLeave);
+							
+								boolean addOvertimeTaskSucceed = AsanaUtils.addOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
+								if(!addOvertimeTaskSucceed) {
 									userAskForOvertime.setDescription("Asana新增Task失敗\n" + userAskForOvertime.getDescription());
 								}
 								logger.info("Asana Id ajaxAdd : " + userAskForOvertime.getAsanaTaskId());
@@ -164,8 +197,6 @@ public class AskOvertimeController extends AbstractController<UserAskForOvertime
 						}else{
 							map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 						}
-					}else {
-						map = createResponseMsg(false, "", Constant.EMERGENCE_ILLEGAL);
 					}
 				}
 			}

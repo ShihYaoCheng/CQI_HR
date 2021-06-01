@@ -110,15 +110,21 @@ public class MendPunchRecordService extends AbstractService<MendPunchRecord>{
 				attendanceRecord.setOriginalData(sdfTime.format(mendPunchRecord.getMendPunchTime()));
 				attendanceRecord.setStatus(1);
 				attendanceRecord.setCreateDate(new Date());
-			}else {
+			}else if (attendanceRecord.getArriveTime() == null || attendanceRecord.getArriveTime().isEmpty()) {
+				attendanceRecord.setArriveTime(sdfTime.format(mendPunchRecord.getMendPunchTime()));
+				attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";"+sdfTime.format(mendPunchRecord.getMendPunchTime()));
+				attendanceRecord.setUpdateDate(new Date());
+			} else {
 				Date arriveTimeDate = sdfTime.parse(attendanceRecord.getArriveTime());
 				arriveTimeDate.setYear(mendDate.getYear());
 				arriveTimeDate.setMonth(mendDate.getMonth());
 				arriveTimeDate.setDate(mendDate.getDate());
+				
 				Date leaveTimeDate = (attendanceRecord.getLeaveTime() == null || attendanceRecord.getLeaveTime().isEmpty() ) ? arriveTimeDate : sdfTime.parse(attendanceRecord.getLeaveTime());
 				leaveTimeDate.setYear(mendDate.getYear());
 				leaveTimeDate.setMonth(mendDate.getMonth());
 				leaveTimeDate.setDate(mendDate.getDate());
+				
 				if(mendPunchRecord.getMendPunchTime().before(arriveTimeDate)) {
 					attendanceRecord.setLeaveTime(attendanceRecord.getArriveTime());
 					attendanceRecord.setArriveTime(sdfTime.format(mendPunchRecord.getMendPunchTime()));
