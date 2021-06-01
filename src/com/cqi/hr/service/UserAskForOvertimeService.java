@@ -21,6 +21,7 @@ import com.cqi.hr.dao.SpecialDateAboutWorkDAO;
 import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
 import com.cqi.hr.dao.UserLeaveDAO;
+import com.cqi.hr.dao.UserShiftQuotaDAO;
 import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.EmergenceOvertimeSign;
 import com.cqi.hr.entity.PagingList;
@@ -28,6 +29,7 @@ import com.cqi.hr.entity.SpecialDateAboutWork;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.UserAskForOvertime;
 import com.cqi.hr.entity.UserLeave;
+import com.cqi.hr.entity.UserShiftQuota;
 import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.MD5Utils;
 import com.cqi.hr.util.StringUtils;
@@ -43,6 +45,7 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 	@Resource EmergenceOvertimeSignDAO emergenceOvertimeSignDAO;
 	@Resource LineImageUrlDAO lineImageUrlDAO;
 	@Resource SpecialDateAboutWorkDAO specialDateAboutWorkDAO;
+	@Resource UserShiftQuotaDAO userShiftQuotaDAO;
 	
 	@Override
 	protected AbstractDAO<UserAskForOvertime> getDAO() {
@@ -107,28 +110,20 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 		switch (type) {
 		case 1:
 			userAskForOvertimeDAO.persist(userAskForOvertime);
-			//CQI的調班專屬邏輯，可以折抵事假時數
+			
 			if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("調班")) {
-				//取得事假資料
-				CompanyLeave companyLeave = companyLeaveDAO.getOvertimeByName("事假");
-				if(null==companyLeave) {
+				
+				//取得剩餘調班額度
+				UserShiftQuota userShiftQuota = userShiftQuotaDAO.getOneByUserId(userAskForOvertime.getSysUserId());
+				if (userShiftQuota == null || userShiftQuota.getCount() <= 0) {
 					return false;
-				}
-				//取得剩餘可以請的事假資料
-				UserLeave userLeave = userLeaveDAO.getOneBy2Id(userAskForOvertime.getSysUserId(), companyLeave.getLeaveId());
-				if(null==userLeave) {
-					userLeave = new UserLeave();
-					userLeave.setLeaveId(companyLeave.getLeaveId());
-					userLeave.setCount(userAskForOvertime.getSpendTime());
-					userLeave.setSysUserId(userAskForOvertime.getSysUserId());
-					userLeave.setStatus(1);
-					userLeave.setCreateDate(calendar.getTime());
-					userLeave.setUpdateDate(calendar.getTime());
 				}else {
-					userLeave.setCount(userLeave.getCount() + userAskForOvertime.getSpendTime());
-					userLeave.setUpdateDate(calendar.getTime());
+					userShiftQuota.setCount(userShiftQuota.getCount() -1 );
+					userShiftQuota.setUpdateTime(new Date());
 				}
-				userLeaveDAO.saveOrUpdate(userLeave);
+				userShiftQuotaDAO.update(userShiftQuota);
+				
+				
 			}else if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("災害處理")) {
 				// 1. 產生災害處理單的對應認證碼
 				EmergenceOvertimeSign sign = new EmergenceOvertimeSign();
@@ -203,8 +198,8 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 	 * 刪除加班紀錄
 	 */
 	@Transactional
-	public boolean deleteAskOvertime(Long askForLeaveId, SysUser operator) throws Exception{
-		UserAskForOvertime userAskForOvertime = userAskForOvertimeDAO.get(askForLeaveId);
+	public boolean deleteAskOvertime(Long askForOvertimeId, SysUser operator) throws Exception{
+		UserAskForOvertime userAskForOvertime = userAskForOvertimeDAO.get(askForOvertimeId);
 		if(null==userAskForOvertime){
 			return false;
 		}
@@ -220,22 +215,17 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 		userAskForOvertime.setUpdateDate(calendar.getTime());
 		userAskForOvertimeDAO.update(userAskForOvertime);
 		Map<Long, CompanyLeave> overtimeMap = getCompanyOvertimeMapping();
-		//CQI的調班專屬邏輯，可以折抵事假時數
+		
 		if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("調班")) {
-			//取得事假資料
-			CompanyLeave companyLeave = companyLeaveDAO.getOvertimeByName("事假");
-			if(null==companyLeave) {
-				return false;
-			}
-			//取得剩餘可以請的事假資料
-			UserLeave userLeave = userLeaveDAO.getOneBy2Id(userAskForOvertime.getSysUserId(), companyLeave.getLeaveId());
-			if(null==userLeave) {
+			//取得剩餘調班額度
+			UserShiftQuota userShiftQuota = userShiftQuotaDAO.getOneByUserId(userAskForOvertime.getSysUserId());
+			if (userShiftQuota == null || userShiftQuota.getCount() <= 0) {
 				return false;
 			}else {
-				userLeave.setCount(userLeave.getCount() - userAskForOvertime.getSpendTime());
-				userLeave.setUpdateDate(calendar.getTime());
+				userShiftQuota.setCount(userShiftQuota.getCount() + 1 );
+				userShiftQuota.setUpdateTime(new Date());
 			}
-			userLeaveDAO.saveOrUpdate(userLeave);
+			userShiftQuotaDAO.update(userShiftQuota);
 		}
 		return true;
 	}

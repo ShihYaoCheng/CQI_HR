@@ -11,16 +11,17 @@ import org.springframework.util.StringUtils;
 import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.AttendanceRecord;
 import com.cqi.hr.entity.PagingList;
-import com.cqi.hr.entity.UserOvertime;
+import com.cqi.hr.entity.UserLeave;
+import com.cqi.hr.entity.UserShiftQuota;
 
 @Repository
-public class UserOvertimeDAO extends AbstractDAO<UserOvertime> {
+public class UserShiftQuotaDAO extends AbstractDAO<UserShiftQuota> {
 	@Override
-	protected Class<UserOvertime> getEntityClass() {
-		return UserOvertime.class;
+	protected Class<UserShiftQuota> getEntityClass() {
+		return UserShiftQuota.class;
 	}
 
-	public PagingList<UserOvertime> getListByPage(Integer page, String userId) throws Exception {
+	public PagingList<UserShiftQuota> getListByPage(Integer page, String userId) throws Exception {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		if(StringUtils.hasText(userId)){
 			criteria.add(Restrictions.eq("sysUserId", userId));
@@ -29,14 +30,24 @@ public class UserOvertimeDAO extends AbstractDAO<UserOvertime> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public UserOvertime getOneByUserId(String userId) throws Exception {
+	public UserShiftQuota getOneByUserId(String userId) throws Exception {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		criteria.add(Restrictions.eq("sysUserId", userId));
-		List<UserOvertime> list = criteria.list();
+		List<UserShiftQuota> list = criteria.list();
 		if(list.size()==1){
 			return list.get(0);
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserShiftQuota> getListByUserId(String userId) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		if(StringUtils.hasText(userId)){
+			criteria.add(Restrictions.eq("sysUserId", userId));
+		}
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		return criteria.list();
 	}
 	
 	

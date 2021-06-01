@@ -12,7 +12,7 @@ import com.cqi.hr.service.LineBotService;
 import com.cqi.hr.service.SysUserService;
 import com.cqi.hr.service.UserAskForOvertimeService;
 import com.cqi.hr.service.UserLeaveService;
-import com.cqi.hr.service.UserOvertimeService;
+import com.cqi.hr.service.UserShiftQuotaService;
 
 
 @Controller
@@ -20,7 +20,7 @@ import com.cqi.hr.service.UserOvertimeService;
 public class LineBotController extends AbstractController<LineUser> {
 	@Resource SysUserService sysUserService;
 	@Resource UserLeaveService userLeaveService;
-	@Resource UserOvertimeService userOvertimeService;
+	@Resource UserShiftQuotaService userOvertimeService;
 	@Resource UserAskForOvertimeService userAskForOvertimeService;
 	@Resource LineBotService linebotService;
 	private static String FUNCTION_NAME = "Line Bot"; 

@@ -27,6 +27,7 @@ import com.cqi.hr.dao.UserAskForOvertimeDAO;
 import com.cqi.hr.dao.UserLeaveDAO;
 import com.cqi.hr.dao.UserLeaveHistoryDAO;
 import com.cqi.hr.dao.UserLeaveQuotaMonthlyDAO;
+import com.cqi.hr.dao.UserShiftQuotaDAO;
 import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.DailyAttendanceRecord;
 import com.cqi.hr.entity.GiveLeaveRecord;
@@ -37,34 +38,26 @@ import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserLeave;
 import com.cqi.hr.entity.UserLeaveHistory;
 import com.cqi.hr.entity.UserLeaveQuotaMonthly;
+import com.cqi.hr.entity.UserShiftQuota;
 import com.cqi.hr.util.DateUtils;
 import com.cqi.hr.util.StringUtils;
 
 @Transactional
 @Service
 public class UserLeaveService extends AbstractService<UserLeave> {
-	@Resource
-	UserLeaveDAO userLeaveDAO;
-	@Resource
-	UserLeaveHistoryDAO userLeaveHistoryDAO;
-	@Resource
-	UserLeaveQuotaMonthlyDAO userLeaveQuotaMonthlyDAO;
-	@Resource
-	CompanyLeaveDAO companyLeaveDAO;
-	@Resource
-	UserAskForLeaveDAO userAskForLeaveDAO;
-	@Resource
-	UserAskForOvertimeDAO userAskForOvertimeDAO;
-	@Resource
-	GiveLeaveRuleDAO giveLeaveRuleDAO;
-	@Resource
-	GiveLeaveRecordDAO giveLeaveRecordDAO;
-	@Resource
-	SysUserDAO sysUserDAO;
+	@Resource UserLeaveDAO userLeaveDAO;
+	@Resource UserLeaveHistoryDAO userLeaveHistoryDAO;
+	@Resource UserLeaveQuotaMonthlyDAO userLeaveQuotaMonthlyDAO;
+	@Resource CompanyLeaveDAO companyLeaveDAO;
+	@Resource UserAskForLeaveDAO userAskForLeaveDAO;
+	@Resource UserAskForOvertimeDAO userAskForOvertimeDAO;
+	@Resource GiveLeaveRuleDAO giveLeaveRuleDAO;
+	@Resource GiveLeaveRecordDAO giveLeaveRecordDAO;
+	@Resource SysUserDAO sysUserDAO;
 	@Resource DailyAttendanceRecordDAO dailyAttendanceRecordDAO;
+	@Resource UserShiftQuotaDAO userShiftQuotaDAO;
 
-	@Resource
-	UserAskForLeaveService userAskForLeaveService;
+	@Resource UserAskForLeaveService userAskForLeaveService;
 	@Resource DailyAttendanceRecordService dailyAttendanceRecordService;
 
 	@Override
@@ -147,7 +140,9 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		CompanyLeave companyLeaveOri = companyLeaveDAO.get(userAskForLeave.getLeaveId());
 		UserLeave userLeave = userLeaveDAO.getOneBy2Id(userAskForLeave.getSysUserId(), userAskForLeave.getLeaveId());
 		if (type.equals(1)) {
-			if (null == userLeave) {
+			if (userAskForLeave.getLeaveId() == 2) {
+				
+			}else if (null == userLeave ) {
 				userLeave = new UserLeave();
 				userLeave.setLeaveId(userAskForLeave.getLeaveId());
 				userLeave.setSysUserId(userAskForLeave.getSysUserId());
@@ -254,10 +249,6 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		if (!userAskForLeave.getSysUserId().equals(operator.getSysUserId())) {
 			return false;
 		}
-		UserLeave userLeave = userLeaveDAO.getOneBy2Id(userAskForLeave.getSysUserId(), userAskForLeave.getLeaveId());
-		if (null == userLeave) {
-			return false;
-		}
 		CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.getLeaveId());
 		if (null == companyLeave) {
 			return false;
@@ -266,8 +257,27 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		if (StringUtils.hasText(errorMsg)) {
 			return false;
 		}
-		userLeave.setCount(userLeave.getCount() - (companyLeave.getType() * userAskForLeave.getSpendTime()));
-		userLeaveDAO.update(userLeave);
+		
+		
+		
+		if (userAskForLeave.getLeaveId() == 2) {
+			UserShiftQuota userShiftQuota = userShiftQuotaDAO.getOneByUserId(userAskForLeave.getSysUserId());
+			if ( null == userShiftQuota ) {
+				return false;
+			}
+			
+			//調班額度在Overtime計算
+			
+		} else {
+			UserLeave userLeave = userLeaveDAO.getOneBy2Id(userAskForLeave.getSysUserId(), userAskForLeave.getLeaveId());
+			if ( null == userLeave) {
+				return false;
+			}
+			userLeave.setCount(userLeave.getCount() - (companyLeave.getType() * userAskForLeave.getSpendTime()));
+			userLeaveDAO.update(userLeave);
+			
+		}
+		
 		userAskForLeave.setStatus(0);
 		userAskForLeave.setUpdateDate(new Date());
 		userAskForLeaveDAO.update(userAskForLeave);
