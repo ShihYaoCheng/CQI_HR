@@ -745,7 +745,7 @@
 
 						// 調班額度管理
 
-						function edit(id){
+						function edit(userShiftQuotaId){
 							if(progressing == 1){
 								return;
 							}
@@ -762,12 +762,12 @@
 							}else{
 								progressing = 1;
 								$("body").css("cursor", "progress");
-								var targetURL= "<c:url value='/security/UserShiftQuota/"+id+"'/>";
+								var targetURL= "<c:url value='/security/UserShiftQuota/"+userShiftQuotaId+"'/>";
 								$.ajax({
 									type : "GET",
 									url : targetURL,
 									data : {
-										shiftId:id
+										userShiftQuotaId:userShiftQuotaId
 									},
 									dataType: "json",
 									success : function(data) {

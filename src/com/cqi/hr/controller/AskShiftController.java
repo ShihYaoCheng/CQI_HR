@@ -295,7 +295,7 @@ public class AskShiftController extends AbstractController<UserAskForOvertime> {
 		returnJsonMap(req, resp, map);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/UserShiftQuota/{askForOvertimeId}")
+	@RequestMapping(method=RequestMethod.GET, value="/UserShiftQuota/{userShiftQuotaId}")
 	public void ajaxShiftQuotaQuery(HttpServletRequest req, HttpServletResponse resp, @PathVariable Long userShiftQuotaId){
 		logger.info(FUNCTION_NAME + " ajaxShiftQuotaQuery: " + userShiftQuotaId);
 		Map<Object, Object> map = null;
@@ -304,6 +304,20 @@ public class AskShiftController extends AbstractController<UserAskForOvertime> {
 			UserShiftQuota userShiftQuota = userShiftQuotaService.get(userShiftQuotaId);
 			map = createResponseMsg(!StringUtils.hasText(result), "", result);
 			map.put("userShiftQuota", userShiftQuota);
+		}catch(Exception e){
+			logger.error(FUNCTION_NAME + " ajaxQuery error: ", e);
+			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
+		}
+		returnJsonMap(req, resp, map);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/UserShiftQuota/update")
+	public void ajaxShiftQuotaUpdate(HttpServletRequest req, HttpServletResponse resp, @Valid UserShiftQuota userShiftQuota){
+		logger.info(FUNCTION_NAME + " ajaxShiftQuotaUpdate: ");
+		Map<Object, Object> map = null;
+		try{
+			String result = "";
+			
 		}catch(Exception e){
 			logger.error(FUNCTION_NAME + " ajaxQuery error: ", e);
 			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
