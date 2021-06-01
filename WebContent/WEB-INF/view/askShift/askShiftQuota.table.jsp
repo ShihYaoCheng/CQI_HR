@@ -42,7 +42,7 @@
 						</td>
 						<td>
 							<c:if test="${operator.roleId == '1'}">
-								<a href="#" id="askOvertimeEdit" class="btn btn-default function_icon"  title="修改" onclick="edit(id)" style="background: #76bcff;"> 
+								<a href="#" id="askOvertimeEdit" class="btn btn-default function_icon"  title="修改" onclick="edit(item.userShiftQuotaId)" style="background: #76bcff;"> 
 									<i class="glyphicon glyphicon-pencil"></i>
 								</a>
 							</c:if>
