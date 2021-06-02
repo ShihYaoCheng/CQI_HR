@@ -321,10 +321,15 @@
 								spendTime: '${userMenstruationLeaveLastMonth.spendTime}',
 							};
 
+
 							//抓取上個月生理假月份
 							var lastMenstruationLeave = '${userMenstruationLeaveLastMonth.startTime}'.substring(5, 7);
 							console.log("上個月生理假月份lastMenstruationLeave ：", lastMenstruationLeave);
 
+
+							//抓取上個月生理假次數
+							var LastMonthspendTime = '${userMenstruationLeaveLastMonth.spendTime}';
+							console.log("上個月生理假次數 ：", LastMonthspendTime);
 
 
 							//抓取上個月份(不足2位數補0)				
@@ -350,7 +355,7 @@
 							if ($('#leaveId').val() == 3) {
 								//當月限請一天生理假
 								if (currentMonth == startTimeMonth) {
-									if ('${userMenstruationLeaveThisMonth.spendTime}' > 1) {
+									if ('${userMenstruationLeaveThisMonth.spendTime}' >= 1) {
 										errors['leaveId'] = 5;
 										$('#leaveId-error').show();
 									}
@@ -369,11 +374,15 @@
 
 								//上個月限請一天生理假 
 								if (lastMonth == startTimeMonth) {
-									if ('${userMenstruationLeaveLastMonth.spendTime}' > 1) {
+									if ('${userMenstruationLeaveLastMonth.spendTime}' >= 1) {
 										errors['leaveId'] = 6;
 										$('#leaveId-error').show();
 									}
 								}
+
+
+
+
 								//每年請超過三天生理假後，第四天起跳出提醒系統將自動改請病假
 								if ('${userMenstruationLeaveQuota.count}' < 1) {
 									alert("本年度生理假已請三次，此次系統將自動計入病假額度");
