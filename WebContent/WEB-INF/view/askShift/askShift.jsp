@@ -213,15 +213,14 @@
 								<h4 class="modal-title" id="myModalLabel">調班額度</h4>
 							</div>
 							<div class="modal-body">
-								<form id="shiftForm" name="shiftForm">
-									<input type="hidden" id="shiftId" name="shiftId"/>
-									<input type="hidden" id="status" name="status"/>
+								<form id="ShiftQuotaForm" name="ShiftQuotaForm">
+									<input type="hidden" id="userShiftQuotaId" name="userShiftQuotaId"/>
 									<div id="edit">
 										<div class="form-group">
 											<label for="recipient-name" class="control-label col-sm-12">成員：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
-													<select class="form-control" id="sysUserId" name="sysUserId" onchange="">
+													<select class="form-control" id="ShiftQuotaSysUserId" name="sysUserId" onchange="">
 														<c:choose>
 															<c:when test="${operator.roleId == '1'}">
 																<option value="">請選擇</option>
@@ -235,21 +234,30 @@
 														</c:choose>
 														
 													</select>
-													<span id="sysUserId-error" class="error_text"></span>
+													<span id="ShiftQuotaSysUserId-error" class="error_text"></span>
 												</div>
 											</div>	
+										</div>
+										<div class="form-group">
+											<label for="recipient-name" class="control-label col-sm-12">剩餘額度：</label>
+											<div class="col-sm-12">
+												<input type="text" class="form-control" id="count" name="count" />
+												<span id="count-error" class="error_text"></span>
+											</div>
 										</div>
 										<div class="form-group">
 											<label for="recipient-name" class="control-label col-sm-12">調班額度（每周）：</label>
 											<div class="col-sm-12 ">
 												<div class="form-group">
-													<select class="form-control" id="shiftQuota" name="shiftQuota">
+													<select class="form-control" id="quota" name="quota">
 														<option value="">請選擇</option>
 														<option value="1">1</option>
 														<option value="2">2</option>
 														<option value="3">3</option>
+														<option value="4">4</option>
+														<option value="5">5</option>
 													</select>
-													<span id="shiftQuota-error" class="error_text"></span>
+													<span id="quota-error" class="error_text"></span>
 												</div>
 											</div>
 										</div>
@@ -265,13 +273,6 @@
 						</div>
 					</div>
 				</div>
-
-
-
-
-
-
-
 
 
 
@@ -746,48 +747,89 @@
 						// 調班額度管理
 
 						function edit(userShiftQuotaId){
+							console.log("edit：" + userShiftQuotaId);
 							if(progressing == 1){
 								return;
 							}
 							var text = "修改";
-							if(typeof(id) == "undefined"){
-								text = "新增";
-								$('#shiftId').val("");
-								$('#sysUserId').val("");
-								$('#shiftQuota').val("");
-
-								$('#status').val("");
-								$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
-								$('#basicModalEdit').modal('toggle');
-							}else{
-								progressing = 1;
-								$("body").css("cursor", "progress");
-								var targetURL= "<c:url value='/security/UserShiftQuota/"+userShiftQuotaId+"'/>";
-								$.ajax({
-									type : "GET",
-									url : targetURL,
-									data : {
-										userShiftQuotaId:userShiftQuotaId
-									},
-									dataType: "json",
-									success : function(data) {
-										$("body").css("cursor", "auto");
-										if (data.success) {
-											$('#shiftId').val(data.sysUserShift.shiftId);
-											$('#sysUserId').val(data.sysUserShift.sysUserId);
-											$('#sysUserId').attr("disabled", true);
-											$('#shiftQuota').val(data.sysUserShift.status);
-											selectedShift(data.sysUserShift.boardTime, data.sysUserShift.finishTime);
-											
-											$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
-											$('#basicModalEdit').modal('toggle');
-											progressing = 0;
-										}else{
-											alert(data.message);
-										}
+							progressing = 1;
+							$("body").css("cursor", "progress");
+							var targetURL= "<c:url value='/security/askShift/UserShiftQuota/"+userShiftQuotaId+"'/>";
+							$.ajax({
+								type : "GET",
+								url : targetURL,
+								data : {
+									userShiftQuotaId:userShiftQuotaId
+								},
+								dataType: "json",
+								success : function(data) {
+									$("body").css("cursor", "auto");
+									if (data.success) {
+										console.log("UserShiftQuota query success：" + userShiftQuotaId);
+										$('#userShiftQuotaId').val(data.userShiftQuota.userShiftQuotaId);
+										$('#ShiftQuotaSysUserId').val(data.userShiftQuota.sysUserId);
+										$('#ShiftQuotaSysUserId').attr("disabled", true);
+										$('#count').val(data.userShiftQuota.count);
+										$('#quota').val(data.userShiftQuota.quota);
+										
+										$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
+										$('#basicModalEdit').modal('toggle');
+										progressing = 0;
+									}else{
+										alert(data.message);
 									}
-								});				
-							}	
+								}
+							});				
+							
+						}
+						
+						function submitEdit() {
+							var data = $('#ShiftQuotaForm').serialize();
+							targetURL = "<c:url value='/security/askShift/UserShiftQuota/update'/>";
+							
+							$('#save').button('loading');
+							$("body").css("cursor", "progress");
+							$.ajax({
+								type: "POST",
+								url: targetURL,
+								data: data,
+								dataType: "json",
+								success: function (data) {
+									location.reload(); //強制重整
+									$("body").css("cursor", "auto");
+
+									if (data.success) {
+										queryData(1);
+
+										$('#basicModal').modal('hide');
+									} else {
+										alert(data.message);
+									}
+									$('#save').button('reset');
+								},
+								error: function (jqXHR, exception) {
+									var msg = "";
+									if (jqXHR.status === 0) {
+										msg = "資料新增失敗！\n\n請檢查您的網路之後，重新登入再試一次!";
+									} else if (jqXHR.status == 401) {
+										msg = "資料新增失敗！\n\n您太久未操作系統，系統會回到登入頁面，請重新登入!";
+									} else if (jqXHR.status == 404) {
+										msg = "資料新增失敗！\n\n系統無此功能404，系統會回到登入頁面，請重新登入!";
+									} else if (jqXHR.status == 500) {
+										msg = "資料新增失敗！\n\n伺服器錯誤500，系統會回到登入頁面，請重新登入!";
+									} else if (exception === 'parsererror') {
+										msg = "資料新增失敗！\n\n資料錯誤，系統會回到登入頁面，請重新登入!";
+									} else if (exception === 'timeout') {
+										msg = "資料新增失敗！\n\n連線逾時，系統會回到登入頁面，請重新登入!";
+									} else if (exception === 'abort') {
+										msg = "資料新增失敗！\n\n連線被取消，系統會回到登入頁面，請重新登入!";
+									} else {
+										msg = "資料新增失敗！\n\n系統錯誤!\n" + jqXHR.responseText + "，系統會回到登入頁面，，請重新登入!";
+									}
+									$('#basicModal').modal('hide');
+									sessionOvertimeMessage(msg);
+								}
+							});
 						}
 
 

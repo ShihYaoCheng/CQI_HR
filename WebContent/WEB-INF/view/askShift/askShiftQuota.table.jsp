@@ -1,14 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<%@include file="/WEB-INF/view/include/view-lib.jsp" %>
-
 		<div>
-			<br>
 			<h4>
 				<b>調班額度管理</b>
 			</h4>
 		</div>
-
 
 		<!-- 調班剩餘額度 -->
 		<table class="table table-striped" id="userLeaveDataArea">
@@ -44,8 +41,8 @@
 						</td>
 						<td>
 							<c:if test="${operator.roleId == '1'}">
-								<a href="#" id="askOvertimeEdit" class="btn btn-default function_icon" title="修改"
-									onclick="edit(item.userShiftQuotaId)" style="background: #76bcff;">
+								
+								<a href="#" id="askOvertimeEdit" class="btn btn-default function_icon"  title="修改" onclick="edit('${item.userShiftQuotaId}')" style="background: #76bcff;"> 
 									<i class="glyphicon glyphicon-pencil"></i>
 								</a>
 							</c:if>
