@@ -245,16 +245,9 @@
 												</div>
 											</div>
 										</div>
+
 										<div class="form-group">
-											<label for="recipient-name" class="control-label col-sm-12">剩餘額度：</label>
-											<div class="col-sm-12">
-												<input type="text" class="form-control" id="count" name="count" />
-												<span id="count-error" class="error_text"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label for="recipient-name"
-												class="control-label col-sm-12">調班額度（每周）：</label>
+											<label for="recipient-name" class="control-label col-sm-12">每周額度：</label>
 											<div class="col-sm-12 ">
 												<div class="form-group">
 													<select class="form-control" id="quota" name="quota">
@@ -267,6 +260,14 @@
 													</select>
 													<span id="quota-error" class="error_text"></span>
 												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label for="recipient-name" class="control-label col-sm-12">本周剩餘額度：</label>
+											<div class="col-sm-12">
+												<input type="text" class="form-control" id="count" name="count" />
+												<span id="count-error" class="error_text"></span>
 											</div>
 										</div>
 

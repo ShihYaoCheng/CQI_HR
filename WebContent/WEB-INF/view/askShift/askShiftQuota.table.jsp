@@ -3,10 +3,10 @@
 	<%@include file="/WEB-INF/view/include/view-lib.jsp" %>
 		<div>
 			<h4>
-			<br>
+				<br>
 				<b>調班額度</b>
 			</h4>
-			<p style="font-size:16px">＊修改調班額度後，系統下周起將套用新設定額度＊</p>
+			<p style="font-size:16px">＊修改調班額度後，系統下周起將套用新設定額度，如有立即需求請洽系統管理員＊</p>
 			<br>
 		</div>
 
