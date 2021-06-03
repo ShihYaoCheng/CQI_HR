@@ -666,10 +666,6 @@
 							if (progressing == 1) {
 								return;
 							}
-							// 1.如果點擊的id是askOvertimeEdit
-							// 2.如果點擊的id不是askOvertimeEdit
-							// 2-1. 如果active(id)中的id是未定義
-							// if($(event.target).attr('id') ===  'askOvertimeEdit'){
 
 							//$('input[name="mangaRoleTypes"]').attr("checked", false);  //原本就註解
 							// $('#datetimepickerEnd').datetimepicker("setStartDate", new Date(-8639968443048000)); //0512註解
