@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<%@include file="/WEB-INF/view/include/view-lib.jsp" %>
-	<html>
+		<html>
 
 		<head>
 			<%@include file="/WEB-INF/view/include/view-html-head.jsp" %>
@@ -21,7 +21,8 @@
 
 									</div>
 									<div class="btn-group">
-										<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增" id="shiftSchedule">
+										<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"
+											id="shiftSchedule">
 											<i class="glyphicon glyphicon-plus"></i>
 										</a>
 									</div>
@@ -36,9 +37,9 @@
 
 						</div>
 					</div>
-			</div>
-	
-	
+				</div>
+
+
 
 
 				<!-- dialog -->
@@ -205,38 +206,44 @@
 
 
 				<!-- dialog 調班剩餘額度-->
-				<div class="modal fade" id="basicModalEdit" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+				<div class="modal fade" id="basicModalEdit" tabindex="-1" role="dialog" aria-labelledby="basicModal"
+					aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
 								<h4 class="modal-title" id="myModalLabel">調班額度</h4>
 							</div>
 							<div class="modal-body">
 								<form id="ShiftQuotaForm" name="ShiftQuotaForm">
-									<input type="hidden" id="userShiftQuotaId" name="userShiftQuotaId"/>
+									<input type="hidden" id="userShiftQuotaId" name="userShiftQuotaId" />
 									<div id="edit">
 										<div class="form-group">
 											<label for="recipient-name" class="control-label col-sm-12">成員：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
-													<select class="form-control" id="ShiftQuotaSysUserId" name="sysUserId" onchange="">
+													<select class="form-control" id="ShiftQuotaSysUserId"
+														name="sysUserId" onchange="">
 														<c:choose>
 															<c:when test="${operator.roleId == '1'}">
 																<option value="">請選擇</option>
-																<c:forEach var="item" items="${mapEnableRule2User}" varStatus="vs">
-																	<option value="${item['key']}">${item['value'].originalName}</option>
+																<c:forEach var="item" items="${mapEnableRule2User}"
+																	varStatus="vs">
+																	<option value="${item['key']}">
+																		${item['value'].originalName}</option>
 																</c:forEach>
-															</c:when>    
+															</c:when>
 															<c:otherwise>
-																<option value="${operator.sysUserId}">${operator.originalName}</option>
+																<option value="${operator.sysUserId}">
+																	${operator.originalName}</option>
 															</c:otherwise>
 														</c:choose>
-														
+
 													</select>
 													<span id="ShiftQuotaSysUserId-error" class="error_text"></span>
 												</div>
-											</div>	
+											</div>
 										</div>
 										<div class="form-group">
 											<label for="recipient-name" class="control-label col-sm-12">剩餘額度：</label>
@@ -246,7 +253,8 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label for="recipient-name" class="control-label col-sm-12">調班額度（每周）：</label>
+											<label for="recipient-name"
+												class="control-label col-sm-12">調班額度（每周）：</label>
 											<div class="col-sm-12 ">
 												<div class="form-group">
 													<select class="form-control" id="quota" name="quota">
@@ -261,14 +269,15 @@
 												</div>
 											</div>
 										</div>
-										
+
 									</div>
 								</form>
 							</div>
 							<div style="clear:both;"></div>
 							<div class="modal-footer" style="margin-top:20px">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary btn-lg " id="save" data-loading-text="儲存中" onclick="submitEdit()">儲存</button>
+								<button type="button" class="btn btn-primary btn-lg " id="saveEdit"
+									data-loading-text="儲存中" onclick="submitEdit()">儲存</button>
 							</div>
 						</div>
 					</div>
@@ -292,7 +301,7 @@
 							}
 
 
-							
+
 							console.log("今天：" + today);
 
 							//抓取當前日期+30天
@@ -312,10 +321,10 @@
 							});
 							$('#datetimepickerStart').datetimepicker('setEndDate', next30days); //限制當前日期+30天
 
-							
+
 							$('#datetimepickerEnd').datetimepicker({
 								format: 'yyyy/mm/dd hh:ii',
-								autoclose: true, 
+								autoclose: true,
 								minuteStep: 30,
 								focusOnShow: false,
 								allowInputToggle: true,
@@ -324,7 +333,7 @@
 
 							});
 							$('#datetimepickerEnd').datetimepicker('setEndDate', next30days); //限制當前日期+30天
-							
+
 
 
 
@@ -570,10 +579,10 @@
 								$('#shiftQuota-error').hide();
 							} */
 
-							
-							
+
+
 							var targetURL = "<c:url value='/security/askShift/add'/>";
-							
+
 							console.log(Object.keys(errors).length);
 							if (Object.keys(errors).length == 0) {
 								var data = $('#askForShiftForm').serialize();
@@ -661,79 +670,67 @@
 							// 2.如果點擊的id不是askOvertimeEdit
 							// 2-1. 如果active(id)中的id是未定義
 							// if($(event.target).attr('id') ===  'askOvertimeEdit'){
-								
-							// 	console.log("修改")
 
-							// 	$('#shiftScheduleDialog').hide();
-							// 	$('#askOvertimeEditDialog').show();
-							// 	$('#basicModal').modal('toggle');
+							//$('input[name="mangaRoleTypes"]').attr("checked", false);  //原本就註解
+							// $('#datetimepickerEnd').datetimepicker("setStartDate", new Date(-8639968443048000)); //0512註解
+							// $('#datetimepickerStart').datetimepicker("setEndDate", new Date(8639968443048000));  //0512註解
+							var text = "修改";
+							if (typeof (id) == "undefined") {
+								text = "新增";
+								$('#askForOvertimeId').val("");
+								$('#overtimeId').val("");
+								$('#spendTime').val("");
+								$('#startTime').val("");
+								$('#sysUserId').val("");
+								$('#endTime').val("");
+								$('#description').val("");
+								$('#asanaTaskId').val("");
+								$('#status').val("");
 
-							// } else {
-							// 	$('#shiftScheduleDialog').show();
-							// 	$('#askOvertimeEditDialog').hide();
-								// console.log("新增")
-							
-								//$('input[name="mangaRoleTypes"]').attr("checked", false);  //原本就註解
-								// $('#datetimepickerEnd').datetimepicker("setStartDate", new Date(-8639968443048000)); //0512註解
-								// $('#datetimepickerStart').datetimepicker("setEndDate", new Date(8639968443048000));  //0512註解
-								var text = "修改";
-								if (typeof (id) == "undefined") {
-									text = "新增";
-									$('#askForOvertimeId').val("");
-									$('#overtimeId').val("");
-									$('#spendTime').val("");
-									$('#startTime').val("");
-									$('#sysUserId').val("");
-									$('#endTime').val("");
-									$('#description').val("");
-									$('#asanaTaskId').val("");
-									$('#status').val("");
+								$('#basicModal').find('.modal-title').text(text + "調班紀錄");
+								$('#basicModal').modal('toggle');
 
-									$('#basicModal').find('.modal-title').text(text + "調班紀錄");
-									$('#basicModal').modal('toggle');
-
-								} else {
-									progressing = 1;
-									$("body").css("cursor", "progress");
-									var targetURL = "<c:url value='/security/askShift/" + id + "'/>";
-									$.ajax({
-										type: "GET",
-										url: targetURL,
-										data: {
-											askForLeaveId: id
-										},
-										dataType: "json",
-										success: function (data) {
-											$("body").css("cursor", "auto");
-											if (data.success) {
-												$('#askForOvertimeId').val(data.userAskForOvertime.askForOvertimeId);
-												$('#overtimeId').val(data.userAskForOvertime.overtimeId);
-												$('#spendTime').val(data.userAskForOvertime.spendTime);
-												$('#startTime').val(formatJsonDate(data.userAskForOvertime.startTime, "y/M/d H:m"));
-												$('#endTime').val(formatJsonDate(data.userAskForOvertime.endTime, "y/M/d H:m"));
-												$('#datetimepickerEnd').datetimepicker("setStartDate", $('#startTime').val());
-												$('#datetimepickerStart').datetimepicker("setEndDate", $('#endTime').val());
-												$('#datetimepickerEndLeave').datetimepicker("setStartDate", $('#startTimeLeave').val()); //排休
-												$('#datetimepickerStartLeave').datetimepicker("setEndDate", $('#endTimeLeave').val()); //排休
-												$('#sysUserId').val(data.userAskForOvertime.sysUserId);
-												$('#description').val(data.userAskForOvertime.description);
-												$('#asanaTaskId').val(data.userAskForOvertime.asanaTaskId);
-												$('#status').val(data.userAskForOvertime.status);
-												selectedLeaveId($('#overtimeId option:selected').html());
-												$('#basicModal').find('.modal-title').text(text + "調班紀錄");
-												$('#basicModal').modal('toggle');
-												progressing = 0;
-											} else {
-												alert(data.message);
-											}
-										},
-										error: function(err){
-											alert('error')
-											$("body").css("cursor", "auto");
+							} else {
+								progressing = 1;
+								$("body").css("cursor", "progress");
+								var targetURL = "<c:url value='/security/askShift/" + id + "'/>";
+								$.ajax({
+									type: "GET",
+									url: targetURL,
+									data: {
+										askForLeaveId: id
+									},
+									dataType: "json",
+									success: function (data) {
+										$("body").css("cursor", "auto");
+										if (data.success) {
+											$('#askForOvertimeId').val(data.userAskForOvertime.askForOvertimeId);
+											$('#overtimeId').val(data.userAskForOvertime.overtimeId);
+											$('#spendTime').val(data.userAskForOvertime.spendTime);
+											$('#startTime').val(formatJsonDate(data.userAskForOvertime.startTime, "y/M/d H:m"));
+											$('#endTime').val(formatJsonDate(data.userAskForOvertime.endTime, "y/M/d H:m"));
+											$('#datetimepickerEnd').datetimepicker("setStartDate", $('#startTime').val());
+											$('#datetimepickerStart').datetimepicker("setEndDate", $('#endTime').val());
+											$('#datetimepickerEndLeave').datetimepicker("setStartDate", $('#startTimeLeave').val()); //排休
+											$('#datetimepickerStartLeave').datetimepicker("setEndDate", $('#endTimeLeave').val()); //排休
+											$('#sysUserId').val(data.userAskForOvertime.sysUserId);
+											$('#description').val(data.userAskForOvertime.description);
+											$('#asanaTaskId').val(data.userAskForOvertime.asanaTaskId);
+											$('#status').val(data.userAskForOvertime.status);
+											selectedLeaveId($('#overtimeId option:selected').html());
+											$('#basicModal').find('.modal-title').text(text + "調班紀錄");
+											$('#basicModal').modal('toggle');
+											progressing = 0;
+										} else {
+											alert(data.message);
 										}
-									});
-								}
-							// }
+									},
+									error: function (err) {
+										alert('error')
+										$("body").css("cursor", "auto");
+									}
+								});
+							}
 
 						}
 
@@ -746,93 +743,183 @@
 
 						// 調班額度管理
 
-						function edit(userShiftQuotaId){
+						function edit(userShiftQuotaId) {
 							console.log("edit：" + userShiftQuotaId);
-							if(progressing == 1){
+							if (progressing == 1) {
 								return;
 							}
 							var text = "修改";
 							progressing = 1;
 							$("body").css("cursor", "progress");
-							var targetURL= "<c:url value='/security/askShift/UserShiftQuota/"+userShiftQuotaId+"'/>";
+							var targetURL = "<c:url value='/security/askShift/UserShiftQuota/" + userShiftQuotaId + "'/>";
 							$.ajax({
-								type : "GET",
-								url : targetURL,
-								data : {
-									userShiftQuotaId:userShiftQuotaId
+								type: "GET",
+								url: targetURL,
+								data: {
+									userShiftQuotaId: userShiftQuotaId
 								},
 								dataType: "json",
-								success : function(data) {
+								success: function (data) {
 									$("body").css("cursor", "auto");
 									if (data.success) {
 										console.log("UserShiftQuota query success：" + userShiftQuotaId);
 										$('#userShiftQuotaId').val(data.userShiftQuota.userShiftQuotaId);
 										$('#ShiftQuotaSysUserId').val(data.userShiftQuota.sysUserId);
-										$('#ShiftQuotaSysUserId').attr("disabled", true);
+										$('#ShiftQuotaSysUserId').attr("readonly", "readonly");
+										$('#ShiftQuotaSysUserId').css("pointer-events", "none");
 										$('#count').val(data.userShiftQuota.count);
+										$('#count').attr("readonly", "readonly");
 										$('#quota').val(data.userShiftQuota.quota);
-										
 										$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
 										$('#basicModalEdit').modal('toggle');
 										progressing = 0;
-									}else{
-										alert(data.message);
-									}
-								}
-							});				
-							
-						}
-						
-						function submitEdit() {
-							var data = $('#ShiftQuotaForm').serialize();
-							targetURL = "<c:url value='/security/askShift/UserShiftQuota/update'/>";
-							
-							$('#save').button('loading');
-							$("body").css("cursor", "progress");
-							$.ajax({
-								type: "POST",
-								url: targetURL,
-								data: data,
-								dataType: "json",
-								success: function (data) {
-									location.reload(); //強制重整
-									$("body").css("cursor", "auto");
-
-									if (data.success) {
-										queryData(1);
-
-										$('#basicModal').modal('hide');
 									} else {
 										alert(data.message);
 									}
-									$('#save').button('reset');
-								},
-								error: function (jqXHR, exception) {
-									var msg = "";
-									if (jqXHR.status === 0) {
-										msg = "資料新增失敗！\n\n請檢查您的網路之後，重新登入再試一次!";
-									} else if (jqXHR.status == 401) {
-										msg = "資料新增失敗！\n\n您太久未操作系統，系統會回到登入頁面，請重新登入!";
-									} else if (jqXHR.status == 404) {
-										msg = "資料新增失敗！\n\n系統無此功能404，系統會回到登入頁面，請重新登入!";
-									} else if (jqXHR.status == 500) {
-										msg = "資料新增失敗！\n\n伺服器錯誤500，系統會回到登入頁面，請重新登入!";
-									} else if (exception === 'parsererror') {
-										msg = "資料新增失敗！\n\n資料錯誤，系統會回到登入頁面，請重新登入!";
-									} else if (exception === 'timeout') {
-										msg = "資料新增失敗！\n\n連線逾時，系統會回到登入頁面，請重新登入!";
-									} else if (exception === 'abort') {
-										msg = "資料新增失敗！\n\n連線被取消，系統會回到登入頁面，請重新登入!";
-									} else {
-										msg = "資料新增失敗！\n\n系統錯誤!\n" + jqXHR.responseText + "，系統會回到登入頁面，，請重新登入!";
-									}
-									$('#basicModal').modal('hide');
-									sessionOvertimeMessage(msg);
 								}
 							});
+
 						}
+
+
+
+						// function submitEdit() {
+						// 	console.log("submitEdit");
+
+						// 	var errorCode = {};
+						// 	errorCode["1"] = "請選擇調班額度";
+						// 	var errors = {};
+
+						// 	if ($('#quota').val() == '') {
+						// 		errors['quota'] = 1;
+						// 	} else {
+						// 		$('#quota-error').hide();
+						// 	}
+
+						// 	var data = $('#ShiftQuotaForm').serialize();
+						// 	targetURL = "<c:url value='/security/askShift/UserShiftQuota/update'/>";
+
+						// 	$('#saveEdit').button('loading');
+						// 	$("body").css("cursor", "progress");
+						// 	$.ajax({
+						// 		type: "POST",
+						// 		url: targetURL,
+						// 		data: data,
+						// 		dataType: "json",
+						// 		success: function (data) {
+						// 			location.reload(); //強制重整
+						// 			$("body").css("cursor", "auto");
+
+						// 			if (data.success) {
+						// 				queryData(1);
+
+						// 				$('#basicModalEdit').modal('hide');
+						// 			} else {
+						// 				alert(data.message);
+						// 			}
+						// 			$('#saveEdit').button('reset');
+						// 		},
+						// 		error: function (jqXHR, exception) {
+						// 			var msg = "";
+						// 			if (jqXHR.status === 0) {
+						// 				msg = "資料新增失敗！\n\n請檢查您的網路之後，重新登入再試一次!";
+						// 			} else if (jqXHR.status == 401) {
+						// 				msg = "資料新增失敗！\n\n您太久未操作系統，系統會回到登入頁面，請重新登入!";
+						// 			} else if (jqXHR.status == 404) {
+						// 				msg = "資料新增失敗！\n\n系統無此功能404，系統會回到登入頁面，請重新登入!";
+						// 			} else if (jqXHR.status == 500) {
+						// 				msg = "資料新增失敗！\n\n伺服器錯誤500，系統會回到登入頁面，請重新登入!";
+						// 			} else if (exception === 'parsererror') {
+						// 				msg = "資料新增失敗！\n\n資料錯誤，系統會回到登入頁面，請重新登入!";
+						// 			} else if (exception === 'timeout') {
+						// 				msg = "資料新增失敗！\n\n連線逾時，系統會回到登入頁面，請重新登入!";
+						// 			} else if (exception === 'abort') {
+						// 				msg = "資料新增失敗！\n\n連線被取消，系統會回到登入頁面，請重新登入!";
+						// 			} else {
+						// 				msg = "資料新增失敗！\n\n系統錯誤!\n" + jqXHR.responseText + "，系統會回到登入頁面，，請重新登入!";
+						// 			}
+						// 			$('#basicModalEdit').modal('hide');
+						// 			sessionOvertimeMessage(msg);
+						// 		}
+						// 	});
+						// }
+
+
+ㄐ
+						function submitEdit() {
+							console.log("submitEdit");
+
+							var errorCode = {};
+							errorCode["1"] = "請選擇調班額度";
+							var errors = {};
+
+							if ($('#quota').val() == '') {
+								errors['quota'] = 1;
+							} else {
+								$('#quota-error').hide();
+							}
+
+							var targetURL = "<c:url value='/security/askShift/UserShiftQuota/update'/>";
+
+							if (Object.keys(errors).length == 0) {
+
+								var data = $('#ShiftQuotaForm').serialize();
+
+
+								$('#saveEdit').button('loading');
+								$("body").css("cursor", "progress");
+								$.ajax({
+									type: "POST",
+									url: targetURL,
+									data: data,
+									dataType: "json",
+									success: function (data) {
+										location.reload(); //強制重整
+										$("body").css("cursor", "auto");
+
+										if (data.success) {
+											queryData(1);
+
+											$('#basicModalEdit').modal('hide');
+										} else {
+											alert(data.message);
+										}
+										$('#saveEdit').button('reset');
+									},
+									error: function (jqXHR, exception) {
+										var msg = "";
+										if (jqXHR.status === 0) {
+											msg = "資料新增失敗！\n\n請檢查您的網路之後，重新登入再試一次!";
+										} else if (jqXHR.status == 401) {
+											msg = "資料新增失敗！\n\n您太久未操作系統，系統會回到登入頁面，請重新登入!";
+										} else if (jqXHR.status == 404) {
+											msg = "資料新增失敗！\n\n系統無此功能404，系統會回到登入頁面，請重新登入!";
+										} else if (jqXHR.status == 500) {
+											msg = "資料新增失敗！\n\n伺服器錯誤500，系統會回到登入頁面，請重新登入!";
+										} else if (exception === 'parsererror') {
+											msg = "資料新增失敗！\n\n資料錯誤，系統會回到登入頁面，請重新登入!";
+										} else if (exception === 'timeout') {
+											msg = "資料新增失敗！\n\n連線逾時，系統會回到登入頁面，請重新登入!";
+										} else if (exception === 'abort') {
+											msg = "資料新增失敗！\n\n連線被取消，系統會回到登入頁面，請重新登入!";
+										} else {
+											msg = "資料新增失敗！\n\n系統錯誤!\n" + jqXHR.responseText + "，系統會回到登入頁面，，請重新登入!";
+										}
+										$('#basicModalEdit').modal('hide');
+										sessionOvertimeMessage(msg);
+									}
+								});
+							}
+							for (var key in errors) {
+								//$("#"+key).css('width',90);
+								$("#" + key + "-error").text(errorCode[errors[key]]);
+								$("#" + key + "-error").show();
+							}
+						}
+
 
 
 					</script>
 		</body>
-	</html>
+
+		</html>

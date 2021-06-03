@@ -3,8 +3,11 @@
 	<%@include file="/WEB-INF/view/include/view-lib.jsp" %>
 		<div>
 			<h4>
-				<b>調班額度管理</b>
+			<br>
+				<b>調班額度</b>
 			</h4>
+			<p style="font-size:16px">＊修改調班額度後，系統下周起將套用新設定額度＊</p>
+			<br>
 		</div>
 
 		<!-- 調班剩餘額度 -->
@@ -13,9 +16,9 @@
 			<thead>
 				<tr style="background-color: #edf8ff; font-weight: bold;">
 					<td width="30%">成員</td>
-					<td width="20%">剩餘額度</td>
-					<td width="20%">調班額度（每周）</td>
-					<td width="15%">修改</td>
+					<td width="30%">每周額度</td>
+					<td width="30%">本周剩餘額度</td>
+					<td width="10%">修改</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -34,15 +37,16 @@
 							${mapEnableRule2User.get(item.sysUserId).originalName}
 						</td>
 						<td>
-							${item.count.intValue()}
-						</td>
-						<td>
 							${item.quota.intValue()}
 						</td>
 						<td>
+							${item.count.intValue()}
+						</td>
+						<td>
 							<c:if test="${operator.roleId == '1'}">
-								
-								<a href="#" id="askOvertimeEdit" class="btn btn-default function_icon"  title="修改" onclick="edit('${item.userShiftQuotaId}')" style="background: #76bcff;"> 
+
+								<a href="#" id="askOvertimeEdit" class="btn btn-default function_icon" title="修改"
+									onclick="edit('${item.userShiftQuotaId}')" style="background: #76bcff;">
 									<i class="glyphicon glyphicon-pencil"></i>
 								</a>
 							</c:if>
