@@ -783,69 +783,6 @@
 
 
 
-						// function submitEdit() {
-						// 	console.log("submitEdit");
-
-						// 	var errorCode = {};
-						// 	errorCode["1"] = "請選擇調班額度";
-						// 	var errors = {};
-
-						// 	if ($('#quota').val() == '') {
-						// 		errors['quota'] = 1;
-						// 	} else {
-						// 		$('#quota-error').hide();
-						// 	}
-
-						// 	var data = $('#ShiftQuotaForm').serialize();
-						// 	targetURL = "<c:url value='/security/askShift/UserShiftQuota/update'/>";
-
-						// 	$('#saveEdit').button('loading');
-						// 	$("body").css("cursor", "progress");
-						// 	$.ajax({
-						// 		type: "POST",
-						// 		url: targetURL,
-						// 		data: data,
-						// 		dataType: "json",
-						// 		success: function (data) {
-						// 			location.reload(); //強制重整
-						// 			$("body").css("cursor", "auto");
-
-						// 			if (data.success) {
-						// 				queryData(1);
-
-						// 				$('#basicModalEdit').modal('hide');
-						// 			} else {
-						// 				alert(data.message);
-						// 			}
-						// 			$('#saveEdit').button('reset');
-						// 		},
-						// 		error: function (jqXHR, exception) {
-						// 			var msg = "";
-						// 			if (jqXHR.status === 0) {
-						// 				msg = "資料新增失敗！\n\n請檢查您的網路之後，重新登入再試一次!";
-						// 			} else if (jqXHR.status == 401) {
-						// 				msg = "資料新增失敗！\n\n您太久未操作系統，系統會回到登入頁面，請重新登入!";
-						// 			} else if (jqXHR.status == 404) {
-						// 				msg = "資料新增失敗！\n\n系統無此功能404，系統會回到登入頁面，請重新登入!";
-						// 			} else if (jqXHR.status == 500) {
-						// 				msg = "資料新增失敗！\n\n伺服器錯誤500，系統會回到登入頁面，請重新登入!";
-						// 			} else if (exception === 'parsererror') {
-						// 				msg = "資料新增失敗！\n\n資料錯誤，系統會回到登入頁面，請重新登入!";
-						// 			} else if (exception === 'timeout') {
-						// 				msg = "資料新增失敗！\n\n連線逾時，系統會回到登入頁面，請重新登入!";
-						// 			} else if (exception === 'abort') {
-						// 				msg = "資料新增失敗！\n\n連線被取消，系統會回到登入頁面，請重新登入!";
-						// 			} else {
-						// 				msg = "資料新增失敗！\n\n系統錯誤!\n" + jqXHR.responseText + "，系統會回到登入頁面，，請重新登入!";
-						// 			}
-						// 			$('#basicModalEdit').modal('hide');
-						// 			sessionOvertimeMessage(msg);
-						// 		}
-						// 	});
-						// }
-
-
-ㄐ
 						function submitEdit() {
 							console.log("submitEdit");
 
