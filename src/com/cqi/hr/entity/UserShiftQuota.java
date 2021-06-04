@@ -58,8 +58,8 @@ public class UserShiftQuota implements Serializable {
 		this.userShiftQuotaId = userShiftQuotaId;
 	}
 
-	public UserShiftQuota(Long userShiftQuotaId, String sysUserId, Double count, Double quota, Integer status) {
-		this.userShiftQuotaId = userShiftQuotaId;
+	public UserShiftQuota( String sysUserId, Double count, Double quota, Integer status) {
+		
 		this.sysUserId = sysUserId;
 		this.count = count;
 		this.quota = quota;

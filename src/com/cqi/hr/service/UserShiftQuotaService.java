@@ -1,8 +1,10 @@
 package com.cqi.hr.service;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cqi.hr.dao.AbstractDAO;
+import com.cqi.hr.dao.SysUserDAO;
 import com.cqi.hr.dao.UserAskForOvertimeDAO;
 import com.cqi.hr.dao.UserLeaveDAO;
 import com.cqi.hr.dao.UserShiftQuotaDAO;
@@ -26,6 +29,7 @@ public class UserShiftQuotaService extends AbstractService<UserShiftQuota>{
 	@Resource UserShiftQuotaDAO userShiftQuotaDAO;
 	@Resource UserLeaveDAO userLeaveDAO;
 	@Resource UserAskForOvertimeDAO userAskForOvertimeDAO;
+	@Resource SysUserDAO sysUserDAO;
 	
 	@Override
 	protected AbstractDAO<UserShiftQuota> getDAO() {
@@ -172,5 +176,29 @@ public class UserShiftQuotaService extends AbstractService<UserShiftQuota>{
 		userShiftQuota.setStatus(1);
 		userShiftQuota.setCount(spendTime);					
 		userShiftQuotaDAO.persist(userShiftQuota);
+	}
+
+
+	public void GiveShiftQuota() throws Exception {
+		List<SysUser> users = new ArrayList<SysUser>();
+		users = sysUserDAO.getEnableRole2User();
+		
+		//for test
+		//users.add(sysUserDAO.get("1198842813042872"));
+		//users.add(sysUserDAO.get("1199963714775439"));
+				
+		
+		for (SysUser user : users) {
+			UserShiftQuota userShiftQuota = userShiftQuotaDAO.getOneByUserId(user.getSysUserId());
+			if (userShiftQuota == null) {
+				userShiftQuota = new UserShiftQuota(user.getSysUserId(), 1.0, 1.0, 1);
+			} else {
+				userShiftQuota.setCount(userShiftQuota.getQuota());
+				userShiftQuota.setUpdateTime(new Date());
+				
+			}
+			userShiftQuotaDAO.saveOrUpdate(userShiftQuota);
+		}
+		
 	}
 }

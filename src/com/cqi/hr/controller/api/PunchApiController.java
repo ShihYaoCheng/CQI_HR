@@ -1,11 +1,6 @@
 package com.cqi.hr.controller.api;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
 
 import javax.annotation.Resource;
 

@@ -15,24 +15,20 @@
 						<div class="col-xs-12 col-md-12 single_table">
 							<form class="navbar-form">
 								<h3><b>調班資料管理</b></h3>
-								<br />
-								<div class="form-group" style="display: inline;">
-									<div class="input-group">
-
-									</div>
-									<div class="btn-group">
-										<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"
-											id="shiftSchedule">
-											<i class="glyphicon glyphicon-plus"></i>
-										</a>
-									</div>
-								</div>
-
+								
 								<%@include file="../include/progressing.jsp" %>
-									<div id="overtimeQuotaContent">
-									</div>
-									<div id="dataContent">
-									</div>
+								
+								<div id="overtimeQuotaContent"></div>
+								
+								<div class="btn-group">
+									<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"
+										id="shiftSchedule">
+										<i class="glyphicon glyphicon-plus"></i>
+									</a>
+								</div>
+								
+								<div id="dataContent"></div>
+								
 							</form>
 
 						</div>

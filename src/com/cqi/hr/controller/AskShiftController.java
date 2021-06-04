@@ -316,16 +316,17 @@ public class AskShiftController extends AbstractController<UserAskForOvertime> {
 		logger.info(FUNCTION_NAME + " ajaxShiftQuotaUpdate: ");
 		Map<Object, Object> map = null;
 		try{
-			String result = "";
+			UserShiftQuota dbData = userShiftQuotaService.get(userShiftQuota.getUserShiftQuotaId());
+			dbData.setUpdateTime(new Date());
+			dbData.setQuota(userShiftQuota.getQuota());
+			userShiftQuotaService.update(dbData);
 			
+			map = createResponseMsg(true, Constant.SUCCESS, "");
 		}catch(Exception e){
 			logger.error(FUNCTION_NAME + " ajaxQuery error: ", e);
 			map = createResponseMsg(false, "", Constant.NETWORK_BUSY);
 		}
 		returnJsonMap(req, resp, map);
 	}
-	
-	
-	
 	
 }

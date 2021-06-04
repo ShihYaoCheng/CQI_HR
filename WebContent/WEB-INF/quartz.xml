@@ -14,8 +14,8 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/task 
 		http://www.springframework.org/schema/task/spring-task-3.0.xsd">
-	<!-- ****排程 時間／參數設定**** -->
-	<!-- #JOB1 月結請假紀錄 BEGIN -->
+<!-- ****排程 時間／參數設定**** -->
+<!-- #JOB1 月結請假紀錄 BEGIN -->
 	<!-- JOB1 月結請假紀錄 工作內容 -->
 	<bean id="jobMonthlyLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyLeaveJob"  />
@@ -59,9 +59,9 @@
         	<value>schedulerMonthlyLeave</value>
     	</property>
     </bean>
-    <!-- #JOB1 月結請假紀錄 END -->
+<!-- #JOB1 月結請假紀錄 END -->
 
-	<!-- #JOB2 請假給假  BEGIN -->
+<!-- #JOB2 請假給假  BEGIN -->
 	<!-- JOB2 請假給假  工作內容 -->
 	<bean id="jobAnnualLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.AnnualLeaveJob"  />
@@ -104,9 +104,9 @@
         	<value>schedulerAnnualLeave</value>
     	</property>
     </bean>
-    <!-- #JOB2 請假給假  END -->
+<!-- #JOB2 請假給假  END -->
     
-    <!-- #JOB3 自動請假 BEGIN -->
+<!-- #JOB3 自動請假 BEGIN -->
 	<!-- JOB3 自動請假 工作內容 -->
 	<bean id="jobAutoAskLeaveBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.AutoAskLeaveJob"  />
@@ -149,9 +149,9 @@
         	<value>schedulerAutoAskLeave</value>
     	</property>
     </bean>
-    <!-- #JOB3 自動請假 END -->
-    
-    <!-- #JOB4 自動推送LineBot審核 BEGIN -->
+<!-- #JOB3 自動請假 END -->
+
+<!-- #JOB4 自動推送LineBot審核 BEGIN -->
 	<!-- JOB4 自動推送LineBot審核 工作內容 -->
 	<bean id="jobMonthlyLinePushBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyLinePushJob"  />
@@ -194,9 +194,9 @@
         	<value>schedulerMonthlyLinePush</value>
     	</property>
     </bean>
-    <!-- #JOB4 自動推送LineBot審核 END -->
-    
-    <!-- #JOB5 月初班別自動生成 BEGIN -->
+<!-- #JOB4 自動推送LineBot審核 END -->
+
+<!-- #JOB5 月初班別自動生成 BEGIN -->
 	<!-- JOB5 月初班別自動生成 工作內容 -->
 	<bean id="jobMonthlyShiftBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyShiftJob"  />
@@ -239,9 +239,9 @@
         	<value>schedulerMonthlyShift</value>
     	</property>
     </bean>
-    <!-- #JOB5 月初班別自動生成 END -->
-    
-    <!-- #JOB6 日結出勤紀錄 BEGIN -->
+<!-- #JOB5 月初班別自動生成 END -->
+
+<!-- #JOB6 日結出勤紀錄 BEGIN -->
 	<!-- JOB6 日結出勤紀錄 工作內容 -->
 	<bean id="jobDailyAttendanceRecordBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.DailyAttendanceRecordJob"  />
@@ -284,9 +284,9 @@
         	<value>schedulerDailyAttendanceRecord</value>
     	</property>
     </bean>
-    <!-- #JOB6 日結出勤紀錄 END -->
-    
-    <!-- #JOB7 月結報表 BEGIN -->
+<!-- #JOB6 日結出勤紀錄 END -->
+
+<!-- #JOB7 月結報表 BEGIN -->
 	<!-- JOB7 月結報表 工作內容 -->
 	<bean id="jobMonthlyReportBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.MonthlyReportJob"  />
@@ -329,9 +329,9 @@
         	<value>schedulerMonthlyReport</value>
     	</property>
     </bean>
-    <!-- #JOB7 月結報表 END -->
-    
-    <!-- #JOB8 未打卡提醒 BEGIN -->
+<!-- #JOB7 月結報表 END -->
+
+<!-- #JOB8 未打卡提醒 BEGIN -->
 	<!-- JOB8 未打卡提醒  工作內容 -->
 	<bean id="jobNoPunchRemindBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.NoPunchRemindJob"  />
@@ -375,9 +375,9 @@
         	<value>schedulerNoPunchRemind</value>
     	</property>
     </bean>
-	<!--     #JOB8 未打卡提醒 END -->
-	
-	<!-- #JOB9 線上打卡BEGIN -->
+<!--     #JOB8 未打卡提醒 END -->
+
+<!-- #JOB9 線上打卡BEGIN -->
 	<!-- #JOB9 線上打卡  工作內容 -->
 	<bean id="jobOnlinePunchSendPasswordBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.OnlinePunchSendPasswordJob"  />
@@ -411,6 +411,40 @@
         	<value>schedulerOnlinePunchSendPassword</value>
     	</property>
     </bean>
-	<!--     #JOB9 線上打卡 END -->
-	
+<!--     #JOB9 線上打卡 END -->
+
+<!-- #JOB10 調班額度  BEGIN -->
+	<!-- JOB10  調班額度  工作內容 -->
+	<bean id="jobGiveShiftQuotaBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.GiveShiftQuotaJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="userShiftQuotaService" value-ref="userShiftQuotaService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB10 調班額度  排程設定 -->
+	<bean id="cronGiveShiftQuotaBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobGiveShiftQuotaBean"/>
+        </property>
+        <property name="cronExpression">
+        	<!--<value>10 * * * * ?</value> -->
+        	<value>0 0 4 ? * MON</value>
+        </property>
+    </bean>
+    <bean id="schedulerGiveShiftQuotaBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronGiveShiftQuotaBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerGiveShiftQuota</value>
+    	</property>
+    </bean>
+<!-- #JOB10 調班額度  END -->	
 </beans>

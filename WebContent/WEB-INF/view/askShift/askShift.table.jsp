@@ -75,12 +75,8 @@
 								<fmt:formatDate var="day" value="${today}" pattern="dd" />
 								<fmt:formatDate var="month" value="${today}" pattern="MM" />
 								<fmt:formatDate var="dataMonth" value="${item.startTime}" pattern="MM" />
-								<c:if
-									test="${mappingOvertime.get(item.overtimeId).leaveName != '災害處理'  && (dataMonth >= month || (day<4 && (dataMonth + 1) == month ))}">
-									<a href="#" class="btn btn-default function_icon"
-										onclick="active('${item.askForOvertimeId}')" title="修改">
-										<i class="glyphicon glyphicon-pencil"></i>
-									</a>
+								<c:if test="${ dataMonth >= month || (day<4 && (dataMonth + 1) == month )}">
+									
 									<a href="#" class="btn btn-default function_icon"
 										onclick="deleteData('${item.askForOvertimeId}')" title="刪除">
 										<i class="glyphicon glyphicon-remove"></i>
