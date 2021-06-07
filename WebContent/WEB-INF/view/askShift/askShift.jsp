@@ -15,20 +15,20 @@
 						<div class="col-xs-12 col-md-12 single_table">
 							<form class="navbar-form">
 								<h3><b>調班資料管理</b></h3>
-								
+
 								<%@include file="../include/progressing.jsp" %>
-								
-								<div id="overtimeQuotaContent"></div>
-								
-								<div class="btn-group">
-									<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"
-										id="shiftSchedule">
-										<i class="glyphicon glyphicon-plus"></i>
-									</a>
-								</div>
-								
-								<div id="dataContent"></div>
-								
+
+									<div id="overtimeQuotaContent"></div>
+
+									<div class="btn-group">
+										<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"
+											id="shiftSchedule">
+											<i class="glyphicon glyphicon-plus"></i>
+										</a>
+									</div>
+
+									<div id="dataContent"></div>
+
 							</form>
 
 						</div>
@@ -526,12 +526,15 @@
 
 						function submit() {
 
+
+
 							var errorCode = {};
 							errorCode["1"] = "請選擇班別";
 							errorCode["2"] = "請選擇天數/時數";
 							errorCode["3"] = "請輸入時間";
 							errorCode["4"] = "請選擇成員";
-							errorCode["5"] = "請選擇調班額度";
+							errorCode["5"] = "本周調班次數已達上限，無法調班";
+
 							var errors = {};
 
 							if ($('#overtimeId :selected').val() == '') {
@@ -565,16 +568,17 @@
 								$('#endTimeLeave-error').hide();
 							}
 
-							if ($('#QuotasysUserId').val() == '') {
-								errors['QuotasysUserId'] = 4;
-							} else {
-								$('#QuotasysUserId-error').hide();
+
+							var thisWeekShiftQuota = $('#thisWeekShiftQuota').text().trim();
+							console.log("本周調班剩餘額度 " + thisWeekShiftQuota);
+
+							// 本周調班剩餘額度為0時，不能調班
+							if ($('#overtimeId').val() == 2) {
+								if (thisWeekShiftQuota < 1) {
+									errors['overtimeId'] = 5;
+									$('#overtimeId-error').show();
+								}
 							}
-							/* if ($('#shiftQuota').val() == '') {
-								errors['shiftQuota'] = 5;
-							} else {
-								$('#shiftQuota-error').hide();
-							} */
 
 
 

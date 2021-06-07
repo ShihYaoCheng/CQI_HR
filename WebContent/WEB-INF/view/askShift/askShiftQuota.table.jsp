@@ -31,14 +31,14 @@
 
 
 				<c:forEach var="item" items="${userShiftQuotaList}">
-					<tr>
+					<tr id="ShiftQuotaForm">
 						<td>
 							${mapEnableRule2User.get(item.sysUserId).originalName}
 						</td>
 						<td>
 							${item.quota.intValue()}
 						</td>
-						<td>
+						<td id="thisWeekShiftQuota">
 							${item.count.intValue()}
 						</td>
 						<td>
