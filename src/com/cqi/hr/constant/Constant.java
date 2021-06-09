@@ -111,7 +111,7 @@ public class Constant {
 	
 	// Developer
 	// 需用ngrok把local8080連接到ngrok.io,並在asana app 設定Redirect URLs,此區也須跟著修改
-	 public final static String ASANA_REDIRECT_URL = "https://19b71c2698bf.ngrok.io/hr-manage/asanaCallback";
+	 public final static String ASANA_REDIRECT_URL = "https://064006df2a5e.ngrok.io/hr-manage/asanaCallback";
 	
 	// Production
 //	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
@@ -124,14 +124,14 @@ public class Constant {
 	/**
 	 * Line Bot Token Developer
 	 */
-	public final static String LINE_CHANNEL_ACCESS_TOKEN = "APTT0hgJxLyPdzRO//VXvmRrXm0MxPe68jwA4sv88tx1e3O+xpKsF9nx1vl47qwgdEZwC8zPoBSZbvCI9kh8of9fkr72JLmcr2Qi3DiMA1jlELhSAKeUWvcoL6cxhL/TbiRQxM1SGVqH7DiTS/FZHwdB04t89/1O/w1cDnyilFU=";
-	public final static String LINE_CHANNEL_SECRET = "9db990d7beab261ed3dc6d0b19f82a81";
+//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "APTT0hgJxLyPdzRO//VXvmRrXm0MxPe68jwA4sv88tx1e3O+xpKsF9nx1vl47qwgdEZwC8zPoBSZbvCI9kh8of9fkr72JLmcr2Qi3DiMA1jlELhSAKeUWvcoL6cxhL/TbiRQxM1SGVqH7DiTS/FZHwdB04t89/1O/w1cDnyilFU=";
+//	public final static String LINE_CHANNEL_SECRET = "9db990d7beab261ed3dc6d0b19f82a81";
 	
 	/**
 	 * Line Bot Token Production
 	 */
-//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "uV0vhaGIS0iiTNYwxmMHR9Ck3hsHDlM/sdU75CYLhnd5G0WWJjYo/Bk3fNe8RRBMco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2NInI5vBQXrzlIyexdkJ21Zig5OgfSte2QS+3qS1ri1hQdB04t89/1O/w1cDnyilFU=";
-//	public final static String LINE_CHANNEL_SECRET = "2599f73f1a402479584066720b7ae7dd";
+	public final static String LINE_CHANNEL_ACCESS_TOKEN = "uV0vhaGIS0iiTNYwxmMHR9Ck3hsHDlM/sdU75CYLhnd5G0WWJjYo/Bk3fNe8RRBMco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2NInI5vBQXrzlIyexdkJ21Zig5OgfSte2QS+3qS1ri1hQdB04t89/1O/w1cDnyilFU=";
+	public final static String LINE_CHANNEL_SECRET = "2599f73f1a402479584066720b7ae7dd";
 
 	
 	public final static String LINE_FLEX_MESSAGE_ALT_TEXT_EMERGENCE_REQUEST = "災害處理單申請";
