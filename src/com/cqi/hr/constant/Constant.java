@@ -108,18 +108,16 @@ public class Constant {
 	//ASANA
 	public final static String ASANA_CLIENT_ID = "1199599852520253";
 	public final static String ASANA_CLIENT_SECRET = "822216ac72ccc569b152ba3660e99dfb";
+	/* Token Account */
+	public final static String CQI_GAMES_ASANA_TOKEN = "0/aa0cd0284bc273402c12b6cc9ad7700c";
 	
 	// Developer
 	// 需用ngrok把local8080連接到ngrok.io,並在asana app 設定Redirect URLs,此區也須跟著修改
-	 public final static String ASANA_REDIRECT_URL = "https://064006df2a5e.ngrok.io/hr-manage/asanaCallback";
+//	 public final static String ASANA_REDIRECT_URL = "https://4c3a550b4825.ngrok.io/hr-manage/asanaCallback";
 	
 	// Production
-//	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
+	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
 	
-	/*
-	 * Token Account
-	 */
-	public final static String CQI_GAMES_ASANA_TOKEN = "0/aa0cd0284bc273402c12b6cc9ad7700c";
 	
 	/**
 	 * Line Bot Token Developer
@@ -133,6 +131,8 @@ public class Constant {
 	public final static String LINE_CHANNEL_ACCESS_TOKEN = "uV0vhaGIS0iiTNYwxmMHR9Ck3hsHDlM/sdU75CYLhnd5G0WWJjYo/Bk3fNe8RRBMco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2NInI5vBQXrzlIyexdkJ21Zig5OgfSte2QS+3qS1ri1hQdB04t89/1O/w1cDnyilFU=";
 	public final static String LINE_CHANNEL_SECRET = "2599f73f1a402479584066720b7ae7dd";
 
+	public final static String LINE_CQI_LEADER_GROUP_ID = "Cf29819bfa3bb762c60ba832a600b5b97";
+	
 	
 	public final static String LINE_FLEX_MESSAGE_ALT_TEXT_EMERGENCE_REQUEST = "災害處理單申請";
 	

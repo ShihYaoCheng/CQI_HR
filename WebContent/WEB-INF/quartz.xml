@@ -377,8 +377,44 @@
     </bean>
 <!--     #JOB8 未打卡提醒 END -->
 
-<!-- #JOB9 線上打卡BEGIN -->
-	<!-- #JOB9 線上打卡  工作內容 -->
+<!-- #JOB9 未打卡清單  BEGIN -->
+	<!-- JOB9  未打卡清單  工作內容 -->
+	<bean id="jobNoPunchLeaderGroupBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"  value="com.cqi.hr.quartz.NoPunchLeaderGroupJob"  />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="lineBotService" value-ref="lineBotService"/>
+                <entry key="specialDateAboutWorkService" value-ref="specialDateAboutWorkService"/>
+                <entry key="webConfigBean"  >
+                    <ref bean="webConfigBean"/>
+                </entry>
+            </map>
+        </property>   
+    </bean>
+    <!-- JOB9 未打卡清單  排程設定 -->
+	<bean id="cronNoPunchLeaderGroupBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobNoPunchLeaderGroupBean"/>
+        </property>
+        <property name="cronExpression">
+        	<!--<value>10 * * * * ?</value>-->
+        	<value>0 40 10 * * ?</value>
+        </property>
+    </bean>
+    <bean id="schedulerNoPunchLeaderGroupBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronNoPunchLeaderGroupBean"/>
+            </list>
+        </property>
+        <property name="schedulerName">
+        	<value>schedulerNoPunchLeaderGroup</value>
+    	</property>
+    </bean>
+<!-- #JOB9 未打卡清單  END -->	
+
+<!-- #JOB10 線上打卡BEGIN -->
+	<!-- #JOB10 線上打卡  工作內容 -->
 	<bean id="jobOnlinePunchSendPasswordBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.OnlinePunchSendPasswordJob"  />
         <property name="jobDataAsMap">
@@ -391,7 +427,7 @@
             </map>
         </property>   
     </bean>
-    <!-- #JOB9 線上打卡 排程設定 -->
+    <!-- #JOB10 線上打卡 排程設定 -->
 	<bean id="cronOnlinePunchSendPasswordBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <ref bean="jobOnlinePunchSendPasswordBean"/>
@@ -411,10 +447,10 @@
         	<value>schedulerOnlinePunchSendPassword</value>
     	</property>
     </bean>
-<!--     #JOB9 線上打卡 END -->
+<!--     #JOB10 線上打卡 END -->
 
-<!-- #JOB10 調班額度  BEGIN -->
-	<!-- JOB10  調班額度  工作內容 -->
+<!-- #JOB11 調班額度  BEGIN -->
+	<!-- JOB11  調班額度  工作內容 -->
 	<bean id="jobGiveShiftQuotaBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass"  value="com.cqi.hr.quartz.GiveShiftQuotaJob"  />
         <property name="jobDataAsMap">
@@ -426,7 +462,7 @@
             </map>
         </property>   
     </bean>
-    <!-- JOB10 調班額度  排程設定 -->
+    <!-- JOB11 調班額度  排程設定 -->
 	<bean id="cronGiveShiftQuotaBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <ref bean="jobGiveShiftQuotaBean"/>
@@ -446,5 +482,6 @@
         	<value>schedulerGiveShiftQuota</value>
     	</property>
     </bean>
-<!-- #JOB10 調班額度  END -->	
+<!-- #JOB11 調班額度  END -->	
+
 </beans>

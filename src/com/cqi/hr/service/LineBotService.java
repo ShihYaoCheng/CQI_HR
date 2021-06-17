@@ -957,6 +957,45 @@ public class LineBotService extends AbstractService<LineUser>{
 		
 		
 	}
+
+	public void NoPunchLeaderGroup() throws Exception {
+		List<SysUser> userList = new ArrayList<SysUser>();
+		LineMessageVo lineMessageVo = new LineMessageVo();
+		List<FlexComponent> bodyContents = new ArrayList<FlexComponent>();
+		Date today = DateUtils.getTodayWithoutHourMinSec();
+		
+		userList = sysUserDAO.getEnableRole2User();
+		
+		for (SysUser sysUser: userList) {
+			if(sysUser.getUserName().equals("JZ")) {continue;}
+			
+			AttendanceRecord userAttendanceRecord = attendanceRecordDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),today);
+			UserAskForLeave userAskForLeave = userAskForLeaveDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),today);
+			if (userAttendanceRecord != null || (userAskForLeave != null && userAskForLeave.getStartTime().before(new Date()) && userAskForLeave.getEndTime().after(new Date())) ) {
+				continue;
+			}
+			
+			bodyContents.add(Text.builder().text(sysUser.getOriginalName()).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		}
+		
+		
+		lineMessageVo.setAltText("未打卡清單");
+		lineMessageVo.setTargetId(Constant.LINE_CQI_LEADER_GROUP_ID);
+		lineMessageVo.setHeader(NoPunchLeaderGroupHeader());
+		lineMessageVo.setBody(Box.builder().layout(FlexLayout.VERTICAL).contents(bodyContents).build());
+		lineMessageVo.setFooter(todayFooter());
+		sendLineMessage(lineMessageVo,null);
+	}
+	
+	public Box NoPunchLeaderGroupHeader() {
+		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+		String sDate = DateUtils.toString(DateUtils.FormatType.DATE, new Date());
+		
+		headerContents.add(Text.builder().text(sDate+"未打卡清單").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		headerContents.add(Separator.builder().build());
+        return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	}
 	
 	
 }

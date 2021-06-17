@@ -22,7 +22,7 @@ public class MendPunchRecordDAO extends AbstractDAO<MendPunchRecord> {
 		if(StringUtils.hasText(userId)){
 			criteria.add(Restrictions.eq("sysUserId", userId));
 		}
-		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"sysUserId", "mendPunchTime DESC","approvedStatus DESC"}));
+		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"approvedStatus DESC", "mendPunchTime DESC","sysUserId"}));
 	}
 
 }
