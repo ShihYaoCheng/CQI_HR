@@ -172,6 +172,8 @@ public class LineBotService extends AbstractService<LineUser>{
 				BindLineIdToSysUser(sourceJson.get("userId").getAsString(),messageJson.get("text").getAsString(), eventJson.get("replyToken").getAsString());
 			}else if (messageJson.get("text").getAsString().contains("打卡")) {
 				OnlinePunchReply(sourceJson.get("userId").getAsString(),messageJson.get("text").getAsString(), eventJson.get("replyToken").getAsString());
+			}else if (messageJson.get("text").getAsString().equals("綁管理群")) {
+				BindLeaderGroup(sourceJson.get("groupId").getAsString(),eventJson.get("replyToken").getAsString());
 			}
 			/* mark 20210421
 			else if(messageJson.get("text").getAsString().contains("審核") || messageJson.get("text").getAsString().contains("勤務")) {
@@ -195,6 +197,27 @@ public class LineBotService extends AbstractService<LineUser>{
 	}
 	
 	
+
+	private void BindLeaderGroup(String groupId, String replyToken) throws Exception {
+		logger.info("groupId : " + groupId);
+		logger.info("replyToken : " + replyToken);
+		SysUser hrmanager = sysUserDAO.getOneBySysUserId("hrmanager");
+		hrmanager.setLineId(groupId);
+		sysUserDAO.saveOrUpdate(hrmanager);
+		
+		//send line
+		LineMessageVo lineMessageVo = new LineMessageVo();
+		lineMessageVo.setTargetId(groupId);
+		lineMessageVo.setAltText("綁定結果");
+		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+		headerContents.add(Text.builder().text("管理群綁定成功").size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text(hrmanager.getLineId()).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		Box headerBox = Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+        lineMessageVo.setHeader(headerBox);
+		
+		sendLineMessage(lineMessageVo,replyToken);
+	}
 
 	private void BindLineIdToSysUser(String lineUserId, String message, String replyToken) throws Exception {
 		logger.info("lineUserId : " + lineUserId);
@@ -971,13 +994,14 @@ public class LineBotService extends AbstractService<LineUser>{
 			
 			AttendanceRecord userAttendanceRecord = attendanceRecordDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),today);
 			UserAskForLeave userAskForLeave = userAskForLeaveDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),today);
-			if (userAttendanceRecord != null || (userAskForLeave != null && userAskForLeave.getStartTime().before(new Date()) && userAskForLeave.getEndTime().after(new Date())) ) {
+			if (userAttendanceRecord != null) {
 				continue;
+			}else if (userAskForLeave != null && userAskForLeave.getStartTime().before(new Date()) && userAskForLeave.getEndTime().after(new Date())) {
+				continue;
+			}else {
+				bodyContents.add(Text.builder().text(sysUser.getOriginalName()).size(FlexFontSize.XS).align(FlexAlign.START).build());
 			}
-			
-			bodyContents.add(Text.builder().text(sysUser.getOriginalName()).size(FlexFontSize.XS).align(FlexAlign.START).build());
 		}
-		
 		
 		lineMessageVo.setAltText("未打卡清單");
 		lineMessageVo.setTargetId(Constant.LINE_CQI_LEADER_GROUP_ID);

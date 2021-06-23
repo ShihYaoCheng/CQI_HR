@@ -9,11 +9,12 @@
 			<table class="table table-striped">
 				<thead>
 					<tr style="background-color: #edf8ff; font-weight: bold;">
-						<td width="15%">班別</td>
-						<td width="20%">天數/時數</td>
+						<td width="10%">成員</td>
+						<td width="10%">班別</td>
+						<td width="10%">天數/時數</td>
 						<td width="25%">調班時間</td>
 						<td width="25%">排休時間</td>
-						<td width="15">修改</td>
+						<td width="10%">修改</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -24,6 +25,9 @@
 					</c:if>
 					<c:forEach var="item" items="${dataList}" varStatus="vs">
 						<tr>
+							<td>
+								${mapEnableRule2User.get(item.sysUserId).originalName}
+							</td>
 							<td>
 								${mappingOvertime.get(item.overtimeId).leaveName}
 							</td>
@@ -76,11 +80,12 @@
 								<fmt:formatDate var="month" value="${today}" pattern="MM" />
 								<fmt:formatDate var="dataMonth" value="${item.startTime}" pattern="MM" />
 								<c:if test="${ dataMonth >= month || (day<4 && (dataMonth + 1) == month )}">
-									
-									<a href="#" class="btn btn-default function_icon"
-										onclick="deleteData('${item.askForOvertimeId}')" title="刪除">
-										<i class="glyphicon glyphicon-remove"></i>
-									</a>
+									<c:if test="${operator.roleId == '2'}">
+										<a href="#" class="btn btn-default function_icon"
+											onclick="deleteData('${item.askForOvertimeId}')" title="刪除">
+											<i class="glyphicon glyphicon-remove"></i>
+										</a>
+									</c:if>
 								</c:if>
 							</td>
 						</tr>

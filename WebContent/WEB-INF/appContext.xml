@@ -72,19 +72,13 @@
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 		
-		<!-- OLD
-			<property name="url" value="jdbc:mysql://localhost:3306/beta_hr?serverTimezone=GMT%2B8" /> 
-			<property name="url" value="jdbc:mysql://35.221.230.161:3306/beta_hr?serverTimezone=GMT%2B8" /> 
-			<property name="username" value="web"/> 
-			<property name="password" value="drinkTEA4000"/> 
-		-->
 		
-		<!-- Develop 
+		<!-- Develop beta_hr 
 			<property name="url" value="jdbc:mysql://35.221.236.182:30001/beta_hr?serverTimezone=GMT%2B8" /> 
 		-->
-		<!-- Product  -->  
+		<!-- Product  -->   
 			<property name="url" value="jdbc:mysql://127.0.0.1:3306/cqi_hr_manager?serverTimezone=GMT%2B8" />
-		 
+		
 			<property name="username" value="root"/> 
 			<property name="password" value="cqig7777"/>
 		 

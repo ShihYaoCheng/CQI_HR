@@ -21,10 +21,11 @@
 									<div id="overtimeQuotaContent"></div>
 
 									<div class="btn-group">
-										<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"
-											id="shiftSchedule">
-											<i class="glyphicon glyphicon-plus"></i>
-										</a>
+										<c:if test="${operator.roleId == '2'}">
+											<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增" id="shiftSchedule">
+												<i class="glyphicon glyphicon-plus"></i>
+											</a>
+										</c:if>
 									</div>
 
 									<div id="dataContent"></div>

@@ -70,12 +70,19 @@ public class AskShiftController extends AbstractController<UserAskForOvertime> {
 		logger.info(FUNCTION_NAME + " ajaxDataLoading");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
+			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			model.addAttribute("operator",operator);
 			model.addAttribute("mapEnableRule2User", sysUserService.getMapEnableRule2User());
 			model.addAttribute("mappingOvertime", userLeaveService.getCompanyOvertimeMapping());
 			
-			PagingList<UserAskForOvertime> askOvertimeList = userAskForOvertimeService.getListByPage(page, operator.getSysUserId());
-			createPagingInfo(model, askOvertimeList);
+			PagingList<UserAskForOvertime> askOvertimeList = new PagingList<UserAskForOvertime>();
+			if (checkUser!=null) {
+				if(checkUser.getRoleId().equals("1")) {
+					askOvertimeList = userAskForOvertimeService.getListByPage(page, null);
+				}else {
+					askOvertimeList = userAskForOvertimeService.getListByPage(page, operator.getSysUserId());
+				}
+			}createPagingInfo(model, askOvertimeList);
 			
 			
 			model.addAttribute("mapUserAskForLeaveByOvertimeId", userAskForShiftService.mapUserAskForLeaveByOvertimeId());
