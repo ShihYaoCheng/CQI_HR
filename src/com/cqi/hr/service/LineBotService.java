@@ -1020,6 +1020,52 @@ public class LineBotService extends AbstractService<LineUser>{
 		headerContents.add(Separator.builder().build());
         return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
 	}
+
+	public boolean sendWFHToUser(WorkFromHome workFromHome) throws Exception {
+		SysUser lineUser = sysUserDAO.getOneBySysUserId(workFromHome.getSysUserId());
+		if (lineUser == null) {
+			return false;
+		}
+		LineMessageVo lineMessageVo = new LineMessageVo();
+		lineMessageVo.setAltText("WFH審核");
+		lineMessageVo.setTargetId(lineUser.getLineId());
+		lineMessageVo.setHeader(basicHeader("WFH審核",""));
+		lineMessageVo.setBody(WFHBody(workFromHome));
+		sendLineMessage(lineMessageVo,null);
+		
+		
+		return true;
+	}
+	
+	public Box basicHeader(String title, String content ) {
+		List<FlexComponent> headerContents = new ArrayList<FlexComponent>();
+		headerContents.add(Text.builder().text(title).size(FlexFontSize.LG).color("#2FC032").weight(TextWeight.BOLD).align(FlexAlign.START).build());
+		if (StringUtils.hasText(content)) {
+			headerContents.add(Text.builder().text(content).size(FlexFontSize.XS).align(FlexAlign.START).build());
+			
+		}
+		headerContents.add(Text.builder().text("訊息推送時間：" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		headerContents.add(Separator.builder().build());
+        return Box.builder().layout(FlexLayout.VERTICAL).contents(headerContents).build();
+	}
+	public Box WFHBody(WorkFromHome workFromHome) throws Exception {
+		List<FlexComponent> bodyContents = new ArrayList<FlexComponent>();
+		SysUser user = sysUserDAO.getOneBySysUserId(workFromHome.getSysUserId());
+		
+		bodyContents.add(Text.builder().text(user.getOriginalName()+ "已新增WFH紀錄;詳情請看HR系統").size(FlexFontSize.XS).align(FlexAlign.START).build());
+		bodyContents.add(Text.builder().text("級別:"+ workFromHome.getLevel()).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		bodyContents.add(Text.builder().text("起始日期:"+ new SimpleDateFormat("yyyy/MM/dd").format(workFromHome.getWorkDate())).size(FlexFontSize.XS).align(FlexAlign.START).build());
+		
+		//URI uri = new URI("https://8f9817ca0714.ngrok.io/hr-manage/security/WorkFromHome");
+		URI uri = new URI("https://hr.cqiserv.com/security/WorkFromHome");
+		final Button buttonWeb = Button.builder().style(ButtonStyle.PRIMARY).height(ButtonHeight.SMALL)
+	            .action(new URIAction("WFH", uri, null))
+	            .build();
+		bodyContents.add(buttonWeb);
+		
+		return Box.builder().layout(FlexLayout.VERTICAL).contents(bodyContents).build();
+	}
+
 	
 	
 }

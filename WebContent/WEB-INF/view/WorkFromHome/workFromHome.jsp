@@ -19,14 +19,13 @@
 					<h3><b>遠端作業管理</b></h3>
 					<br/>
 					<div class="form-group" style="display: inline;">
-						<div class="input-group">
-							
-						</div>
-						<div class="btn-group">
-							<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"> 
-								<i class="glyphicon glyphicon-plus"></i>
-							</a>
-						</div>
+						<c:if test="${operator.roleId == '1'}">
+							<div class="btn-group">
+								<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增"> 
+									<i class="glyphicon glyphicon-plus"></i>
+								</a>
+							</div>
+						</c:if>
 					</div>
 					<br>
 					<table class="table table-striped">

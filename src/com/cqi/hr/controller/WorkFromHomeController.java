@@ -1,5 +1,7 @@
 package com.cqi.hr.controller;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -9,6 +11,7 @@ import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +21,7 @@ import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.SysUserShift;
 import com.cqi.hr.entity.WorkFromHome;
+import com.cqi.hr.service.LineBotService;
 import com.cqi.hr.service.SysUserService;
 import com.cqi.hr.service.SysUserShiftService;
 import com.cqi.hr.service.WorkFromHomeService;
@@ -30,7 +34,13 @@ public class WorkFromHomeController extends AbstractController<WorkFromHome>{
 
 	@Resource SysUserService sysUserService;
 	@Resource WorkFromHomeService workFromHomeService;
+	@Resource LineBotService lineBotService;
 	private static String FUNCTION_NAME = "WorkFromHome";
+	
+	@ModelAttribute("UserList")
+	public List<SysUser> UserList() throws Exception {
+		return sysUserService.getUserList();
+	}
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public String index(HttpServletRequest req, ModelMap model) {
@@ -53,8 +63,14 @@ public class WorkFromHomeController extends AbstractController<WorkFromHome>{
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			PagingList<WorkFromHome> WorkFromHomeList = new PagingList<WorkFromHome>();
-			WorkFromHomeList = workFromHomeService.getList(page, null);
 			
+			if (checkUser!=null) {
+				if(checkUser.getRoleId().equals("1")) {
+					WorkFromHomeList = workFromHomeService.getList(page, null);
+				}else {
+					WorkFromHomeList = workFromHomeService.getList(page, checkUser);
+				}
+			}
 			
 			createPagingInfo(model, WorkFromHomeList);
 			model.addAttribute("operator",operator);
@@ -79,11 +95,19 @@ public class WorkFromHomeController extends AbstractController<WorkFromHome>{
 				workFromHome.setCreateTime(now.getTime());
 				workFromHome.setModifyTime(now.getTime());
 				workFromHome.setStatus(Constant.STATUS_ENABLE);
+				
+				Date startDate = workFromHome.getWorkDate();//紀錄起始日期已傳送line給user
+				
 				String errorMsg = workFromHomeService.addWorkFromHome(workFromHome);
 				if(StringUtils.hasText(errorMsg)) {
 					map = createResponseMsg(false, "", errorMsg);
 				}else {
-					map = createResponseMsg(true, "", "");
+					workFromHome.setWorkDate(startDate);
+					if (lineBotService.sendWFHToUser(workFromHome)) {
+						map = createResponseMsg(true, "", "");
+					} else {
+						map = createResponseMsg(false, "", "line : sendWFHToUser error");
+					}
 				}
 			}
 		}catch(Exception e){
