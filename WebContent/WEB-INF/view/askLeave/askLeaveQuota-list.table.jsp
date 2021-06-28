@@ -18,7 +18,7 @@
 			<tbody>
 				<c:if test="${userLeaveList == null || userLeaveList.size()<1}">
 					<tr class="bg">
-						<td colspan="5" align="center">沒有資料</td>
+						<td colspan="9" align="center">沒有資料</td>
 					</tr>
 				</c:if>
 				<c:forEach var="userLeave" items="${userLeaveList}" varStatus="vs">

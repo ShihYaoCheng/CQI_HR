@@ -4,23 +4,24 @@
 
 		<div class="table-responsive">
 			<div>
-				<h4><b>調班紀錄</b></h4>
+				<h4><b>排班紀錄</b></h4>
 			</div>
 			<table class="table table-striped">
 				<thead>
 					<tr style="background-color: #edf8ff; font-weight: bold;">
 						<td width="10%">成員</td>
 						<td width="10%">班別</td>
-						<td width="10%">天數/時數</td>
-						<td width="25%">調班時間</td>
-						<td width="25%">排休時間</td>
+						<td width="15%">天數/時數</td>
+						<td width="15%">排班時間</td>
+						<td width="15%">排休時間</td>
+						<td width="15%">事由</td>
 						<td width="10%">修改</td>
 					</tr>
 				</thead>
 				<tbody>
 					<c:if test="${totalRecord == 0}">
 						<tr class="bg">
-							<td colspan="5" align="center">沒有資料</td>
+							<td colspan="9" align="center">沒有資料</td>
 						</tr>
 					</c:if>
 					<c:forEach var="item" items="${dataList}" varStatus="vs">
@@ -32,13 +33,13 @@
 								${mappingOvertime.get(item.overtimeId).leaveName}
 							</td>
 
-							<td> 
+							<td>
 								${item.spendTime.intValue()}
 								<c:if test="${mappingOvertime.get(item.overtimeId).unitType == 1}">天</c:if>
 								<c:if test="${mappingOvertime.get(item.overtimeId).unitType == 2}">小時</c:if>
 							</td>
 
-							<!-- 調班時間 -->
+							<!-- 排班時間 -->
 							<td>
 								<div>
 									<fmt:formatDate pattern="yyyy/MM/dd" value="${item.startTime}" />
@@ -59,20 +60,27 @@
 							<!-- 排休時間 -->
 							<td>
 								<div>
-									<fmt:formatDate pattern="yyyy/MM/dd" value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).startTime}" />
+									<fmt:formatDate pattern="yyyy/MM/dd"
+										value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).startTime}" />
 								</div>
 								<div>
-									<fmt:formatDate pattern="HH:mm" value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).startTime}" />
+									<fmt:formatDate pattern="HH:mm"
+										value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).startTime}" />
 								</div>
 								<div>至</div>
 								<div>
-									<fmt:formatDate pattern="yyyy/MM/dd" value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).endTime}" />
+									<fmt:formatDate pattern="yyyy/MM/dd"
+										value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).endTime}" />
 								</div>
 								<div>
-									<fmt:formatDate pattern="HH:mm" value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).endTime}" />
+									<fmt:formatDate pattern="HH:mm"
+										value="${mapUserAskForLeaveByOvertimeId.get(item.askForOvertimeId).endTime}" />
 								</div>
 							</td>
 
+							<td>
+								${item.description}
+							</td>
 
 							<td>
 								<c:set var="today" value="<%=new Date()%>" />

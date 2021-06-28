@@ -14,7 +14,7 @@
 
 						<div class="col-xs-12 col-md-12 single_table">
 							<form class="navbar-form">
-								<h3><b>調班資料管理</b></h3>
+								<h3><b>排班資料管理</b></h3>
 
 								<%@include file="../include/progressing.jsp" %>
 
@@ -22,7 +22,8 @@
 
 									<div class="btn-group">
 										<c:if test="${operator.roleId == '2'}">
-											<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增" id="shiftSchedule">
+											<a href="#" class="btn btn-default function_icon" onclick="active()"
+												title="新增" id="shiftSchedule">
 												<i class="glyphicon glyphicon-plus"></i>
 											</a>
 										</c:if>
@@ -47,7 +48,7 @@
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal"
 									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">新增調班紀錄</h4>
+								<h4 class="modal-title" id="myModalLabel">新增排班紀錄</h4>
 							</div>
 							<div class="modal-body" id="shiftScheduleDialog">
 								<input type="hidden" id="unitType" name="unitType" />
@@ -58,7 +59,7 @@
 									<input type="hidden" id="asanaTaskId" name="asanaTaskId" />
 									<div id="edit">
 										<div class="form-group">
-											<label for="recipient-name" class="control-label col-sm-12">調班種類:</label>
+											<label for="recipient-name" class="control-label col-sm-12">排班種類:</label>
 											<div class="col-sm-12 checkbox">
 												<div id="roleTypeDiv" style="float:left;">
 													<select class="form-control" id="overtimeId" name="overtimeId"
@@ -102,7 +103,7 @@
 											</div>
 										</div>
 										<div class="form-group" style="margin-bottom: 0px;">
-											<label for="recipient-name" class="control-label col-sm-12">調班起始時間：</label>
+											<label for="recipient-name" class="control-label col-sm-12">排班起始時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
 													<div class='input-group date' id='datetimepickerStart'>
@@ -118,7 +119,7 @@
 											</div>
 										</div>
 										<div class="form-group" style="margin-bottom: 0px;">
-											<label for="recipient-name" class="control-label col-sm-12">調班結束時間：</label>
+											<label for="recipient-name" class="control-label col-sm-12">排班結束時間：</label>
 											<div class="col-sm-12">
 												<div class="form-group">
 													<div class='input-group date' id='datetimepickerEnd'
@@ -202,7 +203,7 @@
 
 
 
-				<!-- dialog 調班剩餘額度-->
+				<!-- dialog 排班剩餘額度-->
 				<div class="modal fade" id="basicModalEdit" tabindex="-1" role="dialog" aria-labelledby="basicModal"
 					aria-hidden="true">
 					<div class="modal-dialog">
@@ -210,7 +211,7 @@
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal"
 									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">調班額度</h4>
+								<h4 class="modal-title" id="myModalLabel">排班額度</h4>
 							</div>
 							<div class="modal-body">
 								<form id="ShiftQuotaForm" name="ShiftQuotaForm">
@@ -306,7 +307,7 @@
 							var next30days = new Date(today.setDate(today.getDate() + 30));
 							console.log('30天後：' + next30days);
 
-							//-------------------調班時間--------------------
+							//-------------------排班時間--------------------
 
 							$('#datetimepickerStart').datetimepicker({
 								format: 'yyyy/mm/dd hh:ii',
@@ -477,7 +478,7 @@
 
 
 
-						// "班別：" 點選調班時，"單位：小時" 限制為2跟4小時
+						// "班別：" 點選排班時，"單位：小時" 限制為2跟4小時
 						$('#overtimeId').change(function () {
 
 							$('#startTime').val('');
@@ -498,7 +499,7 @@
 							}
 
 
-							// 抓取選擇調班的時數
+							// 抓取選擇排班的時數
 							$('#spendTime').change(function () {
 
 								var spendTimeHour = $("#spendTime").val();
@@ -534,7 +535,7 @@
 							errorCode["2"] = "請選擇天數/時數";
 							errorCode["3"] = "請輸入時間";
 							errorCode["4"] = "請選擇成員";
-							errorCode["5"] = "本周調班次數已達上限，無法調班";
+							errorCode["5"] = "本周排班次數已達上限，無法排班";
 
 							var errors = {};
 
@@ -571,9 +572,9 @@
 
 
 							var thisWeekShiftQuota = $('#thisWeekShiftQuota').text().trim();
-							console.log("本周調班剩餘額度 " + thisWeekShiftQuota);
+							console.log("本周排班剩餘額度 " + thisWeekShiftQuota);
 
-							// 本周調班剩餘額度為0時，不能調班
+							// 本周排班剩餘額度為0時，不能排班
 							if ($('#overtimeId').val() == 2) {
 								if (thisWeekShiftQuota < 1) {
 									errors['overtimeId'] = 5;
@@ -685,7 +686,7 @@
 								$('#asanaTaskId').val("");
 								$('#status').val("");
 
-								$('#basicModal').find('.modal-title').text(text + "調班紀錄");
+								$('#basicModal').find('.modal-title').text(text + "排班紀錄");
 								$('#basicModal').modal('toggle');
 
 							} else {
@@ -716,7 +717,7 @@
 											$('#asanaTaskId').val(data.userAskForOvertime.asanaTaskId);
 											$('#status').val(data.userAskForOvertime.status);
 											selectedLeaveId($('#overtimeId option:selected').html());
-											$('#basicModal').find('.modal-title').text(text + "調班紀錄");
+											$('#basicModal').find('.modal-title').text(text + "排班紀錄");
 											$('#basicModal').modal('toggle');
 											progressing = 0;
 										} else {
@@ -739,7 +740,7 @@
 
 
 
-						// 調班額度管理
+						// 排班額度管理
 
 						function edit(userShiftQuotaId) {
 							console.log("edit：" + userShiftQuotaId);
@@ -768,7 +769,7 @@
 										$('#count').val(data.userShiftQuota.count);
 										$('#count').attr("readonly", "readonly");
 										$('#quota').val(data.userShiftQuota.quota);
-										$('#basicModalEdit').find('.modal-title').text(text + "調班額度");
+										$('#basicModalEdit').find('.modal-title').text(text + "排班額度");
 										$('#basicModalEdit').modal('toggle');
 										progressing = 0;
 									} else {
@@ -785,7 +786,7 @@
 							console.log("submitEdit");
 
 							var errorCode = {};
-							errorCode["1"] = "請選擇調班額度";
+							errorCode["1"] = "請選擇排班額度";
 							var errors = {};
 
 							if ($('#quota').val() == '') {

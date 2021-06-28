@@ -4,12 +4,12 @@
 		<div>
 			<h4>
 				<br>
-				<b>調班額度</b>
+				<b>排班額度</b>
 			</h4>
-			<p style="font-size:16px">＊修改調班額度後，系統下周起將套用新設定額度，如有立即需求請洽系統管理員＊</p>
+			<p style="font-size:16px">＊修改排班額度後，系統下周起將套用新設定額度，如有立即需求請洽系統管理員＊</p>
 		</div>
 
-		<!-- 調班剩餘額度 -->
+		<!-- 排班剩餘額度 -->
 		<table class="table table-striped" id="userLeaveDataArea">
 
 			<thead>
@@ -24,7 +24,7 @@
 
 				<c:if test="${userShiftQuotaList == null || userShiftQuotaList.size()<1}">
 					<tr class="bg">
-						<td colspan="5" align="center">沒有資料</td>
+						<td colspan="9" align="center">沒有資料</td>
 					</tr>
 				</c:if>
 
