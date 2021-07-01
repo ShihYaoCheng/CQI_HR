@@ -25,7 +25,7 @@ public class CompanyLeave implements Serializable {
 	public static final String OCCUPIED_LEAVE = "事假";
 	public static final Long OCCUPIED_LEAVE_ID = 1L;
 	//調班
-	public static final String SHIFT_OVERTIME = "調班";
+	public static final String SHIFT_OVERTIME = "排班";
 	public static final Long SHIFT_OVERTIME_ID = 2L;
 	//生理假
 	public static final String MENSTRUATION_LEAVE = "生理假";

@@ -386,6 +386,9 @@ public class UserAskForLeaveService extends AbstractService<UserAskForLeave>{
 				}
 			}
 		}
+		if(!DateUtils.isTheSameMonth(data.getStartTime(), data.getEndTime())) {
+			return Constant.DIFFERENT_MONTH;
+		}
 		return "";
 	}
 

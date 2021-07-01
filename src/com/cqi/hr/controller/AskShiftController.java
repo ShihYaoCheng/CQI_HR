@@ -141,51 +141,57 @@ public class AskShiftController extends AbstractController<UserAskForOvertime> {
 				
 				String errorMsgLeave = userAskForLeaveService.checkRule(userAskForLeave);
 				
-				
-				userAskForOvertime.setSysUserId(operator.getSysUserId());
-				String errorMsg = userAskForOvertimeService.checkRule(userAskForOvertime);
-				if(StringUtils.hasText(errorMsg) ||StringUtils.hasText(errorMsgLeave)) {
-					map = createResponseMsg(false, "", errorMsg);
+				if (StringUtils.hasText(errorMsgLeave)) {
+					map = createResponseMsg(false, "","Leave checkRule"+errorMsgLeave);
 				}else {
-					userAskForLeave.setStatus(1);
-					userAskForLeave.setCreateDate(calendar.getTime());
-					userAskForLeave.setUpdateDate(calendar.getTime());
-					userAskForOvertime.setStatus(1);
-					userAskForOvertime.setCreateDate(calendar.getTime());
-					userAskForOvertime.setUpdateDate(calendar.getTime());
-					if(!DateUtils.isTheSameMonth(userAskForLeave.getStartTime(), userAskForLeave.getEndTime())) {
-						map = createResponseMsg(false, "", Constant.DIFFERENT_MONTH);
-					}else if( !userAskForOvertimeService.checkEmergenceRule(userAskForOvertime)) {
-						map = createResponseMsg(false, "", Constant.EMERGENCE_ILLEGAL);
+					userAskForOvertime.setSysUserId(operator.getSysUserId());
+					String errorMsgOvertime = userAskForOvertimeService.checkRule(userAskForOvertime);
+					
+					if(StringUtils.hasText(errorMsgOvertime) ) {
+						map = createResponseMsg(false, "", "Overtime checkRule:"+errorMsgOvertime);
 					}else {
-						boolean isSuccessLeave = userLeaveService.updateUserLeave(userAskForLeave, 1);
-						boolean isSuccessOvertime = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 1);
-						if(isSuccessLeave && isSuccessOvertime){
-							//add shift
-							userAskForShiftService.addShift(userAskForOvertime,userAskForLeave);
+						if( !userAskForOvertimeService.checkEmergenceRule(userAskForOvertime)) {
+							map = createResponseMsg(false, "", Constant.EMERGENCE_ILLEGAL);
+						}else {
+							userAskForLeave.setStatus(0);
+							userAskForLeave.setCreateDate(calendar.getTime());
+							userAskForLeave.setUpdateDate(calendar.getTime());
 							
+							userAskForOvertime.setStatus(0);
+							userAskForOvertime.setCreateDate(calendar.getTime());
+							userAskForOvertime.setUpdateDate(calendar.getTime());
 							
-							String token = SessionUtils.getAsanaToken(req);
-							if(token != null) {
-								boolean addLeaveTaskSucceed = AsanaUtils.addLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyOvertimeMapping());
-								if(!addLeaveTaskSucceed) {
-									userAskForLeave.setDescription("Asana新增Task失敗\n" + userAskForLeave.getDescription());
+							boolean isSuccessLeave = userLeaveService.updateUserLeave(userAskForLeave, 1);
+							if (!isSuccessLeave) {
+								map = createResponseMsg(false, "", "排休新增失敗");
+							}else {
+								boolean isSuccessOvertime = userAskForOvertimeService.updateUserAskOvertime(userAskForOvertime, 1);
+								if(!isSuccessOvertime){
+									map = createResponseMsg(false, "", "排班新增失敗");
+								}else {
+									//add shift
+									boolean isSucessShift = userAskForShiftService.addShift(userAskForOvertime,userAskForLeave);
+									String token = SessionUtils.getAsanaToken(req);
+									if(isSucessShift && token != null){
+										boolean addLeaveTaskSucceed = AsanaUtils.addLeaveTask(token, operator, userAskForLeave, userLeaveService.getCompanyOvertimeMapping());
+										if(!addLeaveTaskSucceed) {
+											userAskForLeave.setDescription("Asana新增Task失敗\n" + userAskForLeave.getDescription());
+										}
+										logger.info("Asana Id ajaxAdd : " + userAskForLeave.getAsanaTaskId());
+										//將Asana狀況儲存，AsanaId和Description
+										userAskForLeaveService.update(userAskForLeave);
+									
+										boolean addOvertimeTaskSucceed = AsanaUtils.addOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
+										if(!addOvertimeTaskSucceed) {
+											userAskForOvertime.setDescription("Asana新增Task失敗\n" + userAskForOvertime.getDescription());
+										}
+										logger.info("Asana Id ajaxAdd : " + userAskForOvertime.getAsanaTaskId());
+										//將Asana狀況儲存，AsanaId和Description
+										userAskForOvertimeService.update(userAskForOvertime);
+									}
+									map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
 								}
-								logger.info("Asana Id ajaxAdd : " + userAskForLeave.getAsanaTaskId());
-								//將Asana狀況儲存，AsanaId和Description
-								userAskForLeaveService.update(userAskForLeave);
-							
-								boolean addOvertimeTaskSucceed = AsanaUtils.addOvertimeTask(token, operator, userAskForOvertime, userLeaveService.getCompanyOvertimeMapping());
-								if(!addOvertimeTaskSucceed) {
-									userAskForOvertime.setDescription("Asana新增Task失敗\n" + userAskForOvertime.getDescription());
-								}
-								logger.info("Asana Id ajaxAdd : " + userAskForOvertime.getAsanaTaskId());
-								//將Asana狀況儲存，AsanaId和Description
-								userAskForOvertimeService.update(userAskForOvertime);
 							}
-							map = createResponseMsg(!StringUtils.hasText(result), Constant.SUCCESS, result);
-						}else{
-							map = createResponseMsg(false, "", Constant.RECORD_NOT_EXIST);
 						}
 					}
 				}

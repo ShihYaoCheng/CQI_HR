@@ -31,6 +31,8 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 			criteria.add(Restrictions.eq("sysUserId", userId));
 		}
 		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		criteria.add(Restrictions.ne("leaveId", CompanyLeave.SHIFT_OVERTIME_ID));
+		
 		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"startTime DESC", "endTime DESC"}));
 	}
 	

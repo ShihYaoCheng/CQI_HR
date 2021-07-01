@@ -168,7 +168,7 @@ public class AsanaUtils {
         	asanaName.append(" " + dayMonthFormat.format(leave.getStartTime()) + "~" + dayMonthFormat.format(leave.getEndTime()));
         }
         if (leave.getLeaveId() == 2) {
-        	asanaName.append(" 調休");
+        	asanaName.append(" 排休");
 		} else {
 			asanaName.append(" " + leaveMapping.get(leave.getLeaveId()).getLeaveName());
 		}

@@ -116,7 +116,7 @@ public class Constant {
 //	 public final static String ASANA_REDIRECT_URL = "https://8f9817ca0714.ngrok.io/hr-manage/asanaCallback";
 	
 	// Production
-//	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
+	 public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
 	
 	
 	/**
