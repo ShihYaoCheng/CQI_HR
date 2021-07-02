@@ -154,7 +154,7 @@
 							$('#datetimepickerStart').datetimepicker({
 								format: 'yyyy/mm/dd hh:ii',
 								autoclose: true,
-								minuteStep: 30,
+								minuteStep: 60,
 								focusOnShow: false,
 								allowInputToggle: true,
 								startDate: pickerStartDate
@@ -162,7 +162,7 @@
 							$('#datetimepickerEnd').datetimepicker({
 								format: 'yyyy/mm/dd hh:ii',
 								autoclose: true,
-								minuteStep: 30,
+								minuteStep: 60,
 								focusOnShow: false,
 								allowInputToggle: true,
 								startDate: pickerStartDate
