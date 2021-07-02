@@ -31,6 +31,27 @@
 					<%@include file="../include/progressing.jsp"%>					
 					<div id="dataContent">
 					</div>
+					
+					<div id="test">
+						<table class="table table-striped">
+							<tbody>
+								<c:forEach var="item" items="${SysUserList}" varStatus="vs">
+									<tr >
+										<td>
+											${item.sysUserId}
+										</td>
+										<td>
+											${item.originalName}
+										</td>
+										<td>
+											${item.cardId}
+										</td>
+									</tr>
+								</c:forEach>
+							
+							</tbody>
+						</table>
+					</div>
 				</form>
 
 			</div>
