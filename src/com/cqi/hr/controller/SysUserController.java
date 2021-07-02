@@ -1,5 +1,6 @@
 package com.cqi.hr.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -11,6 +12,7 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +31,11 @@ import com.cqi.hr.util.StringUtils;
 public class SysUserController extends AbstractController<SysUser> {	
 	@Resource SysUserService sysUserService;
 	private static String FUNCTION_NAME = "sys user"; 
+	
+	@ModelAttribute("SysUserList")
+	public List<SysUser> SysUserList() throws Exception {
+		return sysUserService.getUserList();
+	}
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public String list(HttpServletRequest req, ModelMap model) {

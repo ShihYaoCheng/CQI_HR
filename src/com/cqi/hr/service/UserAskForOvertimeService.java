@@ -111,19 +111,8 @@ public class UserAskForOvertimeService extends AbstractService<UserAskForOvertim
 		case 1:
 			userAskForOvertimeDAO.persist(userAskForOvertime);
 			
-			if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("調班")) {
-				
-				//取得剩餘調班額度
-				UserShiftQuota userShiftQuota = userShiftQuotaDAO.getOneByUserId(userAskForOvertime.getSysUserId());
-				if (userShiftQuota == null || userShiftQuota.getCount() <= 0) {
-					return false;
-				}else {
-					userShiftQuota.setCount(userShiftQuota.getCount() -1 );
-					userShiftQuota.setUpdateTime(new Date());
-				}
-				userShiftQuotaDAO.update(userShiftQuota);
-				
-				
+			if (userAskForOvertime.getOvertimeId() == 2) {
+				//排班額度在UserAskForShiftService扣除
 			}else if(overtimeMap.get(userAskForOvertime.getOvertimeId()).getLeaveName().equals("災害處理")) {
 				// 1. 產生災害處理單的對應認證碼
 				EmergenceOvertimeSign sign = new EmergenceOvertimeSign();

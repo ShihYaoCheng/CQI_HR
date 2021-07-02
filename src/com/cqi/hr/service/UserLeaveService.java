@@ -141,7 +141,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		UserLeave userLeave = userLeaveDAO.getOneBy2Id(userAskForLeave.getSysUserId(), userAskForLeave.getLeaveId());
 		if (type.equals(1)) {
 			if (userAskForLeave.getLeaveId() == 2) {
-				
+				//排班額度在UserAskForShiftService扣除
 			}else if (null == userLeave ) {
 				userLeave = new UserLeave();
 				userLeave.setLeaveId(userAskForLeave.getLeaveId());
