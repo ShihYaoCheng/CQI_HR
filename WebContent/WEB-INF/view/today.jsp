@@ -156,39 +156,39 @@
 																				</c:otherwise>
 																			</c:choose>
 																		</c:otherwise>
-									</c:choose>
-									</c:otherwise>
-									</c:choose>
-									</c:forEach>
-									<c:choose>
-										<c:when test="${todayOvertime.get(user.sysUserId)!=null}">
-											<c:set var="overtimeSum" value="0" />
-											<c:forEach var="userOvertime" items="${todayOvertime.get(user.sysUserId)}"
-												varStatus="vs">
-												<c:set var="overtimeSum"
-													value="${overtimeSum + userOvertime.spendTime}" />
+																	</c:choose>
+																</c:otherwise>
+															</c:choose>
+														</c:forEach>
+														<c:choose>
+															<c:when test="${todayOvertime.get(user.sysUserId)!=null}">
+																<c:set var="overtimeSum" value="0" />
+																<c:forEach var="userOvertime" items="${todayOvertime.get(user.sysUserId)}"
+																	varStatus="vs">
+																	<c:set var="overtimeSum"
+																		value="${overtimeSum + userOvertime.spendTime}" />
+																</c:forEach>
+																<td class="text-center has-overtime">
+																	+${overtimeSum.intValue()}H
+																</td>
+															</c:when>
+															<c:otherwise>
+																<td class="text-center rest-time">
+																	0
+																</td>
+															</c:otherwise>
+														</c:choose>
+													</tr>
+												</c:if>
 											</c:forEach>
-											<td class="text-center has-overtime">
-												+${overtimeSum.intValue()}H
-											</td>
 										</c:when>
 										<c:otherwise>
-											<td class="text-center rest-time">
-												0
-											</td>
+											<tr class="bg">
+												<td colspan="13" align="center">
+													<h1>放假啦~~~~~~!</h1>
+												</td>
+											</tr>
 										</c:otherwise>
-									</c:choose>
-									</tr>
-									</c:if>
-									</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<tr class="bg">
-											<td colspan="13" align="center">
-												<h1>放假啦~~~~~~!</h1>
-											</td>
-										</tr>
-									</c:otherwise>
 									</c:choose>
 								</tbody>
 							</table>
