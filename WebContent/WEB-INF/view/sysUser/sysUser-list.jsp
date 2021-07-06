@@ -265,7 +265,7 @@
 				$('#cardId-error').hide();
 			}
 
-			
+			//
 
 			var userId = "";
 			if($("#sysUserId").val() != ''){
