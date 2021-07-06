@@ -32,7 +32,8 @@
 					<div id="dataContent">
 					</div>
 					
-					<div id="test">
+					<!-- 員工編號/姓名/cardId -->
+					<div id="test" style="display: none;">
 						<table class="table table-striped">
 							<tbody>
 								<c:forEach var="item" items="${SysUserList}" varStatus="vs">
@@ -40,18 +41,19 @@
 										<td>
 											${item.sysUserId}
 										</td>
-										<td>
+										<td class="tdName">
 											${item.originalName}
 										</td>
-										<td>
+										<td class="tdCardId">
 											${item.cardId}
 										</td>
 									</tr>
 								</c:forEach>
-							
 							</tbody>
 						</table>
 					</div>
+
+
 				</form>
 
 			</div>
@@ -103,13 +105,17 @@
 						            <span id="gender-error" class="error_text"></span>
 					            </div>
 							</div>
+
 							<div class="form-group">
-					            <label for="cardId" class="control-label col-sm-12">卡號:</label>
-					            <div class="col-sm-12">
-					            	<input type="text" class="form-control" id="cardId" name="cardId" />
-					            </div>
-					            <span>請前往卡號原始資料查詢無對應的卡號，離職人員請將卡號清除避免卡號重複</span>
+								<label for="cardId" class="control-label col-sm-12">卡號:</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" id="cardId" name="cardId" />
+								</div>
+								<!-- <span>請前往卡號原始資料查詢無對應的卡號，離職人員請將卡號清除避免卡號重複</span> -->
+								<span id="cardId-error" class="error_text" style="padding-left: 15px;"></span>
+
 							</div>
+
 							<div class="form-group">
 					            <label for="department" class="control-label col-sm-12">樓層:</label>
 					            <div class="col-sm-12">
@@ -172,6 +178,30 @@
 
 	<%@include file="/WEB-INF/view/include/view-html-bottom.jsp"%>
 	<script type="text/javascript">
+
+		// const NULL = '';
+		// const SysUserCardId = [];
+		// const SysUserName = [];
+		// <c:forEach var="item" items="${SysUserList}" varStatus="vs">
+		// 	<c:if test="${item.cardId != 'NULL'}">
+		// 		SysUserCardId.push("${item.cardId}");
+		// 		SysUserName.push("${item.originalName}");
+		// 	</c:if>
+		// </c:forEach>
+
+		// 取得全部cardID
+		const tdCardId = $('.tdCardId').map(function(){
+			return $(this).text().trim();
+		}).get();
+
+		// 取得全部Name
+		const tdName = $('.tdName').map(function(){
+			return $(this).text().trim();
+		}).get();
+
+		console.log('tdCardId',tdCardId);
+		console.log('tdName',tdName);
+
 		var progressing = 0;
 		jQuery().ready(function (){
 			
@@ -210,11 +240,33 @@
 		}
 		
 		function submit(){
+
+
 			var errorCode = {};
 			errorCode["1"] = "Can not be empty";
 			errorCode["2"] = "Id duplicate";
 			var errors = {};
+
+			// 如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
+			// if (SysUserCardId.includes($("#cardId").val())) {
+			// 	let theIndex = SysUserCardId.indexOf($("#cardId").val());
+			// 	errorCode["3"] = "11此卡號與職員「"+ SysUserName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
+			// 	errors['cardId'] = 3;
+			// }else {
+			// 	$('#cardId-error').hide();
+			// }
+
+			// 如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
+			if (tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL") {
+				let theIndex = tdCardId.indexOf($("#cardId").val());
+				errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
+				errors['cardId'] = 3;
+			}else {
+				$('#cardId-error').hide();
+			}
+
 			
+
 			var userId = "";
 			if($("#sysUserId").val() != ''){
 				userId = $("#sysUserId").val();

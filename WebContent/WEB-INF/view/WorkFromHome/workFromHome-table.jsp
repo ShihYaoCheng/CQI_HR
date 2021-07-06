@@ -20,7 +20,7 @@
 		<tbody>
 			<c:if test="${totalRecord == 0}">
 				<tr class="bg">
-					<td colspan="5" align="center">沒有資料</td>
+					<td colspan="9" align="center">沒有資料</td>
 				</tr>
 			</c:if>
 			<c:forEach var="item" items="${dataList}" varStatus="vs">
