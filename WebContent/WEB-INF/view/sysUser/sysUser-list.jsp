@@ -250,7 +250,7 @@
 			// 如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
 			// if (SysUserCardId.includes($("#cardId").val())) {
 			// 	let theIndex = SysUserCardId.indexOf($("#cardId").val());
-			// 	errorCode["3"] = "11此卡號與職員「"+ SysUserName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
+			// 	errorCode["3"] = "此卡號與職員「"+ SysUserName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
 			// 	errors['cardId'] = 3;
 			// }else {
 			// 	$('#cardId-error').hide();
@@ -264,7 +264,7 @@
 			}else {
 				$('#cardId-error').hide();
 			}
-			
+
 
 			var userId = "";
 			if($("#sysUserId").val() != ''){
