@@ -21,7 +21,7 @@
 						<div class="input-group">
 							<input type="text" id="searchUserName" class="form-control" placeholder="請輸入人員名稱...">
 							<span class="btn btn-default input-group-addon function_icon" onclick="queryData(1)">
-								GO!
+								GO
 							</span>
 						</div>
 						<div class="btn-group">
@@ -32,12 +32,12 @@
 					<div id="dataContent">
 					</div>
 					
-					<!-- 員工編號/姓名/cardId -->
+					<!-- 員工編號/姓名/cardId 畫面上不顯示-->
 					<div id="test" style="display: none;">
 						<table class="table table-striped">
 							<tbody>
 								<c:forEach var="item" items="${SysUserList}" varStatus="vs">
-									<tr >
+									<tr>
 										<td>
 											${item.sysUserId}
 										</td>
