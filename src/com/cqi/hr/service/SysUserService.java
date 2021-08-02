@@ -145,6 +145,12 @@ public class SysUserService extends AbstractService<SysUser>{
 	}
 	
 	@Transactional
+	public List<SysUser> getAllUserList() throws Exception {
+		return sysUserDAO.get();
+	}
+	
+	
+	@Transactional
 	public List<SysUser> getEnableUserOderByList(String propertyName) throws Exception {
 		List<SysUser> listSysUsers = sysUserDAO.getEnableUserOrderByDesc(propertyName);
 		return listSysUsers;

@@ -34,7 +34,7 @@ public class SysUserController extends AbstractController<SysUser> {
 	
 	@ModelAttribute("SysUserList")
 	public List<SysUser> SysUserList() throws Exception {
-		return sysUserService.getUserList();
+		return sysUserService.getAllUserList();
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
