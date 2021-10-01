@@ -443,6 +443,7 @@ public class IndexController extends AbstractController<CreateInfo> {
 		return "/today";
 	}
 	
+	//opendata網址已棄用 20211001
 	@RequestMapping(method=RequestMethod.GET, value="/weather")
 	public String weather(HttpServletRequest req, ModelMap model) {
 		logger.info("weather");

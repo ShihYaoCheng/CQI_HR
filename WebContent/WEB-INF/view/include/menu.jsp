@@ -18,9 +18,11 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle basic-set" data-toggle="dropdown" style="">Hello, ${userName}<span class="caret color-white"></span></a>
 					<ul class="dropdown-menu" role="menu">
+						<!--
 						<li>
 							<a class="color-white" style="cursor:pointer;" href="<c:url value='/security/sysUser/u/${userId }'/>">我的帳號</a>
 						</li>
+						-->
 						<li>
 							<a class="color-white" style="cursor:pointer;" href="<c:choose><c:when test='${sessionScope.__session_info.logInInfo.roleId == 1}'><c:url value='/logoutManager'/></c:when><c:otherwise><c:url value='/logout'/></c:otherwise></c:choose>">登出</a>
 			    		</li>

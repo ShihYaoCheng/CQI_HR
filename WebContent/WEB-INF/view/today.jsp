@@ -201,7 +201,7 @@
 
 				<script>
 					jQuery().ready(function () {
-						queryData();
+						//queryData();
 					});
 
 					function queryData() {

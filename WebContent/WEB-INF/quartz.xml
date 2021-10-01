@@ -170,8 +170,9 @@
             <ref bean="jobMonthlyLinePushBean"/>
         </property>
         <property name="cronExpression">
-            <value>0 40 1 25 * ?</value> 
             <!-- <value>10 * * * * ?</value>-->
+            <value>0 40 1 25 * ?</value> 
+            
         </property>
         <!-- 
 			    秒（0-59）
@@ -305,8 +306,8 @@
             <ref bean="jobMonthlyReportBean"/>
         </property>
         <property name="cronExpression">
-             <!--  <value>10 * * * * ?</value> -->
-            <value>0 0 2 4 * ?</value>
+             <!-- <value>10 * * * * ?</value>-->
+             <value>0 0 2 4 * ?</value> 
         </property>
         <!-- 
 			    秒（0-59）
