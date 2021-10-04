@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/view/include/view-lib.jsp"%>
@@ -257,13 +256,22 @@
 			// }
 
 			// 如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
-			if (tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL") {
-				let theIndex = tdCardId.indexOf($("#cardId").val());
-				errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
-				errors['cardId'] = 3;
+			if(tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL" && $("#cardId").val() != "") {
+			let theIndex = tdCardId.indexOf($("#cardId").val());
+			errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
+			errors['cardId'] = 3;
 			}else {
 				$('#cardId-error').hide();
 			}
+
+			// //如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
+			// if (tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL") {
+			// 	let theIndex = tdCardId.indexOf($("#cardId").val());
+			// 	errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
+			// 	errors['cardId'] = 3;
+			// }else {
+			// 	$('#cardId-error').hide();
+			// }
 
 
 			var userId = "";
@@ -289,6 +297,7 @@
 					data : data,
 					dataType: "json",
 					success : function(data) {
+						location.reload();
 						$("body").css("cursor", "auto");
 						
 						if (data.success) {
