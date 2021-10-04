@@ -63,7 +63,7 @@ public class SysUserController extends AbstractController<SysUser> {
 	
 	
 	@RequestMapping(method=RequestMethod.POST, value="/{sysUserId}")
-	public void ajaxUpdate(HttpServletRequest req, HttpServletResponse resp, @Valid SysUser sysUser){
+	public void ajaxUpdate(HttpServletRequest req, HttpServletResponse resp, @Valid SysUser sysUser, BindingResult bindingResult){
 		logger.info(FUNCTION_NAME + " ajaxUpdate: " + sysUser.getSysUserId());
 		//logger.info("Test : " + bindingResult.getErrorCount());
 		Map<Object, Object> map = null;
