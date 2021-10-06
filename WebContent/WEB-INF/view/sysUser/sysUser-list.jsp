@@ -220,15 +220,20 @@
 			if(page == 0){
 				return;
 			}
+			let data = {
+				page:page
+			};
+			if($('#searchUserName').val() !== ''){
+				data.searchUserName = $('#searchUserName').val()
+			}
+
 			$("body").css("cursor", "progress");
 			$('#dataContent').hide();
 			$("#progressing").show();
 			$.ajax({
 				type : "POST",
 				url : "<c:url value='/security/sysUser/ajaxDataLoading'/>",
-				data : {
-					page:page
-				},
+				data : data,
 				success : function(data) {
 					$("body").css("cursor", "auto");
 					$("#progressing").hide();
@@ -237,6 +242,7 @@
 				}
 			});
 		}
+
 		
 		function submit(){
 
@@ -255,23 +261,22 @@
 			// 	$('#cardId-error').hide();
 			// }
 
+			let myCardNumber = $("#cardId").val()
+			console.log("自己卡號",myCardNumber);
+			// $("#cardId").attr('data-num', theIndex)
+
 			// 如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
-			if(tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL" && $("#cardId").val() != "") {
-			let theIndex = tdCardId.indexOf($("#cardId").val());
-			errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
-			errors['cardId'] = 3;
+			if(tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL" && $("#cardId").val() != "" ) {
+				let theIndex = tdCardId.indexOf($("#cardId").val());
+				if(tdName[theIndex] !== $("#originalName").val()){
+					errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
+					errors['cardId'] = 3;
+				}
 			}else {
 				$('#cardId-error').hide();
 			}
 
-			// //如果填入的卡號與其他職員的卡號相同，則顯示提示字樣及該職員名
-			// if (tdCardId.includes($("#cardId").val()) && $("#cardId").val() != "NULL") {
-			// 	let theIndex = tdCardId.indexOf($("#cardId").val());
-			// 	errorCode["3"] = "此卡號與職員「"+ tdName[theIndex] +"」重複，請清除離職員工卡號以免系統判斷錯誤";
-			// 	errors['cardId'] = 3;
-			// }else {
-			// 	$('#cardId-error').hide();
-			// }
+
 
 
 			var userId = "";
@@ -293,7 +298,7 @@
 				$("body").css("cursor", "progress");
 				$.ajax({
 					type : "POST",
-					url : targetURL,
+					url: targetURL,
 					data : data,
 					dataType: "json",
 					success : function(data) {
