@@ -32,20 +32,19 @@ public class RestLineBotController extends AbstractController<LineUser> {
 	
 	@RequestMapping(method=RequestMethod.POST, value="webhook")
 	public void ajaxPostWebhook(HttpServletRequest req, HttpServletResponse resp, @RequestBody String requestData){
-		logger.info(FUNCTION_NAME + " ajaxPostWebhook");
+		logger.info(FUNCTION_NAME + " ajaxPostWebhook start");
 		try{
 			String channelSecret = Constant.LINE_CHANNEL_SECRET; // Channel secret string
 			String httpRequestBody = requestData; // Request body string
+			logger.info("data : " + requestData);
 			SecretKeySpec key = new SecretKeySpec(channelSecret.getBytes(), "HmacSHA256");
 			Mac mac = Mac.getInstance("HmacSHA256");
 			mac.init(key);
 			byte[] source = httpRequestBody.getBytes("UTF-8");
 			String signature = Base64.encodeBase64String(mac.doFinal(source));
-			logger.info("signature : " + signature);
-			// Compare X-Line-Signature request header string and the signature
-			logger.info("X-Line-Signature : " + req.getHeader("X-Line-Signature"));
 			
-			logger.info("data : " + requestData);
+			// Compare X-Line-Signature request header string and the signature
+			logger.info("signature : " + signature + "; X-Line-Signature : " + req.getHeader("X-Line-Signature"));
 			if(signature.equals(req.getHeader("X-Line-Signature"))) {
 				lineBotService.webhook(requestData);
 			}

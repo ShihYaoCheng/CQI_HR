@@ -1,6 +1,6 @@
 /target/
-.project
 .classpath
 .settings/
 .vs/
 .sts4-cache/
+/bin/
