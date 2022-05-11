@@ -294,7 +294,7 @@ public class LineBotService extends AbstractService<LineUser>{
 
 	public void replyTestMessage(String string, String replyToken) throws Exception {
 		
-		SysUser targetUser = sysUserDAO.get("1198842813042872");
+		SysUser targetUser = sysUserDAO.getOneBySysUserId("1198842813042872");
 
 
 		

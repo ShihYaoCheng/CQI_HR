@@ -261,7 +261,7 @@
             <ref bean="jobDailyAttendanceRecordBean"/>
         </property>
         <property name="cronExpression">
-            <!--  <value>10 * * * * ?</value>-->
+             <!-- <value>10 * * * * ?</value>-->
      		<value>0 10 1 * * ?</value> 
         </property>
         <!-- 
