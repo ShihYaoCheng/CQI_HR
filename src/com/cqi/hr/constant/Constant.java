@@ -113,7 +113,7 @@ public class Constant {
 	
 	// Developer
 	// 需用ngrok把local8080連接到ngrok.io,並在asana app 設定Redirect URLs,此區也須跟著修改
-	public final static String ASANA_REDIRECT_URL = "https://39df-118-168-29-209.jp.ngrok.io/hr-manage/asanaCallback";
+	public final static String ASANA_REDIRECT_URL = "https://dee5-118-168-5-48.jp.ngrok.io/hr-manage/asanaCallback";
 	
 	// Production
 //	public final static String ASANA_REDIRECT_URL = "https://hr.cqiserv.com/asanaCallback";
@@ -128,8 +128,8 @@ public class Constant {
 	/**
 	 * Line Bot Token Production
 	 */
-//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "uV0vhaGIS0iiTNYwxmMHR9Ck3hsHDlM/sdU75CYLhnd5G0WWJjYo/Bk3fNe8RRBMco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2NInI5vBQXrzlIyexdkJ21Zig5OgfSte2QS+3qS1ri1hQdB04t89/1O/w1cDnyilFU=";
-//	public final static String LINE_CHANNEL_SECRET = "2599f73f1a402479584066720b7ae7dd";
+//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "dr01uLhPWtqB8ziTOyP6fjVgsBPoTGvwFQdHppDvPAKiYh8m3on1OWBN7giHeOuQco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2PoLhDRj43O2K7rDt/SXabDk8Uqb3dSGFcVoz7XrPlBCAdB04t89/1O/w1cDnyilFU=";
+//	public final static String LINE_CHANNEL_SECRET = "e2c0e7d15fe10109716b3b775e792a99";
 
 	public final static String LINE_CQI_LEADER_GROUP_ID = "Cd96ca3fafbb4b54b89bb8f45aea80352";
 	

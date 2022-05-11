@@ -6,7 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
+//import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,10 +19,11 @@ import com.cqi.hr.service.LineBotService;
 import com.cqi.hr.service.SysUserService;
 import com.cqi.hr.service.UserAskForLeaveService;
 import com.cqi.hr.service.UserLeaveService;
+import com.google.api.client.util.Base64;
 
 
 @RestController
-@RequestMapping("/restful/lineBot")
+@RequestMapping("/linebot")
 public class RestLineBotController extends AbstractController<LineUser> {	
 	@Resource SysUserService sysUserService;
 	@Resource UserLeaveService userLeaveService;
@@ -36,17 +37,27 @@ public class RestLineBotController extends AbstractController<LineUser> {
 		try{
 			String channelSecret = Constant.LINE_CHANNEL_SECRET; // Channel secret string
 			String httpRequestBody = requestData; // Request body string
-			logger.info("data : " + requestData);
+			//logger.info("data : " + requestData);
 			SecretKeySpec key = new SecretKeySpec(channelSecret.getBytes(), "HmacSHA256");
+			//logger.info("key : " + key.toString());
 			Mac mac = Mac.getInstance("HmacSHA256");
 			mac.init(key);
 			byte[] source = httpRequestBody.getBytes("UTF-8");
-			String signature = Base64.encodeBase64String(mac.doFinal(source));
 			
+			logger.info("X-Line-Signature : " + req.getHeader("X-Line-Signature"));
+			String signature = Base64.encodeBase64String(mac.doFinal(source));
+			logger.info("signature : " + signature);
 			// Compare X-Line-Signature request header string and the signature
-			logger.info("signature : " + signature + "; X-Line-Signature : " + req.getHeader("X-Line-Signature"));
 			if(signature.equals(req.getHeader("X-Line-Signature"))) {
-				lineBotService.webhook(requestData);
+				new Thread(() -> {
+		        	try {
+						lineBotService.webhook(requestData);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }).start();
+				
 			}
 		}catch(Exception e){
 			logger.error(FUNCTION_NAME + " ajaxPostWebhook error: ", e);

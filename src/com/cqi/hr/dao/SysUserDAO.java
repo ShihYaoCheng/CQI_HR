@@ -37,6 +37,7 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
 		criteria.addOrder(Order.desc(propertyName));
+		criteria.addOrder(Order.desc("createDate"));
 		return criteria.list();
 	}
 	
