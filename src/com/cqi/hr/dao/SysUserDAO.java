@@ -154,7 +154,7 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 			Criterion rest2 = Restrictions.and(Restrictions.like("originalName", "%"+searchUserName+"%"));
 			criteria.add(Restrictions.or(rest1, rest2));
 		}
-		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"inaugurationDate desc", "status desc"}));
+		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"inaugurationDate desc", "sysUserId desc"}));
 	}
 	
 	@SuppressWarnings("unchecked")
