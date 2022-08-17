@@ -11,6 +11,7 @@
 		<table class="table table-striped" id="userLeaveDataArea">
 			<thead>
 				<tr style="background-color: #edf8ff; font-weight: bold;">
+					<td>成員</td>
 					<td>假別</td>
 					<td>剩餘額度</td>
 				</tr>
@@ -24,6 +25,9 @@
 				<c:forEach var="userLeave" items="${userLeaveList}" varStatus="vs">
 					<tr>
 						<td>
+							${userMap.get(userLeave.sysUserId).originalName}
+						</td>
+						<td>
 							${mappingLeave.get(userLeave.leaveId).leaveName}
 						</td>
 						<td>
@@ -35,5 +39,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
+		
 		<br />
 		<br />

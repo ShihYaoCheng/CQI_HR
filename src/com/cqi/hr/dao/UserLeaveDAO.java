@@ -1,5 +1,6 @@
 package com.cqi.hr.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +56,68 @@ public class UserLeaveDAO extends AbstractDAO<UserLeave> {
 		return null;
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	public List<UserLeave> getAllUserLeave() throws Exception {
+		
+		Criteria SysUsercriteria = sessionFactory.getCurrentSession().createCriteria(SysUser.class);
+		SysUsercriteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		SysUsercriteria.add(Restrictions.eq("roleId", "2"));
+		List<SysUser> dataList =  SysUsercriteria.list();
+		List<String> SysUserList = new ArrayList<String>();
+		for(SysUser user : dataList )
+		{
+			SysUserList.add(user.getSysUserId());
+		}
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());	
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));	
+		criteria.addOrder(Order.asc("sysUserId"));
+		List<UserLeave> UserLeaveData = criteria.list();
+		
+		List<UserLeave> result = new 	ArrayList<UserLeave>();
+		
+		for(UserLeave item : UserLeaveData){
+			if(SysUserList.contains(item.getSysUserId()))
+			{
+				result.add(item);
+			}
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<UserLeave> getSearchUserLeave(String OriginalName) throws Exception {
+		
+		Criteria SysUsercriteria = sessionFactory.getCurrentSession().createCriteria(SysUser.class);
+		SysUsercriteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		SysUsercriteria.add(Restrictions.eq("roleId", "2"));
+		SysUsercriteria.add(Restrictions.like("originalName", OriginalName));
+		
+		/* 不找第一筆 找名子包含 字元 全部找出來*/
+		List<SysUser> dataList =  SysUsercriteria.list();
+		List<String> SysUserList = new ArrayList<String>();
+		for(SysUser user : dataList )
+		{
+			SysUserList.add(user.getSysUserId());
+		}
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());	
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));	
+		criteria.addOrder(Order.asc("sysUserId"));
+		List<UserLeave> UserLeaveData = criteria.list();
+		
+		List<UserLeave> result = new ArrayList<UserLeave>();
+		
+		for(UserLeave item : UserLeaveData){
+			if(SysUserList.contains(item.getSysUserId()))
+			{
+				result.add(item);
+			}
+		}
+
+		return result;
+	}
 	
 }
 

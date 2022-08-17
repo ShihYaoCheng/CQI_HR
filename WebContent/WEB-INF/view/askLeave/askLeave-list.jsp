@@ -17,7 +17,7 @@
 							<form class="navbar-form">
 								<h3><b>請假資料管理</b></h3>
 								<br />
-								<div class="form-group" style="display: inline;">
+								<div class="form-group" style="display: black;">
 									<div class="input-group">
 
 									</div>
@@ -29,8 +29,22 @@
 
 								</div>
 								<%@include file="../include/progressing.jsp" %>
+									<c:choose>
+										<c:when test="${operator.roleId == '1'}">
+											<div class="form-group" style="display: black; margin-top: 30px;">
+												<div class="input-group" style="float: left">
+													查詢成員 : <input id="searchUserName" type="search">
+												</div>
+												<div class="btn-group" style="margin-left: 20px;">
+													<button type="button" style="cursor:pointer;" class="btn btn-primary btn-lg " data-loading-text="查詢中" onclick="queryData(1)">查詢</button>
+												</div>
+											</div>
+										</c:when>
+									</c:choose>
+
 									<div id="leaveQuotaContent">
 									</div>
+
 									<div id="dataContent">
 									</div>
 							</form>
@@ -213,7 +227,9 @@
 							$.ajax({
 								type: "POST",
 								url: "<c:url value='/security/askLeave/ajaxLeaveQuota'/>",
-								data: {},
+								data: { 
+									searchUserName : $('#searchUserName').val()
+								},
 								success: function (data) {
 									$('#leaveQuotaContent').html(data);
 									$('#leaveQuotaContent').show();
@@ -223,7 +239,8 @@
 								type: "POST",
 								url: "<c:url value='/security/askLeave/ajaxDataLoading'/>",
 								data: {
-									page: page
+									page: page,
+									searchUserName : $('#searchUserName').val()
 								},
 								success: function (data) {
 									$("body").css("cursor", "auto");

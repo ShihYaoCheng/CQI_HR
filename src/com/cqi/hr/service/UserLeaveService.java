@@ -71,6 +71,17 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 	}
 
 	@Transactional
+	public List<UserLeave> getAllUserLeave() throws Exception {
+		return userLeaveDAO.getAllUserLeave();
+	}
+
+	@Transactional
+	public List<UserLeave> getSearchUserLeave(String OriginalName) throws Exception {
+		return userLeaveDAO.getSearchUserLeave(OriginalName);
+	}
+
+
+	@Transactional
 	public PagingList<UserLeave> getListByPage(Integer page, String userId) throws Exception {
 		return userLeaveDAO.getListByPage(page, userId);
 	}

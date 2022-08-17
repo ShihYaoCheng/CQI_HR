@@ -1,6 +1,7 @@
 package com.cqi.hr.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -73,12 +74,19 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 		logger.info(FUNCTION_NAME + " ajaxDataLoading");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
-			//使用者剩餘的假期
-			List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
-			model.addAttribute("userLeaveList", userLeaveList);
-			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
-			PagingList<UserAskForLeave> askLeaveList = userAskForLeaveService.getListByPage(page, operator.getSysUserId());
-			createPagingInfo(model, askLeaveList);
+			SysUser checkUser = sysUserService.get(operator.getSysUserId());
+			if(checkUser!=null && checkUser.getRoleId().equals("1")) {
+//				if(searchUserName != null && searchUserName.length() > 0 ) {
+//				}
+			}else
+			{
+				//使用者剩餘的假期
+				List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
+				model.addAttribute("userLeaveList", userLeaveList);
+				model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+				PagingList<UserAskForLeave> askLeaveList = userAskForLeaveService.getListByPage(page, operator.getSysUserId());
+				createPagingInfo(model, askLeaveList);
+			}
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}
@@ -86,13 +94,32 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="ajaxLeaveQuota")
-	public String ajaxLeaveQuota(HttpServletRequest req, ModelMap model) {
+	public String ajaxLeaveQuota(HttpServletRequest req, String searchUserName , ModelMap model) {
 		logger.info(FUNCTION_NAME + " ajaxLeaveQuota");
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
-			//使用者剩餘的假期
-			List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());
-			model.addAttribute("userLeaveList", userLeaveList);
+			SysUser checkUser = sysUserService.get(operator.getSysUserId());
+			if(checkUser!=null && checkUser.getRoleId().equals("1")) {				
+				List<UserLeave> userLeaveList = new ArrayList<UserLeave>();
+				if(searchUserName.length() > 0  && searchUserName != null)
+				{
+					userLeaveList = userLeaveService.getSearchUserLeave(searchUserName);
+				}
+				else
+				{
+					userLeaveList = userLeaveService.getAllUserLeave();					
+				}
+				model.addAttribute("userLeaveList", userLeaveList);
+				model.addAttribute("userMap", sysUserService.getMapEnableRule2User());
+				model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+			}
+			else
+			{
+				//使用者剩餘的假期
+				List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());				
+				model.addAttribute("userLeaveList", userLeaveList);
+				model.addAttribute("userMap", sysUserService.getOneBySysUserId(operator.getSysUserId()));				
+			}			
 			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);

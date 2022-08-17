@@ -170,4 +170,14 @@ public class SysUserService extends AbstractService<SysUser>{
 		}
 		return mapping;
 	}
+
+	@Transactional
+	public Map<String, SysUser> getOneBySysUserId(String sysUserId)throws Exception{		
+		Map<String, SysUser> mapping = new HashMap<>();
+		SysUser user = sysUserDAO.getOneBySysUserId(sysUserId);
+		if( user != null){
+			mapping.put(user.getSysUserId(), user);
+		}
+		return mapping;
+	}
 }
