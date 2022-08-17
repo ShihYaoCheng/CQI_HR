@@ -17,17 +17,20 @@
 							<form class="navbar-form">
 								<h3><b>請假資料管理</b></h3>
 								<br />
-								<div class="form-group" style="display: black;">
-									<div class="input-group">
-
-									</div>
-									<div class="btn-group">
-										<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增">
-											<i class="glyphicon glyphicon-plus"></i>
-										</a>
-									</div>
-
-								</div>
+								<c:choose>
+									<c:when test="${operator.roleId == '2'}">
+										<div class="form-group" style="display: black;">
+											<div class="input-group">
+		
+											</div>
+											<div class="btn-group">
+												<a href="#" class="btn btn-default function_icon" onclick="active()" title="新增">
+													<i class="glyphicon glyphicon-plus"></i>
+												</a>
+											</div>		
+										</div>
+									</c:when>
+								</c:choose>
 								<%@include file="../include/progressing.jsp" %>
 									<c:choose>
 										<c:when test="${operator.roleId == '1'}">

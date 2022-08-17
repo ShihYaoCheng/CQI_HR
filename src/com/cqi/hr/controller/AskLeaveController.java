@@ -55,7 +55,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 				model.addAttribute("cqiLeaveList", userLeaveService.getCompanyLeaveListWithoutMenstruation());
 			}
 			model.addAttribute("dataUser", dataUser);
-			
+			model.addAttribute("operator", checkUser);
 			model.addAttribute("userMenstruationLeaveThisMonth", userAskForLeaveService.getMenstruationLeaveByUserIdAndMonth(dataUser.getSysUserId(),0));
 			model.addAttribute("userMenstruationLeaveLastMonth", userAskForLeaveService.getMenstruationLeaveByUserIdAndMonth(dataUser.getSysUserId(),-1));
 			
@@ -86,7 +86,8 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 				model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
 				PagingList<UserAskForLeave> askLeaveList = userAskForLeaveService.getListByPage(page, operator.getSysUserId());
 				createPagingInfo(model, askLeaveList);
-			}
+			}			
+			model.addAttribute("userMap", sysUserService.getMapEnableRule2User());
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
 		}
@@ -111,7 +112,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 				}
 				model.addAttribute("userLeaveList", userLeaveList);
 				model.addAttribute("userMap", sysUserService.getMapEnableRule2User());
-				model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
+				
 			}
 			else
 			{
@@ -119,7 +120,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 				List<UserLeave> userLeaveList = userLeaveService.getListByUserId(operator.getSysUserId());				
 				model.addAttribute("userLeaveList", userLeaveList);
 				model.addAttribute("userMap", sysUserService.getOneBySysUserId(operator.getSysUserId()));				
-			}			
+			}						
 			model.addAttribute("mappingLeave", userLeaveService.getCompanyLeaveMapping());
 		} catch (Exception e) {
 			logger.debug(FUNCTION_NAME + " ajaxDataLoading error: ", e);
