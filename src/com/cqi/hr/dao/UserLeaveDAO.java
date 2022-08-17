@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.CompanyLeave;
 import com.cqi.hr.entity.PagingList;
+import com.cqi.hr.entity.SysUser;
 import com.cqi.hr.entity.UserAskForLeave;
 import com.cqi.hr.entity.UserLeave;
 import com.cqi.hr.util.DateUtils;

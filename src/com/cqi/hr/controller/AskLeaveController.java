@@ -101,7 +101,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			if(checkUser!=null && checkUser.getRoleId().equals("1")) {				
 				List<UserLeave> userLeaveList = new ArrayList<UserLeave>();
-				if(searchUserName.length() > 0  && searchUserName != null)
+				if(   searchUserName != null && searchUserName.length() > 0)
 				{
 					userLeaveList = userLeaveService.getSearchUserLeave(searchUserName);
 				}
