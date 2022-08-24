@@ -55,7 +55,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 				model.addAttribute("cqiLeaveList", userLeaveService.getCompanyLeaveListWithoutMenstruation());
 			}
 			model.addAttribute("dataUser", dataUser);
-			model.addAttribute("operator", checkUser);
+			model.addAttribute("operator", operator);
 			model.addAttribute("userMenstruationLeaveThisMonth", userAskForLeaveService.getMenstruationLeaveByUserIdAndMonth(dataUser.getSysUserId(),0));
 			model.addAttribute("userMenstruationLeaveLastMonth", userAskForLeaveService.getMenstruationLeaveByUserIdAndMonth(dataUser.getSysUserId(),-1));
 			

@@ -97,7 +97,7 @@ public class SysUserAbsenceService extends AbstractService<SysUserAbsence>{
 				 {
 					 item.setEffectiveStatus("y");
 					 saveOrUpdate(item);
-					 SysUser sysUser = sysUserDAO.getOneBySysUserId(item.GetSysUserId());
+					 SysUser sysUser = sysUserDAO.getOneBySysUserId(item.getSysUserId());
 					 if(sysUser != null)
 					 {
 						 sysUser.setStatus(Constant.SYSUSER_leave_of_absence);					 
@@ -115,7 +115,7 @@ public class SysUserAbsenceService extends AbstractService<SysUserAbsence>{
 				 {
 					 item.setExpirationStatus("y");
 					 saveOrUpdate(item);
-					 SysUser sysUser = sysUserDAO.getOneBySysUserId(item.GetSysUserId());
+					 SysUser sysUser = sysUserDAO.getOneBySysUserId(item.getSysUserId());
 					 if(sysUser != null)
 					 {
 						 sysUser.setStatus(Constant.SYSUSER_ENABLE);					 
@@ -129,7 +129,7 @@ public class SysUserAbsenceService extends AbstractService<SysUserAbsence>{
 			 SysUserAbsence =  sysUserAbsenceDAO.getAllSysUserAbsence();
 			 for(SysUserAbsence item : SysUserAbsence )
 			 {								
-				 if(item.GetEffectiveStatus().equals("y") && item.GetExpirationStatus().equals("y"))
+				 if(item.getEffectiveStatus().equals("y") && item.getExpirationStatus().equals("y"))
 				 {
 					 item.setStatus("n");
 					 saveOrUpdate(item);
