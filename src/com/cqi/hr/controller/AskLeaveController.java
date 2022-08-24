@@ -49,6 +49,7 @@ public class AskLeaveController extends AbstractController<UserAskForLeave> {
 		try {
 			SysUser operator = SessionUtils.getLoginInfo(req);
 			SysUser dataUser = sysUserService.get(operator.getSysUserId());
+			SysUser checkUser = sysUserService.get(operator.getSysUserId());
 			if(StringUtils.hasText(dataUser.getGender()) && dataUser.getGender().equals(Constant.GENDER_FEMALE)) {
 				model.addAttribute("cqiLeaveList", userLeaveService.getCompanyLeaveList());
 			}else {
