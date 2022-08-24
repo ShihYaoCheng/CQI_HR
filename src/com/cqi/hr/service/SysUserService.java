@@ -34,11 +34,19 @@ public class SysUserService extends AbstractService<SysUser>{
 	public PagingList<SysUser> getListByPage(Integer page, String searchUserName) throws Exception {
 		return sysUserDAO.getListByPage(page, searchUserName);
 	}
+
+	@Transactional
+	public PagingList<SysUser> getSysUserStatusListByPage(Integer page, String searchUserName) throws Exception {
+		return sysUserDAO.getSysUserStatusListByPage(page, searchUserName);
+	}
 	
 	@Transactional
 	public PagingList<SysRole> getRoleListByPage(Integer page, String searchRoleName) throws Exception {
 		return sysRoleDAO.getListByPage(page, searchRoleName);
 	}
+
+
+
 	@Transactional
 	public List<SysRole> getSysRoleList() throws Exception{
 		return sysRoleDAO.get();
@@ -179,5 +187,39 @@ public class SysUserService extends AbstractService<SysUser>{
 			mapping.put(user.getSysUserId(), user);
 		}
 		return mapping;
+	}
+
+	@Transactional
+	public boolean  updateLeaveOfAbsence(String sysUserId, String status, String cardid , String effectiveDate ,String expirationDate){
+		boolean result= false;
+		try{
+			SysUser sysUser = sysUserDAO.getOneBySysUserId(sysUserId);
+			if(sysUser != null )
+			{
+				if(effectiveDate !="" && expirationDate !="" && status.equals(Constant.SYSUSER_leave_of_absence)  )
+				{
+					Date today = new Date();
+					Date EffectiveDate = new SimpleDateFormat("yyyy/MM/dd").parse(effectiveDate) ;
+					//Date ExpirationDate = new SimpleDateFormat("yyyy/MM/dd").parse(expirationDate) ;								
+					if( today.after(EffectiveDate) )
+					{
+						status = Constant.SYSUSER_leave_of_absence;	
+					}else
+					{
+						status = Constant.SYSUSER_ENABLE;
+					}
+					
+				}
+				sysUser.setStatus(status);
+				sysUser.setCardId(cardid);
+				saveOrUpdate(sysUser);
+				result = true;
+				
+			}
+		}catch(Exception e){
+			logger.error("save error", e);
+			return result;
+		}
+		return result;
 	}
 }

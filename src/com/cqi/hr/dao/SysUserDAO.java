@@ -1,5 +1,9 @@
 package com.cqi.hr.dao;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +20,7 @@ import org.springframework.util.StringUtils;
 import com.cqi.hr.constant.Constant;
 import com.cqi.hr.entity.PagingList;
 import com.cqi.hr.entity.SysUser;
+import com.cqi.hr.entity.SysUserAbsence;
 import com.cqi.hr.util.DateUtils;
 
 @Repository
@@ -156,14 +161,76 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		}
 		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"inaugurationDate desc", "sysUserId desc"}));
 	}
+
+	/*
+	 * 取得在職清單(在職，留職停薪)
+	 * */
+	public PagingList<SysUser> getSysUserStatusListByPage(Integer page, String searchUserName) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		if(StringUtils.hasText(searchUserName)){
+			Criterion rest1 = Restrictions.and(Restrictions.like("userName", "%"+searchUserName+"%"));
+			Criterion rest2 = Restrictions.and(Restrictions.like("originalName", "%"+searchUserName+"%"));
+			criteria.add(Restrictions.or(rest1, rest2));
+		}
+		criteria.add(Restrictions.not(Restrictions.eq("status", Constant.SYSUSER_DISABLE)));
+		criteria.add(Restrictions.eq("roleId", "2"));
+		return createPagingList(Constant.PAGE_SIZE, page, criteria, convertOrders(new String[]{"inaugurationDate desc", "sysUserId desc"}));
+	}
+
 	
 	@SuppressWarnings("unchecked")
 	public List<SysUser> getIntervalOfInauguration(Date startDate, Date endDate) throws Exception{
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		criteria.add(Restrictions.between("inaugurationDate", startDate, endDate));
-		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));		
 		return criteria.list();
 	}
+
+	/* 
+	檢查 公假是否符合堆定
+	*/
+	@SuppressWarnings("unchecked")
+	public List<SysUser> getIntervalOfInaugurationByDay(Integer minDayCount , Integer maxDayCount) throws Exception{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		//criteria.add(Restrictions.between("inaugurationDate", startDate, endDate));
+		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+
+		List<SysUser> dataList = criteria.list();
+		List<SysUser> result = new ArrayList<SysUser>();		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd"); 
+		Calendar calendarStart = Calendar.getInstance();
+		calendarStart.setTime(DateUtils.getTodayWithoutHourMinSec());
+		for(SysUser item : dataList )
+		{
+			LocalDate dateBefore = LocalDate.parse(item.getInaugurationDate().toString() , formatter);
+			LocalDate dateAfter = LocalDate.parse( calendarStart.toString(), formatter);					
+			long onTheJobDays = ChronoUnit.DAYS.between(dateBefore, dateAfter);
+			
+			//抓取是否 有 留職停薪資料
+			Criteria criteriaA = sessionFactory.getCurrentSession().createCriteria(SysUserAbsence.class);
+			criteriaA.add(Restrictions.eq("sysUserId",item.getSysUserId() ));
+			criteriaA.add(Restrictions.eq("status","y" ));
+			List<SysUserAbsence> SysUserAbsenceList = criteriaA.list();
+			//減掉 留職停薪 期間日期
+			for( SysUserAbsence rd : SysUserAbsenceList)
+			{
+				LocalDate dateBeforeA = LocalDate.parse(rd.getEffectiveDate().toString() , formatter);
+				LocalDate dateAfterA = LocalDate.parse( rd.getExpirationDate().toString(), formatter);	
+				onTheJobDays =- ChronoUnit.DAYS.between(dateBeforeA, dateAfterA);
+			}
+			/* 符合 在職天數區間資料 */
+
+			if(  minDayCount <= onTheJobDays  &&  onTheJobDays <= maxDayCount)
+			{
+				result.add(item);
+			}		
+				
+		}
+
+		return result;
+	}
+
+
 	
 	@SuppressWarnings("unchecked")
 	public List<SysUser> getFemale() throws Exception{

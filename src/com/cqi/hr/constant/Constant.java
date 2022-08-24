@@ -70,8 +70,9 @@ public class Constant {
 	
 	public final static String LAST_MONTH_CLOSE = "上個月以前的出勤資料已結算，無法更動。";
 	
-	public final static String SYSUSER_ENABLE = "y";
-	public final static String SYSUSER_DISABLE = "n";
+	public final static String SYSUSER_ENABLE = "y";//在職
+	public final static String SYSUSER_DISABLE = "n";//離職
+	public final static String SYSUSER_leave_of_absence = "l";//留職停薪
 	public final static String MANGA_ROLE_NAME_AND_NICKNAME_DUPLICATED = "role name and nickname are dulicated";
 	public final static String MANGA_ROLE_NAME_DUPLICATED = "role name is dulicated";
 	public final static String PASSWORD_INCORRECT = "password incorrect";

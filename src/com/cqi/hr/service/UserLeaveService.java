@@ -461,13 +461,25 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		logger.info("giveLeaveRuleList : " + giveLeaveRuleList.size());
 
 		// 根據規則搜尋符合的人，為確定有給假，符合條件加寬十天
-		for (GiveLeaveRule giveLeaveRule : giveLeaveRuleList) {
-			Calendar calendarStart = Calendar.getInstance();
-			calendarStart.setTime(DateUtils.getTodayWithoutHourMinSec());
-			calendarStart.add(Calendar.DAY_OF_MONTH, -10);
 
-			Calendar calendarEnd = Calendar.getInstance();
-			calendarEnd.setTime(DateUtils.getTodayWithoutHourMinSec());
+		Integer Day_Of_Year = 365;//
+		Integer RangeDay = 10 ;//
+
+		/* 年資超過25年問題沒有解決
+		 * 因為跑  giveLeaveRule + giveLeaveRecord檢查方式只有到25年 
+		 * 26年不會算到
+		 * by 2022/08/22 chenyuwei
+		 * */
+		for (GiveLeaveRule giveLeaveRule : giveLeaveRuleList) {
+
+			Integer minDayCount = Day_Of_Year - RangeDay;
+			Integer maxDayCount = Day_Of_Year ;
+			//Calendar calendarStart = Calendar.getInstance();
+			//calendarStart.setTime(DateUtils.getTodayWithoutHourMinSec());
+			//calendarStart.add(Calendar.DAY_OF_MONTH, -10);
+
+			//Calendar calendarEnd = Calendar.getInstance();
+			//calendarEnd.setTime(DateUtils.getTodayWithoutHourMinSec());
 
 			logger.info("getYearsAfterAppointment : " + giveLeaveRule.getYearsAfterAppointment().toString());
 			// 因為getYearsAfterAppointment為double，所以正整數會帶.0，因此調整StringUtils
@@ -475,19 +487,24 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 			if (StringUtils.isIntegerStartWithOne(giveLeaveRule.getYearsAfterAppointment().toString())) {
 				// 如果是整數年
 				logger.info("整年");
-				calendarStart.add(Calendar.YEAR, -1 * giveLeaveRule.getYearsAfterAppointment().intValue());
-				calendarEnd.add(Calendar.YEAR, -1 * giveLeaveRule.getYearsAfterAppointment().intValue());
+				//calendarStart.add(Calendar.YEAR, -1 * giveLeaveRule.getYearsAfterAppointment().intValue());
+				//calendarEnd.add(Calendar.YEAR, -1 * giveLeaveRule.getYearsAfterAppointment().intValue());
+				minDayCount =(int) ( Day_Of_Year * giveLeaveRule.getYearsAfterAppointment() -10);
+				maxDayCount =(int) (Day_Of_Year * (giveLeaveRule.getYearsAfterAppointment()+1));
+
 			} else {
 				// 如果不是整數年
 				logger.info("月份");
-				Integer monthQuota = (int) (-1 * 12 * giveLeaveRule.getYearsAfterAppointment());
-				calendarStart.add(Calendar.MONTH, monthQuota);
-				calendarEnd.add(Calendar.MONTH, monthQuota);
+				//Integer monthQuota = (int) (-1 * 12 * giveLeaveRule.getYearsAfterAppointment());
+				//calendarStart.add(Calendar.MONTH, monthQuota);
+				//calendarEnd.add(Calendar.MONTH, monthQuota);
+				minDayCount =(int) (Day_Of_Year * giveLeaveRule.getYearsAfterAppointment() -10);
+				maxDayCount = Day_Of_Year;
 			}
-			logger.info("calendarStart : " + sdf.format(calendarStart.getTime()));
-			logger.info("calendarEnd : " + sdf.format(calendarEnd.getTime()));
-			List<SysUser> userList = sysUserDAO.getIntervalOfInauguration(calendarStart.getTime(),
-					calendarEnd.getTime());
+			/**/
+			//logger.info("calendarStart : " + sdf.format(calendarStart.getTime()));
+			//logger.info("calendarEnd : " + sdf.format(calendarEnd.getTime()));
+			List<SysUser> userList = sysUserDAO.getIntervalOfInaugurationByDay(minDayCount ,maxDayCount ) ;
 			logger.info("userList : " + userList.size());
 			for (SysUser sysUser : userList) {
 				// 確認是否已經給假，還沒給的依照規則給予假
@@ -548,7 +565,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 		}
 		*/
 		
-		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.SHIFT_MENSTRUATION_ID );
+		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.SHIFT_MENSTRUATION_ID ); //3L
 		logger.info("●●●give MENSTRUATION Leave List : " + giveLeaveRuleList.size());
 		LocalDate localDate = LocalDate.now();
 		List<SysUser> femaleList = new ArrayList<SysUser>();
@@ -603,7 +620,7 @@ public class UserLeaveService extends AbstractService<UserLeave> {
 	@Transactional
 	public void sickLeaveGive() throws Exception {
 		// 找出病假規則
-		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.SICK_LEAVE_ID);
+		List<GiveLeaveRule> giveLeaveRuleList = giveLeaveRuleDAO.getGiveLeaveRule(CompanyLeave.SICK_LEAVE_ID); //5L
 		logger.info("●●●give sick Leave List : " + giveLeaveRuleList.size());
 		LocalDate localDate = LocalDate.now();
 		List<SysUser> users = new ArrayList<SysUser>();

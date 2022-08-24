@@ -7,14 +7,18 @@ import javax.annotation.Resource;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.cqi.hr.service.SysUserAbsenceService;
 import com.cqi.hr.service.UserLeaveService;
 import com.cqi.hr.util.DateUtils;
-
+ 
 
 /** 特休新增 **/
 public class AnnualLeaveJob extends BasicJob {
 	@Resource
 	private UserLeaveService userLeaveService;
+	private SysUserAbsenceService sysUserAbsenceService;
+	
+	
 
 	public void setUserLeaveService(UserLeaveService userLeaveService) {
 		this.userLeaveService = userLeaveService;
@@ -29,6 +33,8 @@ public class AnnualLeaveJob extends BasicJob {
 			if(!webConfigBean.getExecute()){
 				//lock this thread
 				webConfigBean.setExecute(true);
+				//更新留職資料資料
+				sysUserAbsenceService.updateQuartz();
 				//特休假給予
 				userLeaveService.annualLeaveGive();
 				//病假給予
