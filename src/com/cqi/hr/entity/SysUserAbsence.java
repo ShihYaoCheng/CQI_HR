@@ -60,7 +60,7 @@ public class SysUserAbsence {
 	}
 	
 	public Date getEffectiveDate() {
-		return this.updateDate;
+		return this.effectiveDate;
 	}
 
 	public void setEffectiveDate(Date effectiveDate) {
@@ -68,7 +68,7 @@ public class SysUserAbsence {
 	}
 	
 	public Date getExpirationDate() {
-		return this.updateDate;
+		return this.expirationDate;
 	}
 
 	public void setExpirationDate(Date expirationDate) {

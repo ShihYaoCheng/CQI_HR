@@ -361,6 +361,9 @@
 							//$('#graduationDate').val(formatJsonDate(data.sysUser.graduationDate, "y/M/d"));
 							$('#basicModal').find('.modal-title').text(text+"開發者");
 							$('#basicModal').modal('toggle');
+
+							$('#EffectiveDate').val(formatJsonDate(data.SysUserAbsence.effectiveDate, "y/M/d"));
+							$('#ExpirationDate').val(formatJsonDate(data.SysUserAbsence.expirationDate, "y/M/d"));
 							progressing = 0;
 						}else{
 							alert(data.message);

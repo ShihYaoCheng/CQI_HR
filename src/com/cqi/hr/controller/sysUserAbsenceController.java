@@ -85,8 +85,10 @@ public class sysUserAbsenceController extends AbstractController<SysUser> {
 			String result = "";
 			SysUser sysUser = sysUserService.get(sysUserId);
 			List<SysUserAbsence> SysUserAbsenceList = sysUserAbsenceService.getSysUserAbsenceList(sysUserId);
+			SysUserAbsence SysUserAbsence = sysUserAbsenceService.getSysUserAbsenceBySysUserId(sysUserId);
 			map = createResponseMsg(!StringUtils.hasText(result), "", result);
 			map.put("sysUser", sysUser);
+			map.put("SysUserAbsence", SysUserAbsence);
 			model.addAttribute("SysUserAbsenceList", SysUserAbsenceList);
 			
 			

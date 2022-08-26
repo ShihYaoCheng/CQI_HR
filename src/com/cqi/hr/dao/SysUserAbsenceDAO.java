@@ -27,6 +27,19 @@ public class SysUserAbsenceDAO extends AbstractDAO<SysUserAbsence> {
 		criteria.add(Restrictions.eq("status", "y"));
 		return criteria.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	public SysUserAbsence getSysUserAbsenceBySysUserId(String sysUserId) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", sysUserId));
+		criteria.add(Restrictions.eq("status", "y"));
+		List<SysUserAbsence> list = criteria.list();
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		
+		return null;
+	}
 	
 	
 	@SuppressWarnings("unchecked")

@@ -30,9 +30,13 @@ public class SysUserAbsenceService extends AbstractService<SysUserAbsence>{
 	
 	@Transactional
 	public List<SysUserAbsence> getSysUserAbsenceList(String sysUserId) throws Exception{
-		return sysUserAbsenceDAO.getSysUserAbsenceBySysUserId(sysUserId);
+		return sysUserAbsenceDAO.getSysUserAbsenceListBySysUserId(sysUserId);
 	}
 	
+	@Transactional
+	public SysUserAbsence getSysUserAbsenceBySysUserId(String sysUserId) throws Exception{
+		return sysUserAbsenceDAO.getSysUserAbsenceBySysUserId(sysUserId);
+	}
 	
 	@Transactional
 	public boolean  updateLeaveOfAbsence(String sysUserId, String status , String effectiveDate ,String expirationDate){
