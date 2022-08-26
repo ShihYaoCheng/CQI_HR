@@ -209,7 +209,7 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 			//抓取是否 有 留職停薪資料
 			Criteria criteriaA = sessionFactory.getCurrentSession().createCriteria(SysUserAbsence.class);
 			criteriaA.add(Restrictions.eq("sysUserId",item.getSysUserId() ));
-			criteriaA.add(Restrictions.eq("status","y" ));
+			
 			List<SysUserAbsence> SysUserAbsenceList = criteriaA.list();
 			//減掉 留職停薪 期間日期
 			for( SysUserAbsence rd : SysUserAbsenceList)
