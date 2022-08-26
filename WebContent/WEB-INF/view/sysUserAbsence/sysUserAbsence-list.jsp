@@ -238,6 +238,17 @@
 				format :'yyyy/mm/dd',
 				autoclose: true, minView: 2
 			});
+
+			var minDateForStart = new Date();
+	        $('#datepickerEffectiveDate').datetimepicker("setStartDate", minDateForStart);
+	        $('#datepickerExpirationDate').datetimepicker("setStartDate", minDateForStart);
+
+		    $("#datepickerEffectiveDate").on("changeDate", function (e) {		    			    
+		    	$('#datepickerExpirationDate').datetimepicker("setStartDate", e.date);
+	        });
+			$("#datepickerExpirationDate").on("changeDate", function (e) {				
+				$('#datepickerEffectiveDate').datetimepicker("setEndDate", e.date);
+	        });
 			queryData(1);
 		});
 		
@@ -361,9 +372,15 @@
 							//$('#graduationDate').val(formatJsonDate(data.sysUser.graduationDate, "y/M/d"));
 							$('#basicModal').find('.modal-title').text(text+"開發者");
 							$('#basicModal').modal('toggle');
-
-							$('#EffectiveDate').val(formatJsonDate(data.SysUserAbsence.effectiveDate, "y/M/d"));
-							$('#ExpirationDate').val(formatJsonDate(data.SysUserAbsence.expirationDate, "y/M/d"));
+							if(data.SysUserAbsence != null)
+							{
+								$('#EffectiveDate').val(formatJsonDate(data.SysUserAbsence.effectiveDate, "y/M/d"));
+								$('#ExpirationDate').val(formatJsonDate(data.SysUserAbsence.expirationDate, "y/M/d"));
+							}else
+							{
+								$('#EffectiveDate').val("");
+								$('#ExpirationDate').val("")
+							}
 							progressing = 0;
 						}else{
 							alert(data.message);

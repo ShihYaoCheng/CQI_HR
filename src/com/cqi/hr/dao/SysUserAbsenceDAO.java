@@ -58,7 +58,8 @@ public class SysUserAbsenceDAO extends AbstractDAO<SysUserAbsence> {
 		return null;
 	}
 	
-	
+	/* 排程撈資料用
+	 */
 	@SuppressWarnings("unchecked")
 	public List<SysUserAbsence> getAllSysUserAbsence() throws Exception {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
