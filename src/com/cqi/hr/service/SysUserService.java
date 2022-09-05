@@ -181,9 +181,9 @@ public class SysUserService extends AbstractService<SysUser>{
 	}
 
 	@Transactional
-	public Map<String, SysUser> getMapEnableRule2User() throws Exception {
+	public Map<String, SysUser> getEnableRole2UserStatus() throws Exception {
 		Map<String, SysUser> mapping = new HashMap<>();
-		List<SysUser> list = sysUserDAO.getEnableRole2User();
+		List<SysUser> list = sysUserDAO.getEnableRole2UserStatus();
 		for(SysUser user : list){
 			mapping.put(user.getSysUserId(), user);
 		}
