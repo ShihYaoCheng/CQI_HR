@@ -56,7 +56,11 @@ public class sysUserAbsenceController extends AbstractController<SysUser> {
 			PagingList<SysUser> sysUserList = sysUserService.getSysUserStatusListByPage(page, searchUserName);
 			
 			createPagingInfo(model, sysUserList);
-			
+
+			List<SysUserAbsence> SysUserAbsenceList = sysUserAbsenceService.getSysUserAbsenceList();
+			model.addAttribute("SysUserAbsenceList", SysUserAbsenceList);
+			model.addAttribute("userMap", sysUserService.getMapEnableRule2User());
+
 		} catch (Exception e) {
 			logger.debug("ajaxDataLoading " + FUNCTION_NAME + " fail : ", e);
 		}

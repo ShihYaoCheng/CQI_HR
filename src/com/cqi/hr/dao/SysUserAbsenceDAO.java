@@ -19,6 +19,12 @@ public class SysUserAbsenceDAO extends AbstractDAO<SysUserAbsence> {
 	protected Class<SysUserAbsence> getEntityClass() {
 		return SysUserAbsence.class;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<SysUserAbsence> getSysUserAbsenceList() throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		return criteria.list();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<SysUserAbsence> getSysUserAbsenceListBySysUserId(String sysUserId) throws Exception {
@@ -58,7 +64,8 @@ public class SysUserAbsenceDAO extends AbstractDAO<SysUserAbsence> {
 		return null;
 	}
 	
-	/* 排程撈資料用
+	/* 
+	排程撈資料用
 	 */
 	@SuppressWarnings("unchecked")
 	public List<SysUserAbsence> getAllSysUserAbsence() throws Exception {

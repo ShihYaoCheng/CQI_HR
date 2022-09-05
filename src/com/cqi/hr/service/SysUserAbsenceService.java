@@ -27,11 +27,14 @@ public class SysUserAbsenceService extends AbstractService<SysUserAbsence>{
 	protected AbstractDAO<SysUserAbsence> getDAO() {
 		return sysUserAbsenceDAO;
 	}
-	
+
+
 	@Transactional
-	public List<SysUserAbsence> getSysUserAbsenceList(String sysUserId) throws Exception{
-		return sysUserAbsenceDAO.getSysUserAbsenceListBySysUserId(sysUserId);
+	public List<SysUserAbsence> getSysUserAbsenceList() throws Exception{
+		return sysUserAbsenceDAO.getSysUserAbsenceList();
 	}
+	
+	
 	
 	@Transactional
 	public SysUserAbsence getSysUserAbsenceBySysUserId(String sysUserId) throws Exception{

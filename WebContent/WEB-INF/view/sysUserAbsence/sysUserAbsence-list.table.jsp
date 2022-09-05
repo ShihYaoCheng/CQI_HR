@@ -54,3 +54,48 @@
 		<li><a href="javascript:queryData(${currentPage+1 > totalPage ? '0' :currentPage+1})">&raquo;</a></li>
 	</ul>
 </nav>
+
+
+
+
+
+
+<div  class="table-responsive" style="margin: 30px;" > 
+	<table id="tableSysUserAbsence"  class="table table-striped">
+		<thead>
+			<tr>
+				<th style="width:20%">人員</th>
+				<th style="width:20%">人員名稱</th>
+				<th style="width:20%">留職停薪開始日期</th>
+				<th style="width:20%">留職停薪結束日期</th>
+				<th style="width:20%">申請日期</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:if test="${totalRecord == 0}">
+				<tr class="bg">
+					<td colspan="2" align="center">沒有資料</td>
+				</tr>
+			</c:if>
+			<c:forEach var="item" items="${SysUserAbsenceList}" varStatus="vs">
+				<tr >
+					<td>
+						${item.sysUserId}
+					</td>
+					<td>
+						${userMap.get(item.sysUserId).originalName}
+					</td>
+					<td>
+						${item.effectiveDate}
+					</td>
+					<td>
+						${item.expirationDate}
+					</td>
+					<td>
+						${item.createDate}
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+</div>

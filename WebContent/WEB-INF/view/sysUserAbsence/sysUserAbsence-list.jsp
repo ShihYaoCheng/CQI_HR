@@ -14,7 +14,7 @@
 			<!--/span-->
 			<div class="col-xs-12 col-md-9 single_table">
 				<form class="navbar-form">
-					<h3><b>人員留職停薪管理 測試用</b></h3>
+					<h3><b>人員留職停薪管理</b></h3>
 					<br/>
 					<div class="form-group" style="display: inline;">
 						<div class="input-group">
@@ -158,37 +158,7 @@
 				
 				
 				
-				<div  class="table-responsive" style="margin: 30px;" > 
-					<table id="tableSysUserAbsence"  class="table table-striped">
-						<thead>
-							<tr>
-								<th style="width:30%">留職停薪開始日期</th>
-								<th style="width:30%">留職停薪結束日期</th>
-								<th style="width:30%">申請日期</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:if test="${totalRecord == 0}">
-								<tr class="bg">
-									<td colspan="2" align="center">沒有資料</td>
-								</tr>
-							</c:if>
-							<c:forEach var="item" items="${SysUserAbsenceList}" varStatus="vs">
-								<tr >
-									<td>
-										${item.effectiveDate}
-									</td>
-									<td>
-										${item.expirationDate}
-									</td>
-									<td>
-										${item.createDate}
-									</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table>
-				</div>
+				
 				
 				
 				<div style="clear:both;"></div>
@@ -240,6 +210,7 @@
 			});
 
 			var minDateForStart = new Date();
+			minDateForStart.setDate(minDateForStart.getDate() + 1);
 	        $('#datepickerEffectiveDate').datetimepicker("setStartDate", minDateForStart);
 	        $('#datepickerExpirationDate').datetimepicker("setStartDate", minDateForStart);
 
