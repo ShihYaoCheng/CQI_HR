@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -20,9 +21,10 @@ public class SysUserAbsenceDAO extends AbstractDAO<SysUserAbsence> {
 		return SysUserAbsence.class;
 	}
 
-	@SuppressWarnings("unchecked")
+		@SuppressWarnings("unchecked")
 	public List<SysUserAbsence> getSysUserAbsenceList() throws Exception {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.addOrder(Order.desc("createDate"));
 		return criteria.list();
 	}
 	

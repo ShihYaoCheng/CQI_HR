@@ -49,7 +49,9 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 	@SuppressWarnings("unchecked")
 	public List<SysUser> getEnableRole2User()throws Exception{
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
-		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		Criterion rest1 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		Criterion rest2 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_leave_of_absence));
+		criteria.add(Restrictions.or(rest1, rest2));
 		criteria.add(Restrictions.eq("roleId", "2"));
 		return criteria.list();
 	}
@@ -208,8 +210,7 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 			
 			//抓取是否 有 留職停薪資料
 			Criteria criteriaA = sessionFactory.getCurrentSession().createCriteria(SysUserAbsence.class);
-			criteriaA.add(Restrictions.eq("sysUserId",item.getSysUserId() ));
-			
+			criteriaA.add(Restrictions.eq("sysUserId",item.getSysUserId() ));			
 			List<SysUserAbsence> SysUserAbsenceList = criteriaA.list();
 			//減掉 留職停薪 期間日期
 			for( SysUserAbsence rd : SysUserAbsenceList)
