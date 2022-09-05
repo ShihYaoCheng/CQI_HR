@@ -49,6 +49,14 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 	@SuppressWarnings("unchecked")
 	public List<SysUser> getEnableRole2User()throws Exception{
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		criteria.add(Restrictions.eq("roleId", "2"));
+		return criteria.list();
+	}
+
+		@SuppressWarnings("unchecked")
+	public List<SysUser> getEnableRole2UserStatus()throws Exception{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());		
 		Criterion rest1 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
 		Criterion rest2 = Restrictions.and(Restrictions.eq("status", Constant.SYSUSER_leave_of_absence));
 		criteria.add(Restrictions.or(rest1, rest2));

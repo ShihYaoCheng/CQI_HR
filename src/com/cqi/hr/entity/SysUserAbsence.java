@@ -22,6 +22,7 @@ public class SysUserAbsence {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id" , unique = true, nullable = false)
 	private String id;
 

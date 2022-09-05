@@ -59,7 +59,7 @@ public class sysUserAbsenceController extends AbstractController<SysUser> {
 
 			List<SysUserAbsence> SysUserAbsenceList = sysUserAbsenceService.getSysUserAbsenceList();
 			model.addAttribute("SysUserAbsenceList", SysUserAbsenceList);
-			model.addAttribute("userMap", sysUserService.getMapEnableRule2User());
+			model.addAttribute("userMap", sysUserService.getEnableRole2UserStatus());
 
 		} catch (Exception e) {
 			logger.debug("ajaxDataLoading " + FUNCTION_NAME + " fail : ", e);
@@ -88,12 +88,12 @@ public class sysUserAbsenceController extends AbstractController<SysUser> {
 		try{
 			String result = "";
 			SysUser sysUser = sysUserService.get(sysUserId);
-			List<SysUserAbsence> SysUserAbsenceList = sysUserAbsenceService.getSysUserAbsenceList(sysUserId);
+			//List<SysUserAbsence> SysUserAbsenceList = sysUserAbsenceService.getSysUserAbsenceList(sysUserId);
 			SysUserAbsence SysUserAbsence = sysUserAbsenceService.getSysUserAbsenceBySysUserId(sysUserId);
 			map = createResponseMsg(!StringUtils.hasText(result), "", result);
 			map.put("sysUser", sysUser);
 			map.put("SysUserAbsence", SysUserAbsence);
-			model.addAttribute("SysUserAbsenceList", SysUserAbsenceList);
+			//model.addAttribute("SysUserAbsenceList", SysUserAbsenceList);
 			
 			
 		}catch(Exception e){
