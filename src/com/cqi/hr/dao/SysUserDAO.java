@@ -1,6 +1,8 @@
 package com.cqi.hr.dao;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -204,6 +206,8 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		//criteria.add(Restrictions.between("inaugurationDate", startDate, endDate));
 		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		
+		criteria.add(Restrictions.isNotNull("inaugurationDate"));
 
 		List<SysUser> dataList = criteria.list();
 		List<SysUser> result = new ArrayList<SysUser>();		
@@ -212,7 +216,15 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		calendarStart.setTime(DateUtils.getTodayWithoutHourMinSec());
 		for(SysUser item : dataList )
 		{
-			LocalDate dateBefore = LocalDate.parse(item.getInaugurationDate().toString() , formatter);
+			
+			
+			
+			
+			
+			//LocalDate dateBefore = LocalDate.parse(item.getInaugurationDate().getTime() , formatter);
+			
+			LocalDate dateBefore = item.getInaugurationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			dateBefore.format(formatter);
 			LocalDate dateAfter = LocalDate.parse( calendarStart.toString(), formatter);					
 			long onTheJobDays = ChronoUnit.DAYS.between(dateBefore, dateAfter);
 			
@@ -223,8 +235,12 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 			//減掉 留職停薪 期間日期
 			for( SysUserAbsence rd : SysUserAbsenceList)
 			{
-				LocalDate dateBeforeA = LocalDate.parse(rd.getEffectiveDate().toString() , formatter);
-				LocalDate dateAfterA = LocalDate.parse( rd.getExpirationDate().toString(), formatter);	
+				//LocalDate dateBeforeA = LocalDate.parse(rd.getEffectiveDate().toString() , formatter);
+				LocalDate dateBeforeA = rd.getEffectiveDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				dateBeforeA.format(formatter);
+				//LocalDate dateAfterA = LocalDate.parse( rd.getExpirationDate().toString(), formatter);
+				LocalDate dateAfterA = rd.getExpirationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				dateAfterA.format(formatter);
 				onTheJobDays =- ChronoUnit.DAYS.between(dateBeforeA, dateAfterA);
 			}
 			/* 符合 在職天數區間資料 */
