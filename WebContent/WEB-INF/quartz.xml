@@ -68,6 +68,7 @@
         <property name="jobDataAsMap">
             <map>
                 <entry key="userLeaveService" value-ref="userLeaveService"/>
+                <entry key="sysUserAbsenceService" value-ref="sysUserAbsenceService"/>
                 <entry key="webConfigBean"  >
                     <ref bean="webConfigBean"/>
                 </entry>
@@ -80,8 +81,8 @@
             <ref bean="jobAnnualLeaveBean"/>
         </property>
         <property name="cronExpression">
-        	<!--<value>10 * * * * ?</value> -->
-             <value>0 0 6 * * ?</value>
+        	<value>10 * * * * ?</value> 
+            <!-- <value>0 0 6 * * ?</value>-->
         </property>
         <!-- 
 			    秒（0-59）
