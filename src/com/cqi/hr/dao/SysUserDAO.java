@@ -204,6 +204,8 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
 		//criteria.add(Restrictions.between("inaugurationDate", startDate, endDate));
 		criteria.add(Restrictions.eq("status", Constant.SYSUSER_ENABLE));
+		
+		criteria.add(Restrictions.isNotNull("inaugurationDate"));
 
 		List<SysUser> dataList = criteria.list();
 		List<SysUser> result = new ArrayList<SysUser>();		

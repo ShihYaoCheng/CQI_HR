@@ -23,6 +23,10 @@ public class AnnualLeaveJob extends BasicJob {
 	public void setUserLeaveService(UserLeaveService userLeaveService) {
 		this.userLeaveService = userLeaveService;
 	}
+	
+	public void setSysUserAbsenceService(SysUserAbsenceService sysUserAbsenceService) {
+		this.sysUserAbsenceService = sysUserAbsenceService;
+	}
 
 	@Override
 	protected void executeInternal(JobExecutionContext arg0)throws JobExecutionException {
