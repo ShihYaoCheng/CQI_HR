@@ -216,11 +216,6 @@ public class SysUserDAO extends AbstractDAO<SysUser> {
 		calendarStart.setTime(DateUtils.getTodayWithoutHourMinSec());
 		for(SysUser item : dataList )
 		{
-			
-			
-			
-			
-			
 			//LocalDate dateBefore = LocalDate.parse(item.getInaugurationDate().getTime() , formatter);
 			
 			LocalDate dateBefore = item.getInaugurationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
