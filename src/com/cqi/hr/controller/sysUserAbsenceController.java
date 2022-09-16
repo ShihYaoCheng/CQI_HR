@@ -28,10 +28,10 @@ import com.cqi.hr.util.StringUtils;
 
 @Controller
 @RequestMapping("/security/sysUserAbsence")
-public class sysUserAbsenceController extends AbstractController<SysUser> {	
+public class SysUserAbsenceController extends AbstractController<SysUser> {	
 	@Resource SysUserService sysUserService;
 	@Resource SysUserAbsenceService sysUserAbsenceService;
-	private static String FUNCTION_NAME = "sys user"; 
+	private static String FUNCTION_NAME = "SysUser Absence"; 
 	
 	@ModelAttribute("SysUserList")
 	public List<SysUser> SysUserList() throws Exception {
