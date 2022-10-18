@@ -1,6 +1,8 @@
 package com.cqi.hr.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -100,6 +102,7 @@ public class MendPunchRecordService extends AbstractService<MendPunchRecord>{
 			SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
 			SysUser mendUser = sysUserDAO.getOneBySysUserId(mendPunchRecord.getSysUserId());
 			Date mendDate = DateUtils.clearTime(mendPunchRecord.getMendPunchTime());
+			
 			//update attendance record
 			AttendanceRecord attendanceRecord =  attendanceRecordDAO.getOneByUserIdAndDate(mendUser.getSysUserId(), mendDate);
 			if (attendanceRecord == null) {
@@ -110,11 +113,37 @@ public class MendPunchRecordService extends AbstractService<MendPunchRecord>{
 				attendanceRecord.setOriginalData(sdfTime.format(mendPunchRecord.getMendPunchTime()));
 				attendanceRecord.setStatus(1);
 				attendanceRecord.setCreateDate(new Date());
-			}else if (attendanceRecord.getArriveTime() == null || attendanceRecord.getArriveTime().isEmpty()) {
-				attendanceRecord.setArriveTime(sdfTime.format(mendPunchRecord.getMendPunchTime()));
+			}else {
+				ArrayList<Date> SortDates = new ArrayList<Date>();
+				if(attendanceRecord.getArriveTime() != null && !attendanceRecord.getArriveTime().isEmpty()) 
+				{
+					Date arriveTimeDate = sdfTime.parse(attendanceRecord.getArriveTime());
+					arriveTimeDate.setYear(mendDate.getYear());
+					arriveTimeDate.setMonth(mendDate.getMonth());
+					arriveTimeDate.setDate(mendDate.getDate()); 
+					SortDates.add(arriveTimeDate);
+				}
+				if(attendanceRecord.getLeaveTime() != null && !attendanceRecord.getLeaveTime().isEmpty()) 
+				{
+					Date leaveTimeDate = sdfTime.parse(attendanceRecord.getLeaveTime());
+					leaveTimeDate.setYear(mendDate.getYear());
+					leaveTimeDate.setMonth(mendDate.getMonth());
+					leaveTimeDate.setDate(mendDate.getDate());
+					SortDates.add(leaveTimeDate);
+				}
+				
+				SortDates.add(mendPunchRecord.getMendPunchTime());
+				
+				//sort
+				Collections.sort(SortDates);
+				
+				attendanceRecord.setArriveTime(sdfTime.format(SortDates.get(0)));
+				attendanceRecord.setLeaveTime(sdfTime.format(SortDates.get(SortDates.size()-1)));
+
 				attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";"+sdfTime.format(mendPunchRecord.getMendPunchTime()));
 				attendanceRecord.setUpdateDate(new Date());
-			} else {
+			}
+				/*
 				Date arriveTimeDate = sdfTime.parse(attendanceRecord.getArriveTime());
 				arriveTimeDate.setYear(mendDate.getYear());
 				arriveTimeDate.setMonth(mendDate.getMonth());
@@ -131,10 +160,10 @@ public class MendPunchRecordService extends AbstractService<MendPunchRecord>{
 				}else if(mendPunchRecord.getMendPunchTime().after(leaveTimeDate)) {
 					attendanceRecord.setLeaveTime(sdfTime.format(mendPunchRecord.getMendPunchTime()));
 				}
-				attendanceRecord.setOriginalData(attendanceRecord.getOriginalData()+";"+sdfTime.format(mendPunchRecord.getMendPunchTime()));
-				attendanceRecord.setUpdateDate(new Date());
+				*/
+		
 				
-			}
+			
 			attendanceRecordDAO.saveOrUpdate(attendanceRecord);
 			
 			//update dailyAttendanceRecord
