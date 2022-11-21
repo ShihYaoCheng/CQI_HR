@@ -52,21 +52,14 @@ public class WorkFromHomeService  extends AbstractService<WorkFromHome>{
 		int days = 0;
 		switch (level) {
 		case 1:
-			days = 3;
-			break;
-		case 2:
-			days = 7;
-			break;
-		case 3:
-			days = 14;
-			break;
-		case 4:
-			days = 30;
-			break;
-		case 5:
 			days = 1;
 			break;
-
+		case 2:
+			days = 3;
+			break;
+		case 3:
+			days = 7;
+			break;
 		default:
 			return "程度不合法";
 			

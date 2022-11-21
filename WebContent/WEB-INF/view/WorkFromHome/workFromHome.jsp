@@ -36,54 +36,37 @@
 						</h4>
 						<thead>
 							<tr style="background-color: #edf8ff; font-weight: bold;">
-								<td width="10%">警戒程度</td>
-								<td width="10%">遠端日數</td>
-								<td width="30%">A 地區關聯</td>
-								<td width="30%">B 親友關聯</td>
-								<td width="20%">C 個人</td>
+								<td width="20%">警戒程度</td>
+								<td width="20%">遠端日數</td>
+								<td width="50%">遠端事由</td>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>一級</td>
-								<td>三天</td>
-								<td>A1.1 居住於確診熱區(萬華5/17)(台北新北5/20)
+								<td>1天</td>
+								<td>1.直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者
 									<br>
-									A1.2 使用跨縣市大眾通勤, 所跨縣市政府宣布三級防疫(新北台北5/17)(全國5/20)
+									2.個人因防疫考量, 請長假超過兩周, 經主管核定業務急需以居家工作代替長假者
 									<br>
-									A1.3 所居住社區出現確診案例, 未共用通風管道或共用電梯
+									3.有嚴重症狀, 但篩檢為陰性者
 								</td>
-								<td>B1.1 直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者</td>
-								<td>C1.1 個人因防疫考量, 請長假超過兩周, 經主管核定業務急需以居家工作代替長假者</td>
 							</tr>
 							<tr>
 								<td>二級</td>
-								<td>七天</td>
-								<td>A2.1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</td>
-								<td>A2.2 本司辦公所在位於確診熱區(板橋中和5/25)</td>
-								<td>B2.1 一周內同室(同車)社交過的親友確診, 過程未戴口罩超過15分鐘</td>
+								<td>3天</td>
+								<td>4.本人, 同居親友收到自主通知單</td>
+								
 							</tr>
 							<tr>
 								<td>三級</td>
-								<td>十四天</td>
-								<td>A3.1 本司辦公所在大樓出現確診案例, 或由公司行政統一發布</td>
-								<td>B3.1 同居親友確診或收到自主通知單</td>
-								<td>C3.1 本人, 配偶, 同居直系確診或收到自主通知單</td>
+								<td>7天</td>
+								<td>5.同居親友確診, 因故無法在院隔離, 須在家隔離者
+									<br>
+									6.本人確診
+								</td>
 							</tr>
-							<tr>
-								<td>四級</td>
-								<td>三十天</td>
-								<td></td>
-								<td>B4.1 同居親友確診, 因故無法在院隔離, 須在家隔離者</td>
-								<td>C4.1 本人確診</td>
-							</tr>
-							<tr>
-								<td>五級</td>
-								<td>超過一個月</td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
+							
 						</tbody>
 					</table>
 
@@ -135,11 +118,9 @@
 								<div class="col-sm-12" id="levelForm">
 									<select class="form-control" id="level" name="level">
 										<option value="">請選擇</option>
-										<option value="1">遠端一級 (３天)</option>
-										<option value="2">遠端二級 (７天)</option>
-										<option value="3">遠端三級 (１４天)</option>
-										<option value="4">遠端四級 (３０天)</option>
-										<option value="5">遠端五級 (超過１個月)</option>
+										<option value="1">遠端一級 (1天)</option>
+										<option value="2">遠端二級 (3天)</option>
+										<option value="3">遠端三級 (7天)</option>
 									</select>
 									<span id="level-error" class="error_text"></span>
 								</div>
@@ -179,40 +160,39 @@
 							</div>
 
 
+							
+							
 							<div class="form-group">
 								<label for="recipient-name" class="control-label col-sm-12">
 									事由：
 								</label>
 								<div class="col-sm-12">
 									<!-- <input type="text" class="form-control" id="spendTime" name="spendTime"/> -->
-									<select class="form-control" id="description" name="description">
+									<select class="form-control" id="descriptionSelect" name="descriptionSelect">
 										<option value="">請選擇</option>
-										<optgroup label="A 地區關聯">
-											<option>A 一級-1 居住於確診熱區(萬華5/17)(台北新北5/20)</option>
-											<option>A 一級-2 使用跨縣市大眾通勤, 所跨縣市政府宣布三級防疫(新北台北5/17)(全國5/20)</option>
-											<option>A 一級-3 所居住社區出現確診案例, 未共用通風管道或共用電梯</option>
-											<option>A 二級-1 所居住大樓出現確診案例, 有共用通風管道或共用電梯</option>
-											<option>A 二級-2 本司辦公所在位於確診熱區(板橋中和5/25)</option>
-											<option>A 三級-1 本司辦公所在大樓出現確診案例, 或由公司行政統一發布</option>
-										</optgroup>
-									
-										<optgroup label="B 親友關聯">
-											<option>B 一級-1 直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者</option>
-											<option>B 二級-1 一周內同室(同車)社交過的親友確診, 過程未戴口罩超過15分鐘</option>
-											<option>B 三級-1 同居親友確診或收到自主通知單</option>
-											<option>B 四級-1 同居親友確診, 因故無法在院隔離, 須在家隔離者</option>
-										</optgroup>
+										<option value="1">1.直系子女因防疫停課, 經主管核定業務急需以居家工作代替防疫照顧假者</option>
+										<option value="2">2.個人因防疫考量, 請長假超過兩周, 經主管核定業務急需以居家工作代替長假者</option>
+										<option value="3">3.有嚴重症狀, 但篩檢為陰性者</option>
+										<option value="4">4.本人, 同居親友收到自主通知單</option>
+										<option value="5">5.同居親友確診, 因故無法在院隔離, 須在家隔離者</option>
+										<option value="6">6.本人確診</option>
+										<option value="7">7.其他原因:</option>
 
-										<optgroup label="C 個人">
-											<option>C 一級-1 個人因防疫考量, 請長假超過兩周, 經主管核定業務急需以居家工作代替長假者</option>
-											<option>C 三級-1 本人, 配偶確診或收到自主通知單</option>
-											<option>C 四級-1 本人確診</option>
-										</optgroup>
 
 									</select>
 									<span id="description-error" class="error_text"></span>
 								</div>
 							</div>
+							
+							<div class="form-group" id="descriptionOtherReasonDiv" style="display: none;">
+								<label for="recipient-name" class="control-label col-sm-12">其他原因：</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" id="description"
+										name="description" />
+								</div>
+							</div>
+							
+							
 
 
 							<div class="form-group">
@@ -284,20 +264,16 @@
 		$('#level').change(function () {
 
 			if ($('#level').val() == '1') {
-				levelWFHDays = '3';
+				levelWFHDays = '1';
 				console.log("一級：" + levelWFHDays + "天");
 			}
 			if ($('#level').val() == '2') {
-				levelWFHDays = '7';
+				levelWFHDays = '3';
 				console.log("二級：" + levelWFHDays + "天");
 			}
 			if ($('#level').val() == '3') {
-				levelWFHDays = "14";
+				levelWFHDays = "7";
 				console.log("三級：" + levelWFHDays + "天");
-			}
-			if ($('#level').val() == '4') {
-				levelWFHDays = "30";
-				console.log("四級：" + levelWFHDays + "天");
 			}
 
 			// 五級時手動輸入天數
@@ -320,6 +296,29 @@
 				$('#levelFive').hide();
 				$('#levelFiveDay').val("");
 			}
+			
+			$('#workDate').val('');
+			$('#endTime').val('');
+		});
+		
+		// 事由
+		$('#descriptionSelect').change(function () {
+			console.log("descriptionSelect change");
+			
+			// 手動輸入其他原因
+			if ($('#descriptionSelect').val() == '7') {
+				console.log("手動輸入其他原因");
+				$('#descriptionOtherReasonDiv').show();
+				$('#description').val('7.其他原因: ');
+
+
+			}else{
+				console.log("descriptionSelect：" + $('#descriptionSelect').val());
+				$('#descriptionOtherReasonDiv').hide();
+				$('#description').val($("#descriptionSelect option:selected").text());
+			}
+			
+			
 		});
 
 		
@@ -338,13 +337,6 @@
 
 			}
 		}
-
-
-		$('#level').change(function () {
-			$('#workDate').val('');
-			$('#endTime').val('');
-		});
-
 		
 		function queryData(page) {
 			if(page == 0){
@@ -420,6 +412,17 @@
 				}
 			}if ($('#level').val() !== '5'){
 				$('#levelFiveDay-error').hide();
+			}
+			
+			
+			if ($('#description').val() == '其他'){
+				if ($('#descriptionOther').val() == '') {
+					errors['descriptionOther'] = 6;
+				} else {
+					$('#descriptionOther-error').hide();
+				}
+			}else{
+				$('#descriptionOther-error').hide();
 			}
 
 			
@@ -519,6 +522,9 @@
 				$('#workDate').val("");
 				$('#endTime').val("");
 				$('#description').val("");
+				$('#descriptionSelect').val("");
+				$('#descriptionOtherReasonDiv').hide();
+				$('#description-error').hide();
 				$('#approvalBy').val("");
 				$('#status').val("");
 				$('#basicModal').find('.modal-title').text(text + "遠端作業紀錄");
@@ -558,6 +564,10 @@
 							$('#workDateForm').css({"cursor": "not-allowed"});
 							$('#datetimepickerStart').css({"pointer-events":"none"});
 							$('#description').val(data.workFromHome.description);
+							
+							var descriptionSelectIndex = data.workFromHome.description.substring(0,1);
+							$('#descriptionSelect').val(descriptionSelectIndex);
+							
 							$('#approvalBy').val(data.workFromHome.approvalBy);
 							$('#status').val(data.workFromHome.status);
 							$('#basicModal').find('#workDateTitle').text("日期：");
