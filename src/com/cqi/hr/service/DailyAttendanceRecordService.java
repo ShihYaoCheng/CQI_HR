@@ -77,7 +77,7 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		
 		// only for test
 		//userList.add(sysUserDAO.get("1198842813042872"));
-		//date = sdfDate.parse("2022-05-05");
+		//date = sdfDate.parse("2022-11-23");
 		
 		
 		for(SysUser sysUser:userList) {
@@ -100,7 +100,7 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 		SpecialDateAboutWork specialDateAboutWork = specialDateAboutWorkDAO.getOneByDate(date);
 		AttendanceRecord userAttendanceRecord = attendanceRecordDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),date);
 		UserAskForOvertime userAskForOvertime = userAskForOvertimeDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),date);
-		UserAskForLeave userAskForLeave = userAskForLeaveDAO.getOneByUserIdAndDate(sysUser.getSysUserId(),date);
+		List<UserAskForLeave> userAskForLeave = userAskForLeaveDAO.getListByUserIdAndDate(sysUser.getSysUserId(),date);
 		double attendHours=0.0,absenceHours = 0.0,overtimeHours = 0.0,leaveHours=0.0;
 		
 		// not work date 
@@ -128,15 +128,31 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 				if(userAskForOvertime == null && userAskForLeave == null){
 					absenceHours = 8.0;
 				}else if(userAskForOvertime == null && userAskForLeave != null) { //只有請假紀錄 ,未請8小時表示有缺席
-					CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.getLeaveId()) ;
-					leaveHours = (companyLeave != null && companyLeave.getUnitType() == 1 ) ? 8.0 : userAskForLeave.getSpendTime();
-					absenceHours = 8.0 - leaveHours;
+					
+					leaveHours = 0;
+					for(int j = 0 ;j<userAskForLeave.size();j++) {
+						CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.get(j).getLeaveId());
+						double leaveHourTemp = (companyLeave != null && companyLeave.getUnitType() == 1 ) ? 8.0 : userAskForLeave.get(j).getSpendTime();
+						leaveHours +=  leaveHourTemp;
+						
+					}
+					
+					absenceHours = 8 - leaveHours;
+					
 				}else if(userAskForOvertime != null && userAskForLeave == null) { //只有加班 --> 勤務?
 					absenceHours = 8.0;
 				}else if(userAskForOvertime != null && userAskForLeave != null) { //有請假,加班紀錄
-					CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.getLeaveId()) ;
-					leaveHours = (companyLeave != null && companyLeave.getUnitType() == 1 ) ? 8.0 : userAskForLeave.getSpendTime();
-					absenceHours = 8.0 - leaveHours;
+					
+					leaveHours = 0;
+					for(int j = 0 ;j<userAskForLeave.size();j++) {
+						CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.get(j).getLeaveId());
+						double leaveHourTemp = (companyLeave != null && companyLeave.getUnitType() == 1 ) ? 8.0 : userAskForLeave.get(j).getSpendTime();
+						leaveHours +=  leaveHourTemp;
+						
+					}
+					
+					absenceHours = 8 - leaveHours;
+					
 				}
 				
 			}else {//有出勤紀錄
@@ -160,8 +176,7 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 						}
 					}
 				}else if(userAttendanceRecord != null && userAskForOvertime == null && userAskForLeave != null) { //有出勤,請假紀錄
-					Date leaveStartTime = userAskForLeave.getStartTime(); 
-					Date leaveEndTime = userAskForLeave.getEndTime(); 
+					
 					
 					for(int i = boardTime.getHours(); i < finishTime.getHours() ; i++) {
 						if(i == 12) {
@@ -169,13 +184,22 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 						}else if( (attendanceArriveTime.getHours() < i && attendanceLeaveTime.getHours() >= i+1 )
 								|| (attendanceArriveTime.getHours() == i && attendanceArriveTime.getMinutes() <= 15 && attendanceLeaveTime.getHours() >= i+1) ){
 							attendHours++;
-						}else if( leaveStartTime.getHours() <= i  && leaveEndTime.getHours() >= i+1 ){ //區間內有無請假 
-							leaveHours++;
-						}else {
-							absenceHours++;
 						}
+					}
+					
+					
+					leaveHours = 0;
+					for(int j = 0 ;j<userAskForLeave.size();j++) {
+						CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.get(j).getLeaveId());
+						double leaveHourTemp = (companyLeave != null && companyLeave.getUnitType() == 1 ) ? 8.0 : userAskForLeave.get(j).getSpendTime();
+						leaveHours +=  leaveHourTemp;
 						
 					}
+					
+					
+					absenceHours = 8 - attendHours - leaveHours;
+					
+					
 				}else if(userAttendanceRecord != null && userAskForOvertime != null && userAskForLeave == null) { //有出勤,加班紀錄
 					for(int i = boardTime.getHours(); i < attendanceLeaveTime.getHours() ; i++) {
 						if(i == 12) {
@@ -194,9 +218,10 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 					}
 					
 				}else if(userAttendanceRecord != null && userAskForOvertime != null && userAskForLeave != null) { //有出勤,加班,請假紀錄
-					Date leaveStartTime = userAskForLeave.getStartTime(); 
-					Date leaveEndTime = userAskForLeave.getEndTime(); 
 					
+					//Date leaveStartTime = userAskForLeave.getStartTime(); 
+					//Date leaveEndTime = userAskForLeave.getEndTime(); 
+					/*
 					for(int i = boardTime.getHours(); i < attendanceLeaveTime.getHours() ; i++) {
 						if(i == 12) {
 							continue;
@@ -214,9 +239,38 @@ public class DailyAttendanceRecordService extends AbstractService<DailyAttendanc
 							absenceHours++;
 						}
 					}
+					*/
+					
+					for(int i = boardTime.getHours(); i < finishTime.getHours() ; i++) {
+						if(i == 12) {
+							continue;
+						}else if( (attendanceArriveTime.getHours() < i && attendanceLeaveTime.getHours() >= i+1 )
+								|| (attendanceArriveTime.getHours() == i && attendanceArriveTime.getMinutes() <= 15 && attendanceLeaveTime.getHours() >= i+1) ){
+							attendHours++;
+						}
+					}
+					
+					
+					leaveHours = 0;
+					for(int j = 0 ;j<userAskForLeave.size();j++) {
+						CompanyLeave companyLeave = companyLeaveDAO.get(userAskForLeave.get(j).getLeaveId());
+						double leaveHourTemp = (companyLeave != null && companyLeave.getUnitType() == 1 ) ? 8.0 : userAskForLeave.get(j).getSpendTime();
+						leaveHours +=  leaveHourTemp;
+						
+					}
+					
+					
+					absenceHours = 8 - attendHours - leaveHours;
+					
+					
 				}else {
 					return null;
 				}
+				
+				
+				
+				
+				
 			}//end 有出勤紀錄
 		}// end work date
 			

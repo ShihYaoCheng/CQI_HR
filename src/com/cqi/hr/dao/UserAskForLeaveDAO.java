@@ -214,6 +214,27 @@ public class UserAskForLeaveDAO extends AbstractDAO<UserAskForLeave> {
 		return null;
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserAskForLeave> getListByUserIdAndDate (String userId, Date leaveDate) throws Exception {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(getEntityClass());
+		criteria.add(Restrictions.eq("sysUserId", userId));
+		criteria.add(Restrictions.eq("status", Constant.STATUS_ENABLE));
+		
+		Calendar thisDate = Calendar.getInstance();
+		Calendar nextDate = Calendar.getInstance();
+		thisDate.setTime(leaveDate);
+		nextDate.setTime(DateUtils.nextDate(leaveDate));
+		Criterion rest1 = Restrictions.and(Restrictions.le("startTime", DateUtils.clearTime(thisDate.getTime())), 
+				Restrictions.ge("endTime", DateUtils.clearTime(nextDate.getTime())));
+		Criterion rest2 = Restrictions.or(Restrictions.between("startTime", DateUtils.clearTime(thisDate.getTime()), DateUtils.clearTime(nextDate.getTime())), 
+				Restrictions.between("endTime", DateUtils.clearTime(thisDate.getTime()), DateUtils.clearTime(nextDate.getTime())));
+		criteria.add(Restrictions.or(rest1, rest2));
+		
+		List<UserAskForLeave> list = criteria.list();
+		return list;
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<UserAskForLeave> getListByUserId(String sysUserId) {
