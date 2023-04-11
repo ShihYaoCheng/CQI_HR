@@ -1,0 +1,53 @@
+---
+# hr-manager 後台管理佈署
+# alpha - 
+# beta - 
+# 後台資料庫
+# 後台網頁
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hr-deployment
+  labels:
+    app: hr-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hr
+  template:
+    metadata:
+      labels:
+        app: hr
+    spec:
+      containers:
+        - name: hr
+          image: asia.gcr.io/cqi-dev-25/hr-test:220627.1
+          imagePullPolicy: Always 
+#環境變數
+          envFrom:
+          - configMapRef:
+              name: hr-config
+          ports:
+            - containerPort: 8080
+        - name: web-mysql
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent 
+          envFrom:
+          - configMapRef:
+              name: hr-config
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+            - name: tz-config
+              mountPath: /etc/localtime
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: pvc-web-mysql
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Taipei           
+#ingress health 健康檢查

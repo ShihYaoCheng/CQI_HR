@@ -1,0 +1,13 @@
+# paddy 使用完後要刪掉
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-to-reila
+spec:
+  selector:
+    app: hr
+  ports:
+    - protocol: TCP
+      port: 30001
+      targetPort: 3306
+  type: LoadBalancer

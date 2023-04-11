@@ -1,0 +1,9 @@
+# 網頁設定組
+# 讓連線都走內網
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hr-config
+data:
+  MYSQL_ROOT_PASSWORD: "cqig7777"
+  

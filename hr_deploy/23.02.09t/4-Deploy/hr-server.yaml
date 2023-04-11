@@ -1,0 +1,64 @@
+---
+# hr-manager 後台管理佈署
+# alpha - 
+# beta - 
+# 後台資料庫
+# 後台網頁
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hr-server
+  labels:
+    app: hr-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hr-server
+  template:
+    metadata:
+      labels:
+        app: hr-server
+    spec:
+      containers:
+        - name: hr-server
+          image: asia.gcr.io/cqi-dev-25/hr-server:0209
+          imagePullPolicy: Always 
+#環境變數
+        #  envFrom:
+        #  - configMapRef:
+        #      name: hr-config
+          ports:
+            - containerPort: 80
+          env:
+            - name: MySQL__IP
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-hrserver
+                  key: MySQL-IP
+            - name: MySQL__Password
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-hrserver
+                  key: MySQL-Password
+            - name: MySQL__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-hrserver
+                  key: MySQL-Port
+            - name: MySQL__DatabaseName
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-hrserver
+                  key: MySQL-DatabaseName
+            - name: MySQL__User
+              value: 'root'
+            
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: tz-config  
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        

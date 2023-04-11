@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: hr-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: hr-address
+    networking.gke.io/managed-certificates: hr-certificate
+spec:
+  backend:
+    serviceName: hr-service
+    servicePort: 80

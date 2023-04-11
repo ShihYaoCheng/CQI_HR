@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: testhr-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: testhr-address
+    networking.gke.io/managed-certificates: testhr-certificate
+spec:
+  backend:
+    serviceName: testhr-service
+    servicePort: 80

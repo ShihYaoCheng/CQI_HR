@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1beta2
+kind: ManagedCertificate
+metadata:
+  name: testhr-certificate
+spec:
+  domains:
+    - testhr.cqiserv.com
+    - testhr2.cqiserv.com

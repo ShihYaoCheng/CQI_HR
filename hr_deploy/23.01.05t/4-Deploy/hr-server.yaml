@@ -1,0 +1,33 @@
+---
+# hr-manager 後台管理佈署
+# alpha - 
+# beta - 
+# 後台資料庫
+# 後台網頁
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hr-server
+  labels:
+    app: hr-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hr-server
+  template:
+    metadata:
+      labels:
+        app: hr-server
+    spec:
+      containers:
+        - name: hr-server
+          image: asia.gcr.io/cqi-dev-25/hr-server:0105
+          imagePullPolicy: Always 
+#環境變數
+        #  envFrom:
+        #  - configMapRef:
+        #      name: hr-config
+          ports:
+            - containerPort: 80
+        

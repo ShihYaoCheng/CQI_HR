@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-hrserver
+data:
+  MySQL-IP: "hr-db-svc"
+  MySQL-Port: "3306"
+  MySQL-DatabaseName: "beta_hr"
+  MySQL-Password: "cqig7777"
