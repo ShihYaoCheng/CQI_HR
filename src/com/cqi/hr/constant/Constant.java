@@ -123,14 +123,14 @@ public class Constant {
 	/**
 	 * Line Bot Token Developer
 	 */
-	public final static String LINE_CHANNEL_ACCESS_TOKEN = "APTT0hgJxLyPdzRO//VXvmRrXm0MxPe68jwA4sv88tx1e3O+xpKsF9nx1vl47qwgdEZwC8zPoBSZbvCI9kh8of9fkr72JLmcr2Qi3DiMA1jlELhSAKeUWvcoL6cxhL/TbiRQxM1SGVqH7DiTS/FZHwdB04t89/1O/w1cDnyilFU=";
-	public final static String LINE_CHANNEL_SECRET = "9db990d7beab261ed3dc6d0b19f82a81";
+	public final static String LINE_CHANNEL_ACCESS_TOKEN = "*";
+	public final static String LINE_CHANNEL_SECRET = "*";
 	
 	/**
 	 * Line Bot Token Production
 	 */
-//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "dr01uLhPWtqB8ziTOyP6fjVgsBPoTGvwFQdHppDvPAKiYh8m3on1OWBN7giHeOuQco+FBDE3+QThosZfhk9SbXMdkFvhRQyzeh/S294rl2PoLhDRj43O2K7rDt/SXabDk8Uqb3dSGFcVoz7XrPlBCAdB04t89/1O/w1cDnyilFU=";
-//	public final static String LINE_CHANNEL_SECRET = "e2c0e7d15fe10109716b3b775e792a99";
+//	public final static String LINE_CHANNEL_ACCESS_TOKEN = "*";
+//	public final static String LINE_CHANNEL_SECRET = "*";
 
 	public final static String LINE_CQI_LEADER_GROUP_ID = "Cd96ca3fafbb4b54b89bb8f45aea80352";
 	
